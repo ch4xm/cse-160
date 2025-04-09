@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>MS Paint 2.0</title>
+  </head>
+
+  <body onload="main()">
+    <div>
+    <canvas id="canvas" width="400" height="400">
+      Please use a browser that supports "canvas"
+    </canvas>
+    <br/>
+    <button onclick="clearCanvas('canvas')">Clear Canvas</button>
+    <br/>
+    <br/>
+
+    <span>
+      <label>Drawing Mode</label>
+      <br/><br/>
+      <button>Squares</button>
+      <button>Triangles</button>
+      <button>Circles</button>
+    </span>
+    <script src="lib/webgl-utils.js"></script>
+    <script src="lib/webgl-debug.js"></script>
+    <script src="lib/cuon-utils.js"></script>
+    <script src="asgn1.js"></script>
+  </body>
+</html>
