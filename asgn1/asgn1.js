@@ -39,7 +39,7 @@ function main() {
     setupUICallbacks();
     
     clearCanvas();
-    updateSelectedColor();
+    updateSelectedValues();
     // Draw a point
     // gl.drawArrays(gl.POINTS, 0, 1);
 
@@ -177,29 +177,37 @@ function setupUICallbacks() {
         g_selectedColor = [1.0, 1.0, 1.0, 1.0]; // White
         g_selectedSize = 10.0;
         selectedShape = 'point';
-        updateSelectedColor();
+        updateSelectedValues();
     });
 
     document.getElementById('triangleButton').addEventListener('click', function() {
         g_selectedColor = [1.0, 0.0, 0.0, 1.0]; // Red
         g_selectedSize = 10.0;
         selectedShape = 'triangle';
-        updateSelectedColor();
+        updateSelectedValues();
     });
 
     document.getElementById('circleButton').addEventListener('click', function() {
         g_selectedColor = [0.0, 1.0, 0.0, 1.0]; // Green
         g_selectedSize = 10.0;
         selectedShape = 'circle';
-        updateSelectedColor();
+        updateSelectedValues();
     });
 }
 
-function updateSelectedColor() {
+function updateSelectedValues() {
     const red = document.getElementById('redSlider').value;
     const green = document.getElementById('greenSlider').value;
     const blue = document.getElementById('blueSlider').value;
     g_selectedColor = [red / 255.0, green / 255.0, blue / 255.0, 1.0];
+
+    const size = document.getElementById('sizeSlider').value;
+    g_selectedSize = size;
+    document.getElementById('sizeLabel').innerText = size;
+
+    const segments = document.getElementById('segmentsSlider').value;
+    g_selectedSegments = segments;
+    document.getElementById('segmentsLabel').innerText = segments;
 }
 
 function renderAllShapes() {
