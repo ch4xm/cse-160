@@ -39,9 +39,9 @@ function main() {
     setupUICallbacks();
     
     clearCanvas();
-    
+    updateSelectedColor();
     // Draw a point
-    gl.drawArrays(gl.POINTS, 0, 1);
+    // gl.drawArrays(gl.POINTS, 0, 1);
 
     // drawTriangle([0.0, 0.5, -0.5, -0.5, 0.5, -0.5]);
 }
