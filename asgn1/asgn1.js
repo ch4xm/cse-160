@@ -193,7 +193,110 @@ function setupUICallbacks() {
         selectedShape = 'circle';
         updateSelectedValues();
     });
+
+    document.getElementById('resizeSlider').addEventListener('mousemove', function() {
+        const resizeWidth = Number(this.value);
+        document.getElementById('resizeLabel').innerText = resizeWidth;
+    });
+
+    document.getElementById('drawImageButton').addEventListener('click', function() {
+        const img = document.getElementById('imagePreview');
+        const imgCanvas = document.getElementById('imageCanvas');
+        const imgCtx = imgCanvas.getContext('2d');
+        const resizeWidth = Number(document.getElementById('resizeSlider').value);
+        imgCanvas.width = resizeWidth;
+        imgCanvas.height = (img.height / img.width) * resizeWidth;
+        const pixels = imgCtx.getImageData(0, 0, imgCanvas.width, imgCanvas.height)
+        pixels.data.forEach(element => {
+            console.log('element: ' + element);
+        });
+
+        imgCtx.drawImage(img, 0, 0, resizeWidth, imgCanvas.height);
+    });
+
+    document.getElementById('importPicture').addEventListener('change', async function(event) { 
+        const file = event.target.files[0];
+        if (!file) {
+            console.log('No file selected');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const img = document.getElementById('imagePreview');
+            img.style.display = 'block';
+            const resizeWidth = 300 //Number(document.getElementById('resizeSlider').value);
+            const resized = await resizeImageFromDataURL(e.target.result, resizeWidth)
+            const imgCanvas = document.getElementById('imageCanvas');
+            const imgCtx = imgCanvas.getContext('2d');
+            imgCanvas.width = resizeWidth;
+            imgCanvas.height = (img.height / img.width) * resizeWidth;
+
+            img.src = resized;
+            imgCtx.drawImage(img, 0, 0, resizeWidth, imgCanvas.height);
+            // console.log('Imag');
+            URL.revokeObjectURL(img.src);  // no longer needed, free memory
+            // img.src = URL.createObjectURL(this.files[0]); // set src to blob url
+            // console.log('Image src: ' + img.src);
+        };
+        reader.readAsDataURL(file);
+    });
 }
+
+function resizeImageFromDataURL(dataURL, newWidth) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.src = dataURL;
+
+        let resizedDataURL = '';
+        img.onload = function () {
+            const originalWidth = img.width;
+            const originalHeight = img.height;
+
+            const newHeight = (originalHeight / originalWidth) * newWidth;
+
+            const canvas = document.createElement("canvas");
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+            resizedDataURL = canvas.toDataURL(); // default is PNG
+            resolve(resizedDataURL);
+            console.log('resizedDataURL: ' + resizedDataURL);
+        };
+        // img.src = dataURL;
+
+    });
+
+}
+
+function resizeImage(imgToResize, newWidth) {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    
+    const originalWidth = imgToResize.width;
+    const originalHeight = imgToResize.height;
+    console.log('original width: ' + originalWidth);
+    console.log('original height: ' + originalHeight);
+    // const canvasWidth = originalWidth * resizingFactor;
+    // const canvasHeight = originalHeight * resizingFactor;
+  
+    canvas.width = newWidth;
+    const newHeight = (originalHeight / originalWidth) * newWidth;
+    canvas.height = newHeight;
+    console.log('canvas width: ' + canvas.width);   
+    console.log('canvas height: ' + canvas.height);
+  
+    context.drawImage(
+      imgToResize,
+      0,
+      0,
+      newWidth,
+      newHeight,
+    );
+    return canvas.toDataURL();
+  }
 
 function updateSelectedValues() {
     const red = document.getElementById('redSlider').value;
@@ -208,6 +311,9 @@ function updateSelectedValues() {
     const segments = document.getElementById('segmentsSlider').value;
     g_selectedSegments = segments;
     document.getElementById('segmentsLabel').innerText = segments;
+
+    const resizeWidth = document.getElementById('resizeSlider').value;
+    document.getElementById('resizeLabel').innerText = resizeWidth;
 }
 
 function renderAllShapes() {

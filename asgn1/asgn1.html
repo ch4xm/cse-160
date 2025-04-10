@@ -6,54 +6,82 @@
   </head>
 
   <body onload="main()">
-    <div>
-    <canvas id="canvas" width="400" height="400">
-      Please use a browser that supports "canvas"
-    </canvas>
-    <br/>
-    <label id='performanceLabel'></label>
-    <br/><br/>
-    <button id="clear">Clear Canvas</button>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <span>
-      <label>Drawing Mode</label>
-      <button id="squareButton">Squares</button>
-      <button id="triangleButton">Triangles</button>
-      <button id="circleButton">Circles</button>
-    </span>
-    <br/><br/>
-
-    <div>
-      <label>Choose Shape Color:</label>
-      <br/><br/>
-      <span style="align-items: center; display: flex;" >
+    <span style="display: flex; flex-direction: row; align-items: center;">
+      <div>
+        <canvas id="canvas" width="400" height="400" style="margin-right: 20px;">
+          Please use a browser that supports "canvas"
+        </canvas>
         <br/>
-        <label for="redSlider">Red</label>
-        &nbsp;
-        <input id="redSlider" value=255 min=0 max=255 step=1 type="range">
-        &nbsp;&nbsp;&nbsp;
-        <label for="greenSlider">Green</label>
-        &nbsp;
-        <input id="greenSlider" value=255 min=0 max=255 step=1 type="range">
-        &nbsp;&nbsp;&nbsp;
-        <label for="blueSlider">Blue</label>
-        &nbsp;
-        <input id="blueSlider" value=255 min=0 max=255 step=1 type="range">
-      </span>
-    </div>
+        <label id='performanceLabel'></label>
+        <br/><br/>
+        <button id="clear">Clear Canvas</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span>
+          <label>Drawing Mode</label>
+          <button id="squareButton">Squares</button>
+          <button id="triangleButton">Triangles</button>
+          <button id="circleButton">Circles</button>
+        </span>
+        <br/><br/>
 
-    <br/><br/>
-    <label for="sizeSlider">Shape Size:</label>
-    <label id="sizeLabel">10</label>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <label for="segmentsSlider">Circle Segments:</label>
-    <label id="segmentsLabel">10</label>
-    <br/>
-    <input type="range" min=0 max=100 id="sizeSlider" value=10>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div>
+          <label>Choose Shape Color:</label>
+          <br/><br/>
+          <span style="margin-left: 15px; flex-direction: column; display: flex;" >
+            <br/>
+            <label for="redSlider">Red</label>
+            <input id="redSlider" value=255 min=0 max=255 step=1 type="range">
+            <label for="greenSlider">Green</label>
+            <input id="greenSlider" value=255 min=0 max=255 step=1 type="range">
+            <label for="blueSlider">Blue</label>
+            <input id="blueSlider" value=255 min=0 max=255 step=1 type="range">
+          </span>
+        </div>
 
-    <input type="range" min=3 max=100 id="segmentsSlider" value=10>
+        <br/><br/>
+        <label for="sizeSlider">Shape Size:</label>
+        <label id="sizeLabel">10</label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label for="segmentsSlider">Circle Segments:</label>
+        <label id="segmentsLabel">10</label>
+        <br/>
+        <input type="range" min=0 max=100 id="sizeSlider" value=10>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="range" min=3 max=100 id="segmentsSlider" value=10>
+      </div>
 
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px; align-self: start; margin-left: 10px; margin-right: 30px;">
+        <span style="margin-bottom: 0px; line-height: 30px;">
+          <label for="importPicture">Convert an image into shapes</label>
+          &nbsp;&nbsp;<br/>
+          <input type="file" id="importPicture" accept="image/*" />
+        </span>
+        <br/><br/>
+        <span>
+          <label>Draw Image with Shape:</label>
+          &nbsp;
+          <button id="imageSquareButton">Squares</button>
+          <button id="imageTriangleButton">Triangles</button>
+          <button id="imageCircleButton">Circles</button>
+        </span>
+        <span style="align-items: center; display: flex; margin-bottom: 25px; margin-top: 20px;">
+          <label>Image Size:</label>
+          &nbsp;&nbsp;
+          <label id="resizeLabel">200</label>
+          &nbsp;&nbsp;&nbsp;
+          <input type="range" id="resizeSlider" min=0 max=400 value=200 />
+        </span>
+        <button id="drawImageButton">Draw Image Onto Canvas</button>
+      </div>
+      <div style="align-self: flex-start; margin-top: 25px;">
+        <label>Selected Image:</label>
+        <br/>
+        <img id="imagePreview" src="/" alt="Select an Image"/>
+        <canvas id="imageCanvas" width="200" height="200" style="display: none;"></canvas>
+        <br/>
+      </div>
+    </span>
     <script src="lib/webgl-utils.js"></script>
     <script src="lib/webgl-debug.js"></script>
     <script src="lib/cuon-utils.js"></script>
