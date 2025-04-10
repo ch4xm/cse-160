@@ -11,7 +11,16 @@
       Please use a browser that supports "canvas"
     </canvas>
     <br/>
+    <label id='performanceLabel'></label>
+    <br/><br/>
     <button id="clear">Clear Canvas</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <span>
+      <label>Drawing Mode</label>
+      <button id="squareButton">Squares</button>
+      <button id="triangleButton">Triangles</button>
+      <button id="circleButton">Circles</button>
+    </span>
     <br/><br/>
 
     <div>
@@ -36,20 +45,21 @@
     <br/><br/>
     <label for="sizeSlider">Shape Size:</label>
     <label id="sizeLabel">10</label>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <label for="segmentsSlider">Circle Segments:</label>
+    <label id="segmentsLabel">10</label>
     <br/>
     <input type="range" min=0 max=100 id="sizeSlider" value=10>
-    <br/><br/>
-    <span>
-      <label>Drawing Mode</label>
-      <br/><br/>
-      <button>Squares</button>
-      <button>Triangles</button>
-      <button>Circles</button>
-    </span>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+    <input type="range" min=3 max=100 id="segmentsSlider" value=10>
+
     <script src="lib/webgl-utils.js"></script>
     <script src="lib/webgl-debug.js"></script>
     <script src="lib/cuon-utils.js"></script>
     <script src="Point.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="Circle.js"></script>
     <script src="asgn1.js"></script>
   </body>
 </html>
