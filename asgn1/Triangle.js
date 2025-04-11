@@ -33,7 +33,8 @@ class Triangle {
     
 }
 
-function drawTriangle(vertices) {
+
+function drawTriangle(vertices, color) {
     // var vertices = new Float32Array([
     //     0, 0.5,   -0.5, -0.5,   0.5, -0.5
     //   ]);
@@ -62,5 +63,8 @@ function drawTriangle(vertices) {
     // Enable the assignment to a_Position variable
     gl.enableVertexAttribArray(a_Position);
     
+    if (color) {
+        gl.uniform4f(u_FragColor, color[0], color[1], color[2], color[3]);
+    }
     gl.drawArrays(gl.TRIANGLES, 0, n);
 }

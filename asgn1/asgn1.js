@@ -43,6 +43,10 @@ function main() {
     // Draw a point
     // gl.drawArrays(gl.POINTS, 0, 1);
 
+    // document.addEventListener('DOMContentLoaded', function() {
+        // console.log('DOMContentLoaded');
+    drawAlbumArt();
+    // });
     // drawTriangle([0.0, 0.5, -0.5, -0.5, 0.5, -0.5]);
 }
 
@@ -249,6 +253,11 @@ function setupUICallbacks() {
         drawImageOntoCanvas(shape, resizeWidth, scaleFactor);
     });
 
+    document.getElementById('drawDSOTM').addEventListener('click', function() {
+        drawAlbumArt();
+    });
+
+
     document.getElementById('importPicture').addEventListener('change', async function(event) { 
         const file = event.target.files[0];
         if (!file) {
@@ -327,6 +336,24 @@ function drawImageOntoCanvas(selectedShape, resizeWidth, scaleFactor) {
         }
     }
     renderAllShapes();
+}
+
+function drawAlbumArt() {
+    clearCanvas();
+    
+    // g_selectedColor = []; // White
+
+    // gl.uniform4f(u_FragColor, 0, 0.2, 0, 1.0);
+    drawTriangle([-1, -0.14, -0.2, 0.04, -1, -0.12], [1,1,1,1]) // 1st triangle to make line
+    drawTriangle([-1, -0.14, -0.21, 0.02, -0.2, 0.04], [1,1,1,1])   // 2nd triangle to make line
+    
+    drawTriangle([0.0, 0.5, -0.5, -0.5, 0.5, -0.5], [0.5, 0.5, 0.5, 0.5]);  // Outer white triangle
+    drawTriangle([0.0, 0.475, -0.48, -0.49, 0.48, -0.49], [0.5, 0.5, 0.5, 1]);  // inner gray triangle
+    drawTriangle([0.0, 0.45, -0.45, -0.475, 0.45, -0.475], [0, 0, 0, 1]);   // Black triangle to cover the white triangle
+    
+    drawTriangle([-0.275, 0.02, 0.245, -0.05, 0.17, 0.1], [0.44,0.55,0.58,1]);  // diffusion triangle inside prism
+    
+    drawTriangle([0.245, -0.05, 1, 1, 0,0], [235/255, 29/255, 49/255, 1]) // Red rainbow stripe
 }
 
 function resizeImageFromDataURL(dataURL, newWidth) {
