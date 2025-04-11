@@ -141,6 +141,8 @@ let g_selectedColor = [1.0, 1.0, 1.0, 1.0]; // The current color of the selected
 let g_selectedSize = 10.0; // The current size of the selected point
 let g_selectedSegments = 10; // The current number of segments for the selected circle
 
+let g_drawImageSelectedShape = 'Points'
+
 let selectedShape = 'point'; // The current selected shape  
 function setupUICallbacks() {
     canvas.onmousedown = click;
@@ -196,22 +198,55 @@ function setupUICallbacks() {
 
     document.getElementById('resizeSlider').addEventListener('mousemove', function() {
         const resizeWidth = Number(this.value);
-        document.getElementById('resizeLabel').innerText = resizeWidth;
+        document.getElementById('resizeLabel').innerText = 'Image Size: ' + resizeWidth;
+    });
+
+    document.getElementById('scaleFactorSlider').addEventListener('mousemove', function() {
+        console.log('scale factor: ' + this.value);
+        const scaleFactor = Number(this.value);
+        document.getElementById('scaleFactorLabel').innerText = 'Pixel Scale Factor: ' + scaleFactor;
+    });
+
+    document.getElementById('imageSquareButton').addEventListener('click', function() {
+        g_drawImageSelectedShape = 'Points';
+        document.getElementById('drawImageLabel').innerText = 'Current Shape: ' + g_drawImageSelectedShape;
+    });
+
+    document.getElementById('imageTriangleButton').addEventListener('click', function() {
+        g_drawImageSelectedShape = 'Triangles';
+        document.getElementById('drawImageLabel').innerText = 'Current Shape: ' + g_drawImageSelectedShape;
+    });
+
+    document.getElementById('imageCircleButton').addEventListener('click', function() {
+        g_drawImageSelectedShape = 'Circles';
+        document.getElementById('drawImageLabel').innerText = 'Current Shape: ' + g_drawImageSelectedShape;
+    });
+
+    document.getElementById('randomizeImageButton').addEventListener('click', function() {
+        const resizeWidth = Math.floor(Math.random() * 500) + 200;
+        const scaleFactor = Math.floor(Math.random() * 6) + 2;
+        let shape = '';
+        switch (Math.floor(Math.random() * 3))
+        {
+            case 0:
+                shape = 'Triangles';
+                break;
+            case 1:
+                shape = 'Circles';
+                break;
+            default:
+                shape = 'Points';
+        }
+        console.log('random shape: ' + shape);
+            
+        drawImageOntoCanvas(shape, resizeWidth, scaleFactor);
     });
 
     document.getElementById('drawImageButton').addEventListener('click', function() {
-        const img = document.getElementById('imagePreview');
-        const imgCanvas = document.getElementById('imageCanvas');
-        const imgCtx = imgCanvas.getContext('2d');
         const resizeWidth = Number(document.getElementById('resizeSlider').value);
-        imgCanvas.width = resizeWidth;
-        imgCanvas.height = (img.height / img.width) * resizeWidth;
-        const pixels = imgCtx.getImageData(0, 0, imgCanvas.width, imgCanvas.height)
-        pixels.data.forEach(element => {
-            console.log('element: ' + element);
-        });
-
-        imgCtx.drawImage(img, 0, 0, resizeWidth, imgCanvas.height);
+        const scaleFactor = Number(document.getElementById('scaleFactorSlider').value);
+        const shape = g_drawImageSelectedShape
+        drawImageOntoCanvas(shape, resizeWidth, scaleFactor);
     });
 
     document.getElementById('importPicture').addEventListener('change', async function(event) { 
@@ -240,6 +275,64 @@ function setupUICallbacks() {
         };
         reader.readAsDataURL(file);
     });
+}
+
+function drawImageOntoCanvas(selectedShape, resizeWidth, scaleFactor) {
+    console.log('resizeWidth: ' + resizeWidth);
+    console.log('scaleFactor: ' + scaleFactor);
+    const img = document.getElementById('imagePreview');
+    const imgCanvas = document.getElementById('imageCanvas');
+    const imgCtx = imgCanvas.getContext('2d');
+
+    imgCanvas.width = resizeWidth;
+    imgCanvas.height = (img.height / img.width) * resizeWidth;
+
+    imgCtx.drawImage(img, 0, 0, resizeWidth, imgCanvas.height);
+
+    const pixels = imgCtx.getImageData(0, 0, imgCanvas.width, imgCanvas.width).data;
+
+    clearCanvas();
+    for (let y = 0; y < imgCanvas.height; y += scaleFactor) {
+        for (let x = 0; x < imgCanvas.width; x += scaleFactor) {
+            const index = (y * imgCanvas.width + x) * 4;
+    
+            const r = pixels[index];
+            const g = pixels[index + 1];
+            const b = pixels[index + 2];
+            const a = pixels[index + 3] / 255.0;
+    
+            let shape = null;
+            switch (selectedShape) {
+                case 'Triangles':
+                    shape = new Triangle();
+                    // console.log('Triangle');
+                    break;
+                case 'Circles':
+                    shape = new Circle();
+                    // console.log('Circle');
+                    shape.segments = 10;
+                    break;
+                default:
+                    // console.log('Point');
+                    shape = new Point();
+            }
+
+            // console.log(typeof shape);
+    
+            shape.color = [r / 255.0, g / 255.0, b / 255.0, a];
+            const average = (r + g + b) / 3;
+            shape.size = Math.min(6, ((150 + average) / 255.0) * scaleFactor);
+            // shape.size = scaleFactor / 2;
+    
+            // Convert canvas x/y to WebGL coordinates [-1, 1]
+            const gl_x = (x / imgCanvas.width) * 2 - 1;
+            const gl_y = ((imgCanvas.height - y) / imgCanvas.height) * 2 - 1;
+            shape.position = [gl_x, gl_y, 0.0];
+    
+            g_shapes.push(shape);
+        }
+    }
+    renderAllShapes();
 }
 
 function resizeImageFromDataURL(dataURL, newWidth) {
@@ -313,7 +406,12 @@ function updateSelectedValues() {
     document.getElementById('segmentsLabel').innerText = segments;
 
     const resizeWidth = document.getElementById('resizeSlider').value;
-    document.getElementById('resizeLabel').innerText = resizeWidth;
+    document.getElementById('resizeLabel').innerText = 'Image Size: ' + resizeWidth;
+
+    const scaleFactor = document.getElementById('scaleFactorSlider').value;
+    document.getElementById('scaleFactorLabel').innerText = 'Pixel Scale Factor: ' + scaleFactor;
+    
+    document.getElementById('drawImageLabel').innerText = 'Current Shape: ' + g_drawImageSelectedShape;
 }
 
 function renderAllShapes() {

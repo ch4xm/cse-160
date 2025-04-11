@@ -24,6 +24,11 @@ class Triangle {
         const offset = this.size / 200.0;
         drawTriangle([xy[0] - offset / 2, xy[1] - offset / 2, xy[0] + offset / 2, xy[1] - offset / 2, xy[0], xy[1] + offset / 2]);
     }
+
+    drawUpsideDownTriangle() {
+        const offset = this.size / 200.0;
+        drawTriangle([this.position[0] - offset / 2, this.position[1] + offset / 2, this.position[0] + offset / 2, this.position[1] + offset / 2, this.position[0], this.position[1] - offset / 2]);
+    }
     
     
 }

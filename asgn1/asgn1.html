@@ -59,20 +59,25 @@
         </span>
         <br/><br/>
         <span>
-          <label>Draw Image with Shape:</label>
+          <label >Draw Image with Shape:</label>
           &nbsp;
           <button id="imageSquareButton">Squares</button>
           <button id="imageTriangleButton">Triangles</button>
           <button id="imageCircleButton">Circles</button>
         </span>
-        <span style="align-items: center; display: flex; margin-bottom: 25px; margin-top: 20px;">
-          <label>Image Size:</label>
-          &nbsp;&nbsp;
-          <label id="resizeLabel">200</label>
-          &nbsp;&nbsp;&nbsp;
-          <input type="range" id="resizeSlider" min=0 max=400 value=200 />
-        </span>
+        &nbsp;&nbsp;&nbsp;
+
+        <label id="resizeLabel">Image Size: 300</label>
+        <input type="range" id="resizeSlider" min=50 max=400 value=300 />
+        &nbsp;&nbsp;&nbsp;
+
+        <label id="scaleFactorLabel">Pixel Scale Factor: 3</label>
+        <input type="range" id="scaleFactorSlider" min=1 max=10 value=3 />
+        &nbsp;&nbsp;&nbsp;
         <button id="drawImageButton">Draw Image Onto Canvas</button>
+        &nbsp;
+        <button id="randomizeImageButton">Randomize Image</button>
+        <label id="drawImageLabel"></label>
       </div>
       <div style="align-self: flex-start; margin-top: 25px;">
         <label>Selected Image:</label>
