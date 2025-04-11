@@ -237,8 +237,8 @@ function setupUICallbacks() {
             default:
                 shape = 'Points';
         }
-        console.log('random shape: ' + shape);
-            
+        
+        console.log('Randomized shape: ' + shape + ', resizeWidth: ' + resizeWidth + ', scaleFactor: ' + scaleFactor);
         drawImageOntoCanvas(shape, resizeWidth, scaleFactor);
     });
 
@@ -278,8 +278,6 @@ function setupUICallbacks() {
 }
 
 function drawImageOntoCanvas(selectedShape, resizeWidth, scaleFactor) {
-    console.log('resizeWidth: ' + resizeWidth);
-    console.log('scaleFactor: ' + scaleFactor);
     const img = document.getElementById('imagePreview');
     const imgCanvas = document.getElementById('imageCanvas');
     const imgCtx = imgCanvas.getContext('2d');
@@ -305,19 +303,15 @@ function drawImageOntoCanvas(selectedShape, resizeWidth, scaleFactor) {
             switch (selectedShape) {
                 case 'Triangles':
                     shape = new Triangle();
-                    // console.log('Triangle');
                     break;
                 case 'Circles':
                     shape = new Circle();
-                    // console.log('Circle');
                     shape.segments = 10;
                     break;
                 default:
-                    // console.log('Point');
                     shape = new Point();
             }
 
-            // console.log(typeof shape);
     
             shape.color = [r / 255.0, g / 255.0, b / 255.0, a];
             const average = (r + g + b) / 3;

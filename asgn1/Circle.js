@@ -18,7 +18,6 @@ class Circle {
 
         let angleStep = 360 / this.segments;
 
-        console.log('angleStep: ' + angleStep);
         for (let angle = 0; angle < 360; angle += angleStep) {
             let center = [xy[0], xy[1]];
 
