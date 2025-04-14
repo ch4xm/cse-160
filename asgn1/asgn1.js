@@ -342,19 +342,50 @@ function drawAlbumArt() {
     clearCanvas();
     
     // g_selectedColor = []; // White
+    // drawTriangle([-1, -1, -0.5, 1, 1, 1], [1,1,1,1]) 
 
     // gl.uniform4f(u_FragColor, 0, 0.2, 0, 1.0);
+    drawTriangle([0.18, 0.12, 1, -0.03, 1, 0.02], [235/255, 29/255, 49/255, 1]) // Red rainbow stripe
+    drawTriangle([0.18, 0.12, 0.20, 0.09, 1, -.03])
+
+    // drawTriangle([0.18, 0.12, 1, -0.03, 1, 0.02], [247/255, 109/255, 34/255, 1]) // Red rainbow stripe
+    drawTriangle([-0.11, 0.11, 0.2, 0.09, 1, -.03], [247/255, 109/255, 34/255, 1]) // Orange stripe
+    drawTriangle([-0.11, 0.12, 1, -0.09, 1, -.03], [247/255, 109/255, 34/255, 1])
+
+    drawTriangle([-0.14, 0.08, 0.2, 0.061, 1, -0.08], [255/255, 221/255, 0/255, 1]); // Yellow stripe 
+    drawTriangle([-0.14, 0.1, 1, -0.12, 1, -0.07], [255/255, 221/255, 0/255, 1]);
+
+    // green stripe
+    drawTriangle([-0.17, 0.07, 0.2, 0.035, 1, -0.12], [0/255, 158/255, 96/255, 1]); 
+    drawTriangle([-0.17, 0.09, 1, -0.16, 1, -0.12], [0/255, 158/255, 96/255, 1]);
+    
+    // blue stripe
+    drawTriangle([-0.20, 0.05, 0.2, 0.011, 1, -0.16], [0/255, 102/255, 204/255, 1]); 
+    drawTriangle([-0.20, 0.08, 1, -0.20, 1, -0.16], [0/255, 102/255, 204/255, 1]);
+
+    // purple stripe
+    drawTriangle([-0.23, 0.06, 0.2, -0.01, 1, -0.20], [106/255, 76/255, 147/255, 1]); 
+    drawTriangle([-0.23, 0.072, 1, -0.24, 1, -0.20], [106/255, 76/255, 147/255, 1]);
+
+    drawTriangle([0.0, 0.5, -0.5, -0.5, 0.5, -0.5], [0.5, 0.5, 0.5, 0.8]);  // Outer white triangle
+    drawTriangle([0.0, 0.475, -0.48, -0.49, 0.48, -0.49], [80/255, 96/255, 102/255, 1]);  // inner gray triangle
+    drawTriangle([0.0, 0.425, -0.425, -0.45, 0.425, -0.45], [0, 0, 0, 1]);   // Black triangle to cover the white triangle
+    
+    // diffusion triangle inside prism
+    drawTriangle([-0.275, 0.02, 0, -0.06, 0, 0.115], [0.44,0.55,0.58,0.85]);
+
+    drawTriangle([-0.063, 0.093, 0, -0.06, 0, 0.12], [0.44,0.55,0.58,1]);
+    drawTriangle([-0.06, 0.09, 0, -0.06, -0.06, -0.043], [0.44,0.55,0.58,1]);
+
+
     drawTriangle([-1, -0.14, -0.2, 0.04, -1, -0.12], [1,1,1,1]) // 1st triangle to make line
     drawTriangle([-1, -0.14, -0.21, 0.02, -0.2, 0.04], [1,1,1,1])   // 2nd triangle to make line
     
-    drawTriangle([0.0, 0.5, -0.5, -0.5, 0.5, -0.5], [0.5, 0.5, 0.5, 0.5]);  // Outer white triangle
-    drawTriangle([0.0, 0.475, -0.48, -0.49, 0.48, -0.49], [0.5, 0.5, 0.5, 1]);  // inner gray triangle
-    drawTriangle([0.0, 0.45, -0.45, -0.475, 0.45, -0.475], [0, 0, 0, 1]);   // Black triangle to cover the white triangle
+    // Patch where diffusion triangle overlaps with outer 2 triangle
+    drawTriangle([0.0, 0.475, -0.48, -0.49, -0.44, -0.49], [80/255, 96/255, 102/255, 1])
+    drawTriangle([0.0, 0.475, 0, 0.45, -0.44, -0.49], [80/255, 96/255, 102/255, 1]);  // inner gray triangle
+
     
-    drawTriangle([-0.275, 0.02, 0.245, -0.05, 0.17, 0.1], [0.44,0.55,0.58,1]);  // diffusion triangle inside prism
-    
-    drawTriangle([0.15, 0.1, 1, 0.1, 1, 0.05], [235/255, 29/255, 49/255, 1]) // Red rainbow stripe
-    drawTriangle([0.15, 0.1, 1, 0.0, 0.18, 0.05], [235/255, 29/255, 49/255, 1]) // Red rainbow stripe
     
 }
 
