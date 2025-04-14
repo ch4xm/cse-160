@@ -353,7 +353,9 @@ function drawAlbumArt() {
     
     drawTriangle([-0.275, 0.02, 0.245, -0.05, 0.17, 0.1], [0.44,0.55,0.58,1]);  // diffusion triangle inside prism
     
-    drawTriangle([0.245, -0.05, 1, 1, 0,0], [235/255, 29/255, 49/255, 1]) // Red rainbow stripe
+    drawTriangle([0.15, 0.1, 1, 0.1, 1, 0.05], [235/255, 29/255, 49/255, 1]) // Red rainbow stripe
+    drawTriangle([0.15, 0.1, 1, 0.0, 0.18, 0.05], [235/255, 29/255, 49/255, 1]) // Red rainbow stripe
+    
 }
 
 function resizeImageFromDataURL(dataURL, newWidth) {
