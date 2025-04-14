@@ -45,7 +45,7 @@ function main() {
 
     // document.addEventListener('DOMContentLoaded', function() {
         // console.log('DOMContentLoaded');
-    drawAlbumArt();
+    // drawAlbumArt();
     // });
     // drawTriangle([0.0, 0.5, -0.5, -0.5, 0.5, -0.5]);
 }
