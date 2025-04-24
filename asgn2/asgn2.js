@@ -38,10 +38,9 @@ function main() {
     
     connectVariablesToGLSL();
     
-    setupUICallbacks();
     
     clearCanvas();
-    updateSelectedValues();
+    setupUICallbacks();
 }
 
 function setupWebGL() {
@@ -54,7 +53,7 @@ function setupWebGL() {
     
     // Get the rendering context for WebGL
     // gl = getWebGLContext(canvas);
-    gl = canvas.getContext("webgl", { preserveDrawingBuffer: true});
+    gl = canvas.getContext("webgl", { preserveDrawingBuffer: true, alpha: true });
     if (!gl) {
         console.log('Failed to get the rendering context for WebGL');
         return;
@@ -111,7 +110,7 @@ function getRenderingContext(id) {
 
 function clearCanvas() {
     // Specify the color for clearing <canvas>
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
     
     g_shapes = [];
     renderAllShapes()
@@ -157,164 +156,154 @@ let g_globalAngleHorizontal = 0;
 let g_globalAngleVertical = 0;
 let g_drawImageSelectedShape = 'Points'
 
-let selectedShape = 'point'; // The current selected shape  
+let selectedShape = 'point'; // The current selected shape
+
+const sliders = [
+    {
+        id: 'shoulderAngle',
+        label: 'Shoulder Angle',
+        min: 0,
+        max: 90,
+        value: 0,
+        step: 1,
+        onChange: function(event) {
+            if (event.buttons != 1) {
+                return;
+            }
+            const value = event.target.value;
+            g_shoulderAngle = Number(value);
+            console.log('g_shoulderAngle: ' + g_shoulderAngle);
+            document.getElementById('shoulderAngleLabel').innerText = 'Shoulder Angle: ' + value;
+            renderAllShapes();
+        }
+    },
+    {
+        id: 'elbowAngle',
+        label: 'Elbow Angle',
+        min: 0,
+        max: 90,
+        value: 0,
+        step: 1,
+        onChange: function(event) {
+            if (event.buttons != 1) {
+                return;
+            }
+            const value = event.target.value;
+            g_elbowAngle = Number(value);
+            console.log('g_elbowAngle: ' + g_elbowAngle);
+            document.getElementById('elbowAngleLabel').innerText = 'Elbow Angle: ' + value;
+            renderAllShapes();
+        }
+    },
+    {
+        id: 'wristAngle',
+        label: 'Wrist Angle',
+        min: 0,
+        max: 90,
+        value: 0,
+        step: 1,
+        onChange: function(event) {
+            if (event.buttons != 1) {
+                return;
+            }
+            const value = event.target.value;
+            g_wristAngle = Number(value);
+            console.log('g_wristAngle: ' + g_wristAngle);
+            document.getElementById('wristAngleLabel').innerText = 'Wrist Angle: ' + value;
+            renderAllShapes();
+        }
+    }
+];
+
 function setupUICallbacks() {
     canvas.onmousedown = click;
     canvas.onmousemove = function(event) {
-        if (event.buttons == 1) {
-            click(event);
+        if (event.buttons != 1) {
+            return;
         }
+        rotateView(event);
     }
-    document.getElementById('clear').addEventListener('click', function() {
-        clearCanvas();
-    });
 
-    document.getElementById('globalRotateHorizontalSlider').addEventListener('mousemove', function(e) {
-        if (e.buttons != 1) {
-            return;
-        }
+    registerArmCallbacks();
 
-        g_globalAngleHorizontal = Number(this.value);
-        document.getElementById('globalRotateHorizontalLabel').innerText = 'Horizontal Rotate: ' + g_globalAngleHorizontal;
-        renderAllShapes();
-    });
+    const parentElement = document.getElementById('sliderContainer');
 
-    document.getElementById('globalRotateVerticalSlider').addEventListener('mousemove', function(e) {
-        if (e.buttons != 1) {
-            return;
-        }
-        g_globalAngleVertical = Number(this.value);
-        console.log('g_globalAngleVertical: ' + g_globalAngleVertical);
-        document.getElementById('globalRotateVerticalLabel').innerText = 'Vertical Rotate: ' + g_globalAngleVertical;
-        renderAllShapes();
+    sliders.forEach(slider => {
+        const sliderContainer = document.createElement('span');
+    
+        const labelElement = document.createElement('label');
+        const sliderElement = document.createElement('input');
+        sliderElement.type = 'range';
+        sliderElement.id = slider.id + 'Slider';
+        sliderElement.min = slider.min;
+        sliderElement.max = slider.max;
+        sliderElement.value = slider.value;
+        sliderElement.step = slider.step;
+        sliderContainer.appendChild(sliderElement);
+        labelElement.innerText = slider.label + ': ' + slider.value;
+        labelElement.id = slider.id + 'Label';
+        labelElement.setAttribute('for', slider.id);
+        sliderContainer.appendChild(labelElement);
+        parentElement.appendChild(sliderContainer);
+        parentElement.appendChild(document.createElement('br'));
+        sliderElement.addEventListener('mousemove', function(event) {
+            slider.onChange(event);
+        });
     });
     
-    document.getElementById('redSlider').addEventListener('mousemove', function() {
-        g_selectedColor[0] = Number(this.value) / 255.0;
-    });
-    document.getElementById('greenSlider').addEventListener('mousemove', function() {
-        g_selectedColor[1] = Number(this.value) / 255.0;
-    });
-    document.getElementById('blueSlider').addEventListener('mousemove', function() {
-        g_selectedColor[2] = Number(this.value) / 255.0;
-    });
+    // document.getElementById('clear').addEventListener('click', function() {
+    //     clearCanvas();
+    // });
+
+
+
+    // document.getElementById('globalRotateHorizontalSlider').addEventListener('mousemove', function(e) {
+    //     if (e.buttons != 1) {
+    //         return;
+    //     }
+
+    //     g_globalAngleHorizontal = Number(this.value);
+    //     document.getElementById('globalRotateHorizontalLabel').innerText = 'Horizontal Rotate: ' + g_globalAngleHorizontal;
+    //     renderAllShapes();
+    // });
+
+    // document.getElementById('globalRotateVerticalSlider').addEventListener('mousemove', function(e) {
+    //     if (e.buttons != 1) {
+    //         return;
+    //     }
+    //     g_globalAngleVertical = Number(this.value);
+    //     console.log('g_globalAngleVertical: ' + g_globalAngleVertical);
+    //     document.getElementById('globalRotateVerticalLabel').innerText = 'Vertical Rotate: ' + g_globalAngleVertical;
+    //     renderAllShapes();
+    // });
+
+    updateSelectedValues();
+
+}
+
+// let g_oldHorizontalAngle = 0;
+// let g_oldVerticalAngle = 0;
+function rotateView(event) {
+    const x = event.clientX;
+    const y = event.clientY;
+    const rect = canvas.getBoundingClientRect();
     
-    document.getElementById('sizeSlider').addEventListener('mousemove', function() {
-        g_selectedSize = Number(this.value);
-        document.getElementById('sizeLabel').innerText = this.value;
-    });
+    const gl_x = ((x - rect.left) - canvas.width/2)/(canvas.width/2);
+    const gl_y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);
 
-    document.getElementById('segmentsSlider').addEventListener('mousemove', function() {
-        g_selectedSegments = Number(this.value);
-        document.getElementById('segmentsLabel').innerText = this.value;
-    });
+    // console.log('gl_x: ' + gl_x);
+    // console.log('gl_y: ' + gl_y);
 
-    document.getElementById('squareButton').addEventListener('click', function() {
-        g_selectedColor = [1.0, 1.0, 1.0, 1.0]; // White
-        g_selectedSize = 10.0;
-        selectedShape = 'point';
-        updateSelectedValues();
-    });
+    // g_globalAngleHorizontal = gl_x * 180;
+    // g_globalAngleVertical = gl_y * 180;
 
-    document.getElementById('triangleButton').addEventListener('click', function() {
-        g_selectedColor = [1.0, 0.0, 0.0, 1.0]; // Red
-        g_selectedSize = 10.0;
-        selectedShape = 'triangle';
-        updateSelectedValues();
-    });
+    g_globalAngleHorizontal = gl_x * 90;
+    g_globalAngleVertical = gl_y * 90;
 
-    document.getElementById('circleButton').addEventListener('click', function() {
-        g_selectedColor = [0.0, 1.0, 0.0, 1.0]; // Green
-        g_selectedSize = 10.0;
-        selectedShape = 'circle';
-        updateSelectedValues();
-    });
+    document.getElementById('globalRotateHorizontalLabel').innerText = 'Horizontal Rotate: ' + g_globalAngleHorizontal;
+    document.getElementById('globalRotateVerticalLabel').innerText = 'Vertical Rotate: ' + g_globalAngleVertical;
 
-    document.getElementById('resizeSlider').addEventListener('mousemove', function() {
-        const resizeWidth = Number(this.value);
-        document.getElementById('resizeLabel').innerText = 'Image Size: ' + resizeWidth;
-    });
-
-    document.getElementById('scaleFactorSlider').addEventListener('mousemove', function() {
-        console.log('scale factor: ' + this.value);
-        const scaleFactor = Number(this.value);
-        document.getElementById('scaleFactorLabel').innerText = 'Pixel Scale Factor: ' + scaleFactor;
-    });
-
-    document.getElementById('imageSquareButton').addEventListener('click', function() {
-        g_drawImageSelectedShape = 'Points';
-        document.getElementById('drawImageLabel').innerText = 'Current Shape: ' + g_drawImageSelectedShape;
-    });
-
-    document.getElementById('imageTriangleButton').addEventListener('click', function() {
-        g_drawImageSelectedShape = 'Triangles';
-        document.getElementById('drawImageLabel').innerText = 'Current Shape: ' + g_drawImageSelectedShape;
-    });
-
-    document.getElementById('imageCircleButton').addEventListener('click', function() {
-        g_drawImageSelectedShape = 'Circles';
-        document.getElementById('drawImageLabel').innerText = 'Current Shape: ' + g_drawImageSelectedShape;
-    });
-
-    document.getElementById('randomizeImageButton').addEventListener('click', function() {
-        const resizeWidth = Math.floor(Math.random() * 500) + 200;
-        const scaleFactor = Math.floor(Math.random() * 6) + 2;
-        let shape = '';
-        switch (Math.floor(Math.random() * 3))
-        {
-            case 0:
-                shape = 'Triangles';
-                break;
-            case 1:
-                shape = 'Circles';
-                break;
-            default:
-                shape = 'Points';
-        }
-        
-        console.log('Randomized shape: ' + shape + ', resizeWidth: ' + resizeWidth + ', scaleFactor: ' + scaleFactor);
-        drawImageOntoCanvas(shape, resizeWidth, scaleFactor);
-    });
-
-
-    document.getElementById('drawImageButton').addEventListener('click', function() {
-        const resizeWidth = Number(document.getElementById('resizeSlider').value);
-        const scaleFactor = Number(document.getElementById('scaleFactorSlider').value);
-        const shape = g_drawImageSelectedShape
-        drawImageOntoCanvas(shape, resizeWidth, scaleFactor);
-    });
-
-    document.getElementById('drawDSOTM').addEventListener('click', function() {
-        drawAlbumArt();
-    });
-
-
-    document.getElementById('importPicture').addEventListener('change', async function(event) { 
-        const file = event.target.files[0];
-        if (!file) {
-            console.log('No file selected');
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            const img = document.getElementById('imagePreview');
-            img.style.display = 'block';
-            const resizeWidth = 300 //Number(document.getElementById('resizeSlider').value);
-            const resized = await resizeImageFromDataURL(e.target.result, resizeWidth)
-            const imgCanvas = document.getElementById('imageCanvas');
-            const imgCtx = imgCanvas.getContext('2d');
-            imgCanvas.width = resizeWidth;
-            imgCanvas.height = (img.height / img.width) * resizeWidth;
-
-            img.src = resized;
-            imgCtx.drawImage(img, 0, 0, resizeWidth, imgCanvas.height);
-            // console.log('Imag');
-            URL.revokeObjectURL(img.src);  // no longer needed, free memory
-            // img.src = URL.createObjectURL(this.files[0]); // set src to blob url
-            // console.log('Image src: ' + img.src);
-        };
-        reader.readAsDataURL(file);
-    });
+    renderAllShapes();
 }
 
 function drawImageOntoCanvas(selectedShape, resizeWidth, scaleFactor) {
@@ -477,34 +466,34 @@ function resizeImage(imgToResize, newWidth) {
   }
 
 function updateSelectedValues() {
-    const red = document.getElementById('redSlider').value;
-    const green = document.getElementById('greenSlider').value;
-    const blue = document.getElementById('blueSlider').value;
-    g_selectedColor = [red / 255.0, green / 255.0, blue / 255.0, 1.0];
+    // const red = document.getElementById('redSlider').value;
+    // const green = document.getElementById('greenSlider').value;
+    // const blue = document.getElementById('blueSlider').value;
+    // g_selectedColor = [red / 255.0, green / 255.0, blue / 255.0, 1.0];
 
-    const size = document.getElementById('sizeSlider').value;
-    g_selectedSize = size;
-    document.getElementById('sizeLabel').innerText = size;
+    // const size = document.getElementById('sizeSlider').value;
+    // g_selectedSize = size;
+    // document.getElementById('sizeLabel').innerText = size;
 
-    const segments = document.getElementById('segmentsSlider').value;
-    g_selectedSegments = segments;
-    document.getElementById('segmentsLabel').innerText = segments;
+    // const segments = document.getElementById('segmentsSlider').value;
+    // g_selectedSegments = segments;
+    // document.getElementById('segmentsLabel').innerText = segments;
 
-    const resizeWidth = document.getElementById('resizeSlider').value;
-    document.getElementById('resizeLabel').innerText = 'Image Size: ' + resizeWidth;
+    // const resizeWidth = document.getElementById('resizeSlider').value;
+    // document.getElementById('resizeLabel').innerText = 'Image Size: ' + resizeWidth;
 
-    const scaleFactor = document.getElementById('scaleFactorSlider').value;
-    document.getElementById('scaleFactorLabel').innerText = 'Pixel Scale Factor: ' + scaleFactor;
+    // const scaleFactor = document.getElementById('scaleFactorSlider').value;
+    // document.getElementById('scaleFactorLabel').innerText = 'Pixel Scale Factor: ' + scaleFactor;
     
-    const globalRotateHorizontal = document.getElementById('globalRotateHorizontalSlider').value;
-    g_globalAngleHorizontal = globalRotateHorizontal;
-    document.getElementById('globalRotateHorizontalLabel').innerText = 'Horizontal Rotate: ' + globalRotateHorizontal;
+    // const globalRotateHorizontal = document.getElementById('globalRotateHorizontalSlider').value;
+    // g_globalAngleHorizontal = globalRotateHorizontal;
+    // document.getElementById('globalRotateHorizontalLabel').innerText = 'Horizontal Rotate: ' + globalRotateHorizontal;
 
-    const globalRotateVertical = document.getElementById('globalRotateVerticalSlider').value;
-    g_globalAngleVertical = globalRotateVertical;
-    document.getElementById('globalRotateVerticalLabel').innerText = 'Vertical Rotate: ' + globalRotateVertical;
+    // const globalRotateVertical = document.getElementById('globalRotateVerticalSlider').value;
+    // g_globalAngleVertical = globalRotateVertical;
+    // document.getElementById('globalRotateVerticalLabel').innerText = 'Vertical Rotate: ' + globalRotateVertical;
 
-    document.getElementById('drawImageLabel').innerText = 'Current Shape: ' + g_drawImageSelectedShape;
+    // document.getElementById('drawImageLabel').innerText = 'Current Shape: ' + g_drawImageSelectedShape;
     renderAllShapes();
 }
 
@@ -513,18 +502,34 @@ function renderAllShapes() {
     var startTime = performance.now();
     // Clear <canvas>
     var globalRotMat = new Matrix4().rotate(g_globalAngleHorizontal, 0, 1, 0);
-    globalRotMat.rotate(g_globalAngleVertical, 1, 0, 0);
+    globalRotMat.rotate(g_globalAngleVertical, 0, 0, 1);
     gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     // drawTriangle3D([-1,0,0,  -0.5,-1,0,  0,0,0])
     
+    // var body = new Cube();
+    // body.color = [0.2,0.6,0,1];
+    // body.matrix.translate(-0.25, -0.5, 0)
+    // body.matrix.scale(0.5, 0.5, 0.5)
+    // body.render();
+
+    // var body = new Cube();
+    // body.color = [0.2,0.6,0,1];
+    // body.matrix.setTranslate(0, 0, 0);
+    // body.matrix.rotate(0, 0, 0, 1);
+    // body.matrix.scale(0.5, 0.5, 0.5);
+    // body.render();
     var body = new Cube();
-    body.color = [0.2,0.6,0,1];
-    body.matrix.translate(-0.25, -0.5, 0.0)
-    // body.matrix.scale(0.5, 1, 0.5)
+    body.color = [0, 1, 0];
+    body.matrix.translate(-.25, -0.75, 0);
+    body.matrix.rotate(-5,1,0,0);
+    body.matrix.scale(0.25,.3,.25);
     body.render();
+
+    var leftArm = new Arm(body.matrix);
+    leftArm.draw();
     
     // var leftArm = new Cube();
     // leftArm.color = [0.2,0.6,0,1];
@@ -545,6 +550,95 @@ function renderAllShapes() {
     // // console.log('numdot: ' + len + ' ms: ' + Math.floor(duration) + ' fps: ' + Math.floor(10000.0 /duration));
 }
 
+let g_shoulderAngle = 0;
+let g_elbowAngle = 0;
+let g_wristAngle = 0;
+class Arm {
+    constructor(startMatrix) {
+        if (!startMatrix) {
+            this.matrix = new Matrix4();
+        } else {
+            this.matrix = new Matrix4(startMatrix); // Matrix to start at
+        }
+        // this.shoulderAngle = 5;
+        // this.elbowAngle = 0;
+        // this.wristAngle = 0;
+    }
+
+    draw() {
+        // var bo
+        var arm = new Cube();
+        arm.color = [0.25, 0.25, 0.25];
+        arm.matrix.setTranslate(0, -0.5, 0);
+        arm.matrix.rotate(-5, 1, 0, 0);
+        arm.matrix.rotate(g_shoulderAngle, 0, 0, 1);
+        arm.matrix.scale(.2501, .7, .2501)
+        arm.matrix.translate(-1, 0, 0);
+        arm.render();
+
+        var forearm = new Cube();
+        forearm.color = [0.25, 1, 0.25];
+        forearm.matrix = new Matrix4(arm.matrix);
+        forearm.matrix.setTranslate(0, .5, 0);
+        forearm.render();
+        forearm.matrix.scale(0.25, 0.7, 0.25);
+        // forearm.matrix.rotate(-5, 1, 0, 0);
+        // forearm.matrix.rotate(g_elbowAngle, 0, 0, 1);
+        // arm.color = [0,0,0];
+        // arm.matrix.setTranslate(0, -0.5, 0);
+        // arm.matrix.rotate(-5,1,0,0);
+        // arm.matrix.rotate(this.shoulderAngle, 0, 0, 1);
+        // const forearmStart = new Matrix4(this.matrix);
+        // arm.matrix.scale(0.25, 0.7, 0.25)
+        // arm.matrix.rotate(this.shoulderAngle, 0, 0, 1);
+        // // arm.matrix.translate(0, 0.5, 0);
+        // arm.render();
+
+        // var forearm = new Cube();
+        // forearm.color = [0,0,0];
+        // forearm.matrix = forearmStart;
+        // forearm.matrix.scale(0.15, 0.7, 0.15);
+        // forearm.matrix.translate(0, 0, 0);
+        // forearm.render();
+
+        // var forearm = new Cube();
+        
+        // var elbow = new Cube(); // to fill in the elbow
+    }
+}
+
+
+function registerArmCallbacks() {
+    // document.getElementById('shoulderAngleSlider').addEventListener('mousemove', function(e) {
+
+    // });
+    // document.getElementById('elbowAngleSlider').addEventListener('mousemove', function(e) {
+    //     if (e.buttons != 1) {
+    //         return;
+    //     }
+    //     g_elbowAngle = Number(this.value);
+    //     document.getElementById('elbowAngleLabel').innerText = 'Elbow Angle: ' + this.value;
+    //     renderAllShapes();
+    // });
+    // document.getElementById('wristAngleSlider').addEventListener('mousemove', function(e) {
+    //     if (e.buttons != 1) {
+    //         return;
+    //     }
+    //     g_wristAngle = Number(this.value);
+    //     document.getElementById('wristAngleLabel').innerText = 'Wrist Angle: ' + this.value;
+    //     renderAllShapes();
+    // });
+    document.getElementById('resetAngles').addEventListener('click', function() {
+        g_shoulderAngle = 0;
+        g_elbowAngle = 0;
+        g_wristAngle = 0;
+        document.getElementById('shoulderAngleLabel').innerText = 'Shoulder Angle: 0';
+        document.getElementById('elbowAngleLabel').innerText = 'Elbow Angle: 0';
+        document.getElementById('wristAngleLabel').innerText = 'Wrist Angle: 0';
+        
+        renderAllShapes();
+    });
+}
 function convertCoordinatesEventToGL(event) {
     var x = event.clientX; // x coordinate of a mouse pointer
     var y = event.clientY; // y coordinate of a mouse pointer

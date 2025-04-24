@@ -11,100 +11,43 @@
         <canvas id="canvas" width="400" height="400" style="margin-right: 20px;">
           Please use a browser that supports "canvas"
         </canvas>
+        <style>
+          #canvas {
+            /* put your reference image behind the WebGL buffer */
+            background-color: 'transparent';
+            background: url('minos.webp') no-repeat center/cover;
+          }
+        </style>
+        <br/>
+        <button id="resetAngles">Reset Arm Angles</button>
         <br/>
         <span>
-          <input type="range" value="90" min="0" max="360" id="globalRotateHorizontalSlider"/> 
+          <!-- <input type="range" value="90" min="0" max="360" id="globalRotateHorizontalSlider"/>  -->
           <label id="globalRotateHorizontalLabel">Horizontal rotate: 0</label>
-        <span>
-        <span>
-        <input type="range" value="90" min="0" max="360" id="globalRotateVerticalSlider"/>
-        <label id="globalRotateVerticalLabel">Vertical rotate: 0</label>
         </span>
-        <label id='performanceLabel'></label>
-        <button id="drawDSOTM">Draw Art (DSOTM Album Cover)</button>
-        </span>
-        <br/><br/>
-        <button id="clear">Clear Canvas</button>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <span>
-          <label>Drawing Mode</label>
-          <button id="squareButton">Squares</button>
-          <button id="triangleButton">Triangles</button>
-          <button id="circleButton">Circles</button>
-        </span>
-        <br/><br/>
-
-        <div>
-          <label>Choose Shape Color:</label>
-          <br/><br/>
-          <span style="margin-left: 15px; flex-direction: column; display: flex;" >
-            <br/>
-            <label for="redSlider">Red</label>
-            <input id="redSlider" value=255 min=0 max=255 step=1 type="range">
-            <label for="greenSlider">Green</label>
-            <input id="greenSlider" value=255 min=0 max=255 step=1 type="range">
-            <label for="blueSlider">Blue</label>
-            <input id="blueSlider" value=255 min=0 max=255 step=1 type="range">
-          </span>
-        </div>
-
-        <br/><br/>
-        <label for="sizeSlider">Shape Size:</label>
-        <label id="sizeLabel">10</label>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <label for="segmentsSlider">Circle Segments:</label>
-        <label id="segmentsLabel">10</label>
         <br/>
-        <input type="range" min=0 max=100 id="sizeSlider" value=10>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="range" min=3 max=100 id="segmentsSlider" value=10>
-      </div>
-
-
-      <div style="display: flex; flex-direction: column; margin-top: 20px; align-self: start; margin-left: 10px; margin-right: 30px;">
-        <span style="margin-bottom: 0px; line-height: 30px;">
-          <label for="importPicture">Awesomeness: Convert an image into shapes</label>
-          &nbsp;&nbsp;<br/>
-          <input type="file" id="importPicture" accept="image/*" />
-        </span>
-        <br/><br/>
         <span>
-          <label >Draw Image with Shape:</label>
-          &nbsp;
-          <button id="imageSquareButton">Squares</button>
-          <button id="imageTriangleButton">Triangles</button>
-          <button id="imageCircleButton">Circles</button>
+          <!-- <input type="range" value="90" min="0" max="360" id="globalRotateVerticalSlider"/> -->
+          <label id="globalRotateVerticalLabel">Vertical rotate: 0</label>
         </span>
-        &nbsp;&nbsp;&nbsp;
-
-        <label id="resizeLabel">Image Size: 300</label>
-        <input type="range" id="resizeSlider" min=50 max=400 value=300 />
-        &nbsp;&nbsp;&nbsp;
-
-        <label id="scaleFactorLabel">Pixel Scale Factor: 3</label>
-        <input type="range" id="scaleFactorSlider" min=1 max=10 value=3 />
-        &nbsp;&nbsp;&nbsp;
-        <button id="drawImageButton">Draw Image Onto Canvas</button>
-        &nbsp;
-        <button id="randomizeImageButton">Randomize Image</button>
-        <label id="drawImageLabel"></label>
-
-        &nbsp;&nbsp;&nbsp;
-        <label>Triangle Drawing Inspiration: Pink Floyd - The Dark Side of the Moon</label>
-        &nbsp;
+        <br/>
+        <div id="sliderContainer"></div>
+        <!-- <span>
+          <input type="range" value="90" min="0" max="360" id="shoulderAngleSlider"/>
+          <label id="shoulderAngleLabel">Shoulder Angle: 0</label>
+        </span>
+        <br/>
         <span>
-          <img id="dsotm" src="dsotm.jpeg" alt="Pink Floyd - The Dark Side of the Moon" style="width: auto; height: 175px;"/>
-          <img id="drawing" src="drawing.jpg" alt="Drawing" style="width: auto; height: 175px;"/>
+          <input type="range" value="90" min="0" max="360" id="elbowAngleSlider"/>
+          <label id="elbowAngleLabel">Elbow Angle: 0</label>
         </span>
-      </div>
-      <div style="align-self: flex-start; margin-top: 25px;">
-        <label>Selected Image:</label>
         <br/>
-        <img id="imagePreview" src="/" alt="Select an Image"/>
-        <canvas id="imageCanvas" width="200" height="200" style="display: none;"></canvas>
-        <br/>
-      </div>
-    </span>
+        <span>
+          <input type="range" value="90" min="0" max="360" id="wristAngleSlider"/>
+          <label id="wristAngleLabel">Wrist Angle: 0</label>
+        </span>
+        <br/> -->
+
     <script src="lib/webgl-utils.js"></script>
     <script src="lib/webgl-debug.js"></script>
     <script src="lib/cuon-utils.js"></script>
