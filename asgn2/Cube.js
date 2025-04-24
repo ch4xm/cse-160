@@ -1,9 +1,9 @@
 class Cube {
-    constructor() {
+    constructor(startMatrix) {
+        this.matrix = startMatrix || new Matrix4(); // Use the provided matrix or create a new one
         this.type = 'cube';
         // this.position = [0.0, 0.0, 0.0];
         this.color = [1.0, 1.0, 1.0, 1.0]; // Default color is white
-        this.matrix = new Matrix4();
         // this.size = 10.0;
         // this.segments = 10; // Number of segments to approximate the circle
     }
@@ -18,7 +18,7 @@ class Cube {
         drawTriangle3D([0,0,0,  0,1,0,  1,1,0]);
 
 
-        gl.uniform4f(u_FragColor, rgba[0] * 0.9, rgba[1], rgba[2] * 0.9, rgba[3] * 0.9);
+        gl.uniform4f(u_FragColor, rgba[0] * 0.9, rgba[1] * 0.9, rgba[2] * 0.9, rgba[3] * 0.9);
         drawTriangle3D([0,1,0,  0,1,1,  1,1,1]);
         drawTriangle3D([0,1,0,  1,1,1,  1,1,0]);
 

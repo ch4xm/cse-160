@@ -160,6 +160,42 @@ let selectedShape = 'point'; // The current selected shape
 
 const sliders = [
     {
+        id: 'globalRotateHorizontal',
+        label: 'Global Rotate Horizontal',
+        min: -90,
+        max: 90,
+        value: 0,
+        step: 1,
+        onChange: function(event) {
+            if (event.buttons != 1) {
+                return;
+            }
+            const value = event.target.value;
+            g_globalAngleHorizontal = Number(value);
+            console.log('g_globalAngleHorizontal: ' + g_globalAngleHorizontal);
+            document.getElementById('globalRotateHorizontalLabel').innerText = 'Global Rotate Horizontal: ' + value;
+            renderAllShapes();
+        }
+    },
+    {
+        id: 'globalRotateVertical',
+        label: 'Global Rotate Vertical',
+        min: -90,
+        max: 90,
+        value: 0,
+        step: 1,
+        onChange: function(event) {
+            if (event.buttons != 1) {
+                return;
+            }
+            const value = event.target.value;
+            g_globalAngleVertical = Number(value);
+            console.log('g_globalAngleVertical: ' + g_globalAngleVertical);
+            document.getElementById('globalRotateVerticalLabel').innerText = 'Global Rotate Vertical: ' + value;
+            renderAllShapes();
+        }
+    },
+    {
         id: 'shoulderAngle',
         label: 'Shoulder Angle',
         min: 0,
@@ -212,7 +248,7 @@ const sliders = [
             document.getElementById('wristAngleLabel').innerText = 'Wrist Angle: ' + value;
             renderAllShapes();
         }
-    }
+    },
 ];
 
 function setupUICallbacks() {
@@ -506,14 +542,7 @@ function renderAllShapes() {
     gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.clear(gl.COLOR_BUFFER_BIT);
-
-    // drawTriangle3D([-1,0,0,  -0.5,-1,0,  0,0,0])
     
-    // var body = new Cube();
-    // body.color = [0.2,0.6,0,1];
-    // body.matrix.translate(-0.25, -0.5, 0)
-    // body.matrix.scale(0.5, 0.5, 0.5)
-    // body.render();
 
     // var body = new Cube();
     // body.color = [0.2,0.6,0,1];
@@ -521,15 +550,29 @@ function renderAllShapes() {
     // body.matrix.rotate(0, 0, 0, 1);
     // body.matrix.scale(0.5, 0.5, 0.5);
     // body.render();
-    var body = new Cube();
-    body.color = [0, 1, 0];
-    body.matrix.translate(-.25, -0.75, 0);
-    body.matrix.rotate(-5,1,0,0);
-    body.matrix.scale(0.25,.3,.25);
-    body.render();
+    var upperBody = new Cube();
+    upperBody.color = [0, 1, 0];
+    upperBody.matrix.translate(-.1, 0.27, 0);
+    upperBody.matrix.scale(0.5,.235,.25);
+    var upperBodyPos = new Matrix4(upperBody.matrix);
+    upperBody.render();
 
-    var leftArm = new Arm(body.matrix);
-    leftArm.draw();
+    var neckLeft1 = new Cube(upperBodyPos);
+    neckLeft1.color = [0, 1, 0];
+    neckLeft1.matrix.translate(0, 1, 0);
+    neckLeft1.matrix.scale(.16,.5,1);
+    neckLeft1.matrix.rotate(-85, 0, 0, 1);
+    neckLeft1.render();
+    
+    var neckLeft2 = new Cube(upperBodyPos);
+    neckLeft2.color = [1, 0, 0];
+    neckLeft2.matrix.translate(0.2, 1, 0);
+    neckLeft2.matrix.scale(.25,2,1);
+    neckLeft2.matrix.rotate(55, 0, 0, 1);
+    neckLeft2.render();
+
+    // var leftArm = new Arm(body.matrix);
+    // leftArm.draw();
     
     // var leftArm = new Cube();
     // leftArm.color = [0.2,0.6,0,1];
