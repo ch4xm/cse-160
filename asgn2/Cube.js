@@ -2,10 +2,7 @@ class Cube {
     constructor(startMatrix) {
         this.matrix = new Matrix4(startMatrix) || new Matrix4(); // Use the provided matrix or create a new one
         this.type = 'cube';
-        // this.position = [0.0, 0.0, 0.0];
         this.color = [1.0, 1.0, 1.0, 1.0]; // Default color is white
-        // this.size = 10.0;
-        // this.segments = 10; // Number of segments to approximate the circle
     }
 
     render() {

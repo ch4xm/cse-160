@@ -60,6 +60,8 @@ function setupWebGL() {
     }
 
     gl.enable(gl.DEPTH_TEST);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.BLEND);
 }
 
 function connectVariablesToGLSL() {
@@ -152,28 +154,33 @@ let g_selectedColor = [1.0, 1.0, 1.0, 1.0]; // The current color of the selected
 let g_selectedSize = 10.0; // The current size of the selected point
 let g_selectedSegments = 10; // The current number of segments for the selected circle
 
-let g_globalAngleHorizontal = 0;
+let g_globalAngleHorizontal = 180;
 let g_globalAngleVertical = 0;
-let g_drawImageSelectedShape = 'Points'
+let g_neckAngleVertical = 0;
+let g_neckAngleHorizontal = 0;
 
-let selectedShape = 'point'; // The current selected shape
+let g_leftShoulderAngleForward = 0;
+let g_leftShoulderAngleLateral = 50;
+let g_leftShoulderAngleInOut = 0;
+
+let g_leftElbowAngle = 0;
+let g_leftWristAngle = 0;
 
 const sliders = [
     {
         id: 'globalRotateHorizontal',
         label: 'Global Rotate Horizontal',
-        min: -90,
-        max: 90,
-        value: 0,
+        min: 0,
+        max: 360,
+        value: 180,
         step: 1,
-        onChange: function(event) {
+        onChange: function(event, slider) {
             if (event.buttons != 1) {
                 return;
             }
             const value = event.target.value;
             g_globalAngleHorizontal = Number(value);
-            console.log('g_globalAngleHorizontal: ' + g_globalAngleHorizontal);
-            document.getElementById('globalRotateHorizontalLabel').innerText = 'Global Rotate Horizontal: ' + value;
+            document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
             renderAllShapes();
         }
     },
@@ -184,32 +191,64 @@ const sliders = [
         max: 90,
         value: 0,
         step: 1,
-        onChange: function(event) {
+        onChange: function(event, slider) {
             if (event.buttons != 1) {
                 return;
             }
             const value = event.target.value;
             g_globalAngleVertical = Number(value);
-            console.log('g_globalAngleVertical: ' + g_globalAngleVertical);
-            document.getElementById('globalRotateVerticalLabel').innerText = 'Global Rotate Vertical: ' + value;
+            document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
             renderAllShapes();
         }
     },
     {
-        id: 'shoulderAngle',
-        label: 'Shoulder Angle',
-        min: 0,
-        max: 90,
+        id: 'neckAngleVertical',
+        label: 'Neck Angle (Up/Down)',
+        min: -30,
+        max: 30,
         value: 0,
         step: 1,
-        onChange: function(event) {
+        onChange: function(event, slider) {
             if (event.buttons != 1) {
                 return;
             }
             const value = event.target.value;
-            g_leftShoulderAngle = Number(value);
-            console.log('g_shoulderAngle: ' + g_leftShoulderAngle);
-            document.getElementById('shoulderAngleLabel').innerText = 'Shoulder Angle: ' + value;
+            g_neckAngleVertical = Number(value);
+            document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
+            renderAllShapes();
+        }
+    },
+    {
+        id: 'neckAngleHorizontal',
+        label: 'Neck Angle (Left/Right)',
+        min: -30,
+        max: 30,
+        value: 0,
+        step: 1,
+        onChange: function(event, slider) {
+            if (event.buttons != 1) {
+                return;
+            }
+            const value = event.target.value;
+            g_neckAngleHorizontal = Number(value);
+            document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
+            renderAllShapes();
+        }
+    },
+    {
+        id: 'shoulderAngleLateral',
+        label: 'Shoulder Angle (Lateral)',
+        min: -60,
+        max: 70,
+        value: 50,
+        step: 1,
+        onChange: function(event, slider) {
+            if (event.buttons != 1) {
+                return;
+            }
+            const value = event.target.value;
+            g_leftShoulderAngleLateral = Number(value);
+            document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
             renderAllShapes();
         }
     },
@@ -220,14 +259,13 @@ const sliders = [
         max: 90,
         value: 0,
         step: 1,
-        onChange: function(event) {
+        onChange: function(event, slider) {
             if (event.buttons != 1) {
                 return;
             }
             const value = event.target.value;
             g_leftElbowAngle = Number(value);
-            console.log('g_elbowAngle: ' + g_leftElbowAngle);
-            document.getElementById('elbowAngleLabel').innerText = 'Elbow Angle: ' + value;
+            document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
             renderAllShapes();
         }
     },
@@ -238,14 +276,13 @@ const sliders = [
         max: 90,
         value: 0,
         step: 1,
-        onChange: function(event) {
+        onChange: function(event, slider) {
             if (event.buttons != 1) {
                 return;
             }
             const value = event.target.value;
             g_leftWristAngle = Number(value);
-            console.log('g_wristAngle: ' + g_leftWristAngle);
-            document.getElementById('wristAngleLabel').innerText = 'Wrist Angle: ' + value;
+            document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
             renderAllShapes();
         }
     },
@@ -276,14 +313,15 @@ function setupUICallbacks() {
         sliderElement.value = slider.value;
         sliderElement.step = slider.step;
         sliderContainer.appendChild(sliderElement);
-        labelElement.innerText = slider.label + ': ' + slider.value;
+        labelElement.innerText = '\xa0\xa0' + slider.label + ': ' + slider.value;
         labelElement.id = slider.id + 'Label';
         labelElement.setAttribute('for', slider.id);
         sliderContainer.appendChild(labelElement);
         parentElement.appendChild(sliderContainer);
         parentElement.appendChild(document.createElement('br'));
+        slider.label = '\xa0\xa0' + slider.label;
         sliderElement.addEventListener('mousemove', function(event) {
-            slider.onChange(event);
+            slider.onChange(event, slider);
         });
     });
     
@@ -333,11 +371,11 @@ function rotateView(event) {
     // g_globalAngleHorizontal = gl_x * 180;
     // g_globalAngleVertical = gl_y * 180;
 
-    g_globalAngleHorizontal = gl_x * 90;
+    g_globalAngleHorizontal = gl_x * 90 + 180;
     g_globalAngleVertical = gl_y * 90;
 
-    document.getElementById('globalRotateHorizontalLabel').innerText = 'Horizontal Rotate: ' + g_globalAngleHorizontal;
-    document.getElementById('globalRotateVerticalLabel').innerText = 'Vertical Rotate: ' + g_globalAngleVertical;
+    document.getElementById('globalRotateHorizontalLabel').innerText = '\xa0\xa0Global Rotate Horizontal: ' + g_globalAngleHorizontal;
+    document.getElementById('globalRotateVerticalLabel').innerText = '\xa0\xa0Global Rotate Vertical: ' + g_globalAngleVertical;
 
     renderAllShapes();
 }
@@ -534,14 +572,14 @@ function updateSelectedValues() {
 }
 
 function renderAllShapes() {
-    console.log('renderAllShapes');
+    // console.log('renderAllShapes');
     var startTime = performance.now();
     // Clear <canvas>
-    var globalRotMat = new Matrix4().rotate(g_globalAngleHorizontal, 0, 1, 0);
-    globalRotMat.rotate(g_globalAngleVertical, 0, 0, 1);
+    var globalRotMat = new Matrix4().rotate(-g_globalAngleHorizontal, 0, 1, 0);
+    globalRotMat.rotate(-g_globalAngleVertical, 1, 0, 0);
     gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    // gl.clear(gl.COLOR_BUFFER_BIT);
     
 
     // var body = new Cube();
@@ -550,88 +588,159 @@ function renderAllShapes() {
     // body.matrix.rotate(0, 0, 0, 1);
     // body.matrix.scale(0.5, 0.5, 0.5);
     // body.render();
-    var color = [0.2,0.6,0,.5];
-
+    var color = [1,1,1,.4] // [0.2,0.6,0,.5];
+    
+    
     var upperBody = new Cube();
     upperBody.color = color;
     upperBody.matrix.translate(-.1, 0.27, 0);
-    upperBody.matrix.scale(0.5,.235,.25);
-    var upperBodyPos = new Matrix4(upperBody.matrix);
-    // upperBody.render();
+    const upperBodyPos = new Matrix4(upperBody.matrix);
+    upperBody.matrix.scale(0.5,.235,.2);
+    var upperBodyPosScaled = new Matrix4(upperBody.matrix);
+    upperBody.matrix.scale(1,1,1.1)
+    
+    var heart = new Cube(upperBodyPosScaled);
+    heart.color = [1,0,0,1];
+    heart.matrix.translate(.3, .275, .5);
+    heart.matrix.scale(0.15, 0.2, .25);
+    heart.render();
+    upperBody.render();
 
-    var lowerBody = new Cube(upperBodyPos);
+    var lowerBody = new Cube(upperBodyPosScaled);
     lowerBody.color = color;
     lowerBody.matrix.translate(0.07, -1, .05);
     lowerBody.matrix.scale(.85,1,.9);
     var lowerBodyPos = new Matrix4(lowerBody.matrix);
-    // lowerBody.render();
+    lowerBody.render();
 
-    var upperleftBody = new Cube(upperBodyPos);
+    var upperleftBody = new Cube(upperBodyPosScaled);
     upperleftBody.color = color;
     upperleftBody.matrix.translate(.075, -.4, 0.05);
     upperleftBody.matrix.rotate(10, 0, 0, 1);
-    upperleftBody.matrix.scale(.25,.5,.9);
+    upperleftBody.matrix.scale(.25,.65,.9);
     upperleftBody.render();
 
-    var upperRightBody = new Cube(upperBodyPos);
+    var upperRightBody = new Cube(upperBodyPosScaled);
     upperRightBody.color = color;
     upperRightBody.matrix.translate(.675, -.35, 0.05);
     upperRightBody.matrix.rotate(-10, 0, 0, 1);
-    upperRightBody.matrix.scale(.25,.5,.9);
+    upperRightBody.matrix.scale(.25,.65,.9);
     upperRightBody.render();
 
-    var leftBottomArmConnector = new Cube(upperBodyPos);
+    var leftBottomArmConnector = new Cube(upperBodyPosScaled);
     leftBottomArmConnector.color = color;
     leftBottomArmConnector.matrix.translate(0, 0, 0);
     leftBottomArmConnector.matrix.rotate(20, 0, 0, 1);
     leftBottomArmConnector.matrix.scale(.25,.25,.9);
     leftBottomArmConnector.render();
 
-    var leftMiddleArmConnector = new Cube(upperBodyPos);
+    var leftMiddleArmConnector = new Cube(upperBodyPosScaled);
     leftMiddleArmConnector.color = color;
-    leftMiddleArmConnector.matrix.translate(-.085, .225, 0);
-    leftMiddleArmConnector.matrix.rotate(5, 0, 0, 1);
-    leftMiddleArmConnector.matrix.scale(.15,.7,.9);
+    // leftMiddleArmConnector.matrix.translate(-.05, .05, 0);
+    leftMiddleArmConnector.matrix.translate(-.075, .22, 0);
     var leftMiddleArmConnectorPos = new Matrix4(leftMiddleArmConnector.matrix);
+    leftMiddleArmConnector.matrix.rotate(15, 0, 0, 1);
+    leftMiddleArmConnector.matrix.scale(.4,.69,.9);
     leftMiddleArmConnector.render();
 
+    // var rightMiddleArmConnector = new Cube(upperBodyPosScaled);
+    // rightMiddleArmConnector.color = color;
+    // rightMiddleArmConnector.matrix.translate(.65, .35, 0);
+    // var rightMiddleArmConnectorPos = new Matrix4(leftMiddleArmConnector.matrix);
+    // rightMiddleArmConnector.matrix.rotate(-20, 0, 0, 1);
+    // // rightMiddleArmConnector.matrix.rotate(-g_leftShoulderAngleLateral, 0, 0, 1);
+    // rightMiddleArmConnector.matrix.scale(.4,.7,.9);
+    // rightMiddleArmConnector.render();
+
+    var leftArmJoint = new Cube(leftMiddleArmConnectorPos);
+    leftArmJoint.color = color;
+    leftArmJoint.matrix.translate(1, .3, 0);
+    leftArmJoint.matrix.rotate(-g_leftShoulderAngleLateral, 0, 0, 1);
+    const leftArmJointPos = new Matrix4(leftArmJoint.matrix);
+    leftArmJoint.matrix.scale(.2,.025,.025);
+
+    var leftShoulder = new Cube(leftArmJointPos) //Cylinder(leftArmJointPos);
+    leftShoulder.color = color;
+    leftShoulder.matrix.translate(0, -.3, .75);
+    leftShoulder.matrix.rotate(90, 0, 1, 0);
+    leftShoulder.matrix.scale(.5,.75,.5);
+    // leftShoulder.render();
+
     // var leftArm = new Arm(leftMiddleArmConnectorPos);
-    var leftArm = new Cube();
-    leftArm.color = [0.25, 0.25, 0.25];
-    leftArm.matrix.setTranslate(0, -0.5, 0);
-    leftArm.matrix.rotate(-5, 1, 0, 0);
-    leftArm.matrix.rotate(g_leftShoulderAngle, 0, 0, 1);
-    leftArm.matrix.scale(.2501, .7, .2501)
-    leftArm.matrix.translate(-1, 0, 0);
-    leftArm.render();
-    leftArm.render();
+    // var leftShoulder = new Cube(leftMiddleArmConnectorPos);
+    // leftShoulder.color = [0.25, 0.25, 0.25];
+    // // leftArm.matrix.setTranslate(0, -0.5, 0);
+    // // leftArm.matrix.rotate(0,0,.5,0);
+    // leftShoulder.matrix.rotate(g_leftShoulderAngle,0,0,.5);
+    // // const leftShoulderPos = new Matrix4(leftShoulder.matrix);
+    // leftShoulder.matrix.scale(.2501, .7, .2501)
+    // // leftShoulder.matrix.translate(1, 1, 1);
+    // // leftArm.render();
+    // leftShoulder.render();
     // var leftArm = new Cube(leftMiddleArmConnectorPos);
     // leftArm.color = color;
     // leftArm.matrix.translate(-.2, 0, 0);
     // leftArm.matrix.rotate(-g_leftShoulderAngle, 0, 0, 1);
 
-    var leftTopArmConnector = new Cube(upperBodyPos);
+    // var leftArm = new Cube(leftShoulderPos);
+    // leftArm.color = color;
+    // leftArm.matrix.translate(-.2, 0, 0);
+    // leftArm.render();
+
+    var leftTopArmConnector = new Cube(upperBodyPosScaled);
     leftTopArmConnector.color = color;
     leftTopArmConnector.matrix.rotate(25, 0, 0, 1);
     leftTopArmConnector.matrix.scale(.15,.15,.9);
     leftTopArmConnector.matrix.translate(1.8, 5, 0);
     leftTopArmConnector.render();
 
-    var rightBottomArmConnector = new Cube(upperBodyPos);
+    var rightBottomArmConnector = new Cube(upperBodyPosScaled);
     rightBottomArmConnector.color = color;
     rightBottomArmConnector.matrix.translate(.985, 0, 0);
-    rightBottomArmConnector.matrix.rotate(-20, 0, 0, 1);
+    rightBottomArmConnector.matrix.rotate(40, 0, 0, 1);
     rightBottomArmConnector.matrix.scale(-.25,.25,.9);
     rightBottomArmConnector.render();
 
-    var rightMiddleArmConnector = new Cube(upperBodyPos);
+    var rightMiddleArmConnector = new Cube(upperBodyPosScaled);
     rightMiddleArmConnector.color = color;
-    rightMiddleArmConnector.matrix.translate(1.068, .225, 0);
-    rightMiddleArmConnector.matrix.rotate(-5, 0, 0, 1);
-    rightMiddleArmConnector.matrix.scale(-.15,.7,.9);
+    rightMiddleArmConnector.matrix.translate(.65, .35, 0);
+    var rightMiddleArmConnectorPos = new Matrix4(leftMiddleArmConnector.matrix);
+    rightMiddleArmConnector.matrix.rotate(-20, 0, 0, 1);
+    // rightMiddleArmConnector.matrix.rotate(-g_leftShoulderAngleLateral, 0, 0, 1);
+    rightMiddleArmConnector.matrix.scale(.4,.7,.9);
     rightMiddleArmConnector.render();
 
-    var rightTopArmConnector = new Cube(upperBodyPos);
+    var rightArmJoint = new Cube(leftMiddleArmConnectorPos);
+    rightArmJoint.color = color;
+    rightArmJoint.matrix.translate(1.2, .525, 0);
+    rightArmJoint.matrix.rotate(-g_leftShoulderAngleLateral, 0, 0, 1);
+    const rightArmJointPos = new Matrix4(rightArmJoint.matrix);
+    rightArmJoint.matrix.scale(.05,.05,.05);
+
+    var rightShoulder = new Cube(rightArmJointPos) //Cylinder(leftArmJointPos);
+    rightShoulder.color = color;
+    rightShoulder.matrix.translate(0.05, -.3, .2);
+    rightShoulder.matrix.scale(.7,.5,.5);
+    // rightShoulder.render();
+
+    
+    // var rightArmJoint = new Cube(rightMiddleArmConnectorPos);
+    // rightArmJoint.color = color;
+    // // rightArmJoint.matrix.translate(2, .25, 0);
+    // rightArmJoint.matrix.rotate(-g_leftShoulderAngleLateral, 0, 0, 1);
+    // const leftArmJointPos = new Matrix4(rightArmJoint.matrix);
+    // // rightArmJoint.matrix.scale(.25,.05,.05);
+    // rightArmJoint.render();
+
+    // var leftShoulder = new Cube(leftArmJointPos) //Cylinder(leftArmJointPos);
+    // leftShoulder.color = color;
+    // // leftShoulder.matrix.translate(.05, -.35, 0);
+    // leftShoulder.matrix.rotate(-g_leftShoulderAngleLateral, 0, 0, 1);
+    // // leftShoulder.matrix.rotate(90, 0, 1, 0);
+    // leftShoulder.matrix.scale(2,1,1);
+    // // leftShoulder.render();
+
+    var rightTopArmConnector = new Cube(upperBodyPosScaled);
     rightTopArmConnector.color = color;
     rightTopArmConnector.matrix.rotate(-25, 0, 0, 1);
     rightTopArmConnector.matrix.scale(-.2,.15,.9);
@@ -644,48 +753,197 @@ function renderAllShapes() {
     pelvis.matrix.scale(1.4,.5,1.2);
     pelvis.render();
 
-    var leftLowerBody = new Cube(upperBodyPos);
+    var leftLowerBody = new Cube(upperBodyPosScaled);
     leftLowerBody.color = color;
     leftLowerBody.matrix.translate(-.1, -1, .05);
     leftLowerBody.matrix.rotate(-15, 0, 0, 1);
     leftLowerBody.matrix.scale(.25,.75,.9);
     leftLowerBody.render();
 
-    var rightLowerBody = new Cube(upperBodyPos);
+    var rightLowerBody = new Cube(upperBodyPosScaled);
     rightLowerBody.color = color;
     rightLowerBody.matrix.translate(.85, -1.075, .05);
     rightLowerBody.matrix.rotate(15, 0, 0, 1);
     rightLowerBody.matrix.scale(.25,.75,.9);
     rightLowerBody.render();
 
-    var neckMiddle = new Cube(upperBodyPos);
+    var neckMiddle = new Cube(upperBodyPosScaled);
     neckMiddle.color = color;
     neckMiddle.matrix.translate(.33, .95, 0);
-    neckMiddle.matrix.scale(.33,.35,1);
-    neckMiddle.render();
+    neckMiddle.matrix.scale(.33,.35,.95);
+    const neckMiddlePos = new Matrix4(neckMiddle.matrix);
+    neckMiddle.matrix.translate(.05, 0, 0);
+    neckMiddle.matrix.scale(.9,1,1);
+    // neckMiddle.render();
 
-    var neckLeft1 = new Cube(upperBodyPos);
+    var neckJoint = new Cube(neckMiddlePos);
+    neckJoint.color = [0,0,0,0];
+    neckJoint.matrix.translate(.55, .5, .45);
+    neckJoint.matrix.rotate(180, 0, 1,0);
+    neckJoint.matrix.rotate(-90, 1, 0, 0);
+    neckJoint.matrix.rotate(g_neckAngleVertical, 1, 0, 0);
+    neckJoint.matrix.rotate(g_neckAngleHorizontal, 0, 0, 1);
+    neckJoint.matrix.scale(1,.9,1);
+    const neckJointPos = new Matrix4(neckJoint.matrix);
+    neckJoint.matrix.scale(.1,.05,1);
+    
+    const upperNeck = new Cube(neckJointPos);
+    upperNeck.color = color;
+    upperNeck.matrix.translate(-.45, -.45, -.2);
+    upperNeck.matrix.scale(1,.95,.75);
+    upperNeck.render();
+
+    const headTop = new Cube(neckJointPos);
+    headTop.color = color;
+    headTop.matrix.translate(-.6, -.6, .75);
+    headTop.matrix.scale(1.3,1.4,1.15);
+    let headPos = new Matrix4(headTop.matrix);
+    headTop.matrix.translate(-0.125, -.05, .95);
+    headTop.matrix.scale(1.2,1.1,.2);
+    headTop.render();
+
+    const headTopLeft = new Cube(headPos);
+    headTopLeft.color = color;
+    headTopLeft.matrix.translate(.8,0,.6);
+    headTopLeft.matrix.rotate(-30, 0, 1, 0);
+    headTopLeft.matrix.scale(.2,1,.5);
+    headTopLeft.render();
+
+    const headTopRight = new Cube(headPos);
+    headTopRight.color = color;
+    headTopRight.matrix.translate(0,0,.7);
+    headTopRight.matrix.rotate(30, 0, 1, 0);
+    headTopRight.matrix.scale(.2,1,.5);
+    headTopRight.render();
+    
+    const crownBase = new Cube(headPos);
+    crownBase.color = [.95,.95,.95,1];
+    crownBase.matrix.translate(0, 0, 1.15);
+    crownBase.matrix.scale(1,.75,.85);
+    crownBase.render();
+
+    const crownFlip = new Cube(headPos);
+    crownFlip.color = color;
+    crownFlip.matrix.scale(-1,1,1);
+    crownFlip.matrix.translate(-1, 0, 0);
+    const crownPos = new Matrix4(crownFlip.matrix);
+
+    const crownSpike1 = new Cube(crownPos);
+    crownSpike1.color = [.9,.9,.9,.9];
+    crownSpike1.matrix.translate(1, .75, 1.1);
+    crownSpike1.matrix.scale(.2,.2,1);
+    crownSpike1.render();
+
+    const crownSpike2 = new Cube(crownPos);
+    crownSpike2.color = [.95,.95,.95,.9];
+    crownSpike2.matrix.translate(.8, .85, 1.1);
+    crownSpike2.matrix.scale(.2,.2,2.25);
+    crownSpike2.render();
+
+    const crownSpike3 = new Cube(crownPos);
+    crownSpike3.color = [.85,.85,.85,.9];
+    crownSpike3.matrix.translate(.6, .85, 1.1);
+    crownSpike3.matrix.scale(.2,.2,2);
+    crownSpike3.render();
+
+    const crownSpike4 = new Cube(crownPos);
+    crownSpike4.color = [1,1,1,.9];
+    crownSpike4.matrix.translate(.4, .85, 1.1);
+    crownSpike4.matrix.scale(.2,.2,2.3);
+    crownSpike4.render();
+
+    const crownSpike5 = new Cube(crownPos);
+    crownSpike5.color = [1,1,1,.9];
+    crownSpike5.matrix.translate(.4, 1, 2);
+    crownSpike5.matrix.scale(.2,.2,1);
+    crownSpike5.render();
+
+    const crownSpike6 = new Cube(crownPos);
+    crownSpike6.color = [.95,.95,.95,.9];
+    crownSpike6.matrix.translate(.2, .85, 1.1);
+    crownSpike6.matrix.scale(.2,.2,1.9);
+    crownSpike6.render();
+
+    const crownSpike7 = new Cube(crownPos);
+    crownSpike7.color = [.95,.95,.95,.9];
+    crownSpike7.matrix.translate(-.1, .8, 1.1);
+    crownSpike7.matrix.rotate(-5, 0, 1, 0);
+    crownSpike7.matrix.scale(.3,.2,1.4);
+    crownSpike7.render();
+    
+    const crownBack = new Cube(crownPos);
+    crownBack.color = [1,1,1,1];
+    crownBack.matrix.translate(-.1, 0, 1.1);
+    crownBack.matrix.scale(1,.5,1);
+
+    const headRight = new Cube(headPos);
+    headRight.color = [1,1,1,1];
+    headRight.matrix.translate(0, 0, 0);
+    headRight.matrix.rotate(-2.5, 0, 1, 0);
+    headRight.matrix.scale(.2,1,1);
+    headRight.render();
+
+    const headLeft = new Cube(headPos);
+    headLeft.color = [1,1,1,1];
+    headLeft.matrix.translate(.775, 0, 0);
+    headLeft.matrix.rotate(2.5, 0, 1, 0);
+    headLeft.matrix.scale(.2,1,1);
+    headLeft.render();
+    
+    const faceHole = new Cube(headPos);
+    faceHole.color = [0,0,0,1];
+    faceHole.matrix.translate(0.2, .45, -.25);
+    faceHole.matrix.scale(.6,.5,1.2);
+    faceHole.render();
+
+    const headBack = new Cube(headPos);
+    headBack.color = [1,1,1,1];
+    headBack.matrix.translate(0.175, -.0001, -.25);
+    headBack.matrix.scale(.625,.5,1.2);
+    headBack.render();
+
+    const chinRight = new Cube(headPos);
+    chinRight.color = [1,1,1,1];
+    chinRight.matrix.translate(.3,0,-0.5);
+    chinRight.matrix.rotate(30, 0, -1, 0);
+    chinRight.matrix.scale(.25,1,.6);
+    chinRight.render();
+
+    const chinLeft = new Cube(headPos);
+    chinLeft.color = [1,1,1,1];
+    chinLeft.matrix.translate(.475,0,-0.375);
+    chinLeft.matrix.rotate(-30, 0, -1, 0);
+    chinLeft.matrix.scale(.25,1,.6);
+    chinLeft.render();
+
+    const chinBottom = new Cube(headPos);
+    chinBottom.color = [1,1,1,1];
+    chinBottom.matrix.translate(.275,0,-.5);
+    chinBottom.matrix.scale(.45,1,.25);
+    chinBottom.render();
+
+    var neckLeft1 = new Cube(upperBodyPosScaled);
     neckLeft1.color = color;
     neckLeft1.matrix.translate(0, 1, 0);
     neckLeft1.matrix.scale(.16,.5,1);
     neckLeft1.matrix.rotate(-85, 0, 0, 1);
     neckLeft1.render();
     
-    var neckLeft2 = new Cube(upperBodyPos);
+    var neckLeft2 = new Cube(upperBodyPosScaled);
     neckLeft2.color = color;
     neckLeft2.matrix.translate(0.25, .8, 0);
     neckLeft2.matrix.rotate(40, 0, 0, 1);
     neckLeft2.matrix.scale(.4,.25,1);
     neckLeft2.render();
 
-    var neckRight1 = new Cube(upperBodyPos);
+    var neckRight1 = new Cube(upperBodyPosScaled);
     neckRight1.color = color;
     neckRight1.matrix.translate(1, 1, 0);
     neckRight1.matrix.scale(-.16,.5,1);
     neckRight1.matrix.rotate(-85, 0, 0, 1);
     neckRight1.render();
 
-    var neckRight2 = new Cube(upperBodyPos);
+    var neckRight2 = new Cube(upperBodyPosScaled);
     neckRight2.color = color;
     neckRight2.matrix.translate(.75, .8, 0);
     neckRight2.matrix.rotate(-40, 0, 0, 1);
@@ -693,7 +951,6 @@ function renderAllShapes() {
     neckRight2.render();
 
     // var leftArm = new Arm(body.matrix);
-    // leftArm.draw();
     
     // var leftArm = new Cube();
     // leftArm.color = [0.2,0.6,0,1];
@@ -703,12 +960,6 @@ function renderAllShapes() {
     // leftArm.render();
 
     
-    // var len = g_shapes.length;
-    // for(var i = 0; i < len; i++) {
-    //     g_shapes[i].render();
-    // }
-
-    
     // var duration = performance.now() - startTime;
     // document.getElementById('performanceLabel').innerText = 'numdot: ' +
     // len + ' ms: ' + Math.floor(duration) + ' fps: ' +
@@ -716,9 +967,6 @@ function renderAllShapes() {
     // // console.log('numdot: ' + len + ' ms: ' + Math.floor(duration) + ' fps: ' + Math.floor(10000.0 /duration));
 }
 
-let g_leftShoulderAngle = 0;
-let g_leftElbowAngle = 0;
-let g_leftWristAngle = 0;
 class Arm {
     constructor(startMatrix) {
         this.matrix = new Matrix4(startMatrix) || new Matrix4();
@@ -795,14 +1043,18 @@ function registerArmCallbacks() {
     //     document.getElementById('wristAngleLabel').innerText = 'Wrist Angle: ' + this.value;
     //     renderAllShapes();
     // });
-    document.getElementById('resetAngles').addEventListener('click', function() {
+    document.getElementById('resetAllSliders').addEventListener('click', function() {
         g_leftShoulderAngle = 0;
         g_leftElbowAngle = 0;
         g_leftWristAngle = 0;
-        document.getElementById('shoulderAngleLabel').innerText = 'Shoulder Angle: 0';
-        document.getElementById('elbowAngleLabel').innerText = 'Elbow Angle: 0';
-        document.getElementById('wristAngleLabel').innerText = 'Wrist Angle: 0';
-        
+        g_globalAngleHorizontal = 180;
+        g_globalAngleVertical = 0;
+
+        sliders.forEach(slider => {
+            console.log(slider.id + 'Label', slider.value);
+            document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + slider.value;
+            document.getElementById(slider.id + 'Slider').value = slider.value;
+        })
         renderAllShapes();
     });
 }

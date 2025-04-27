@@ -2,10 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>MS Paint 2.0</title>
+    <title>Minos Prime</title>
+    <style>
+      @font-face {
+        font-family: 'VCR';
+        src: url(./assets/VCR_OSD_MONO_1.001.ttf);
+      }
+    </style>
   </head>
 
-  <body onload="main()">
+  <body onload="main()" style="background-color: black; color: white; font-family: VCR;">
+    <p style="font-size: 19px; margin: 30px 15%; color: red;">Ah... free at last. O Gabriel... now dawns thy reckoning, and thy gore shall glisten before the temples of man! Creature of steel, my gratitude upon thee for my freedom. But the crimes thy kind have committed against humanity are not forgotten! And thy punishment... is death!</p>
     <span style="display: flex; flex-direction: row; align-items: center;">
       <div>
         <canvas id="canvas" width="450" height="800" style="margin-right: 20px;">
@@ -16,38 +23,27 @@
             /* put your reference image behind the WebGL buffer */
             background-color: 'transparent';
             background: url('minos_front.jpg') no-repeat center/cover;
-            background-position-x: -4px;
+            background-position-x: -71px;
           }
         </style>
         <br/>
-        <button id="resetAngles">Reset Arm Angles</button>
+
+        </div>
+      <div>
+        <button id="resetAllSliders">Reset All Sliders</button>
         <br/>
         <span>
           <!-- <input type="range" value="90" min="0" max="360" id="globalRotateHorizontalSlider"/>  -->
-          <label id="globalRotateHorizontalLabel">Horizontal rotate: 0</label>
+          <!-- <label id="globalRotateHorizontalLabel">Horizontal rotate: 0</label> -->
         </span>
         <br/>
         <span>
           <!-- <input type="range" value="90" min="0" max="360" id="globalRotateVerticalSlider"/> -->
-          <label id="globalRotateVerticalLabel">Vertical rotate: 0</label>
+          <!-- <label id="globalRotateVerticalLabel">Vertical rotate: 0</label> -->
         </span>
         <br/>
         <div id="sliderContainer"></div>
-        <!-- <span>
-          <input type="range" value="90" min="0" max="360" id="shoulderAngleSlider"/>
-          <label id="shoulderAngleLabel">Shoulder Angle: 0</label>
-        </span>
-        <br/>
-        <span>
-          <input type="range" value="90" min="0" max="360" id="elbowAngleSlider"/>
-          <label id="elbowAngleLabel">Elbow Angle: 0</label>
-        </span>
-        <br/>
-        <span>
-          <input type="range" value="90" min="0" max="360" id="wristAngleSlider"/>
-          <label id="wristAngleLabel">Wrist Angle: 0</label>
-        </span>
-        <br/> -->
+      </div>
 
     <script src="lib/webgl-utils.js"></script>
     <script src="lib/webgl-debug.js"></script>
@@ -56,7 +52,7 @@
     <script src="Point.js"></script>
     <script src="Triangle.js"></script>
     <script src="Cube.js"></script>
-    <script src="Circle.js"></script>
+    <script src="Cylinder.js"></script>
     <script src="asgn2.js"></script>
   </body>
 </html>
