@@ -530,6 +530,7 @@ function poke() {
             // g_leftElbowAngle = 0;
             // g_wristPosition = 0.0;
             // g_wristSize = 1.0;
+            resetAngles();
             return;
         }
 
@@ -538,6 +539,38 @@ function poke() {
     requestAnimationFrame(animation);
 }
 
+function resetAngles() {
+
+    // let g_globalAngleHorizontal = 180;
+    // let g_globalAngleVertical = 0;
+    g_neckAngleVertical = 0;
+    g_neckAngleHorizontal = 0;
+
+    g_rightShoulderAngleForward = 0;
+    g_rightShoulderAngleLateral = 70;
+    g_rightShoulderAngleInOut = 0;
+
+    g_rightElbowAngle = 0;
+    g_rightWristAngle = 0;
+
+    g_leftShoulderAngleForward = 0;
+    g_leftShoulderAngleLateral = 250;
+    g_leftShoulderAngleInOut = 0;
+
+    g_leftElbowAngle = 0;
+    g_leftWristAngle = 0;
+    g_wristPosition = 0.0; // The current position of the wrist
+    g_wristSize = 1; // The current size of the wrist
+
+    g_rightHipAngle   = 180;
+    g_rightKneeAngle  = 180;
+    g_rightAnkleAngle = 0;
+
+
+    g_leftHipAngle    = 180;
+    g_leftKneeAngle   = 0;
+    g_leftAnkleAngle  = 0;
+}
 
 function setupUICallbacks() {
     canvas.onmousedown = function(event) {
@@ -559,6 +592,7 @@ function setupUICallbacks() {
     registerArmCallbacks();
 
     document.getElementById('enableAnimate').addEventListener('click', function() {
+        resetAngles();
         document.getElementById('minosSpeech').play();
         console.log('enableAnimate clicked');
         animateElbow = true;
@@ -959,7 +993,12 @@ function renderAllShapes() {
     var rightArmJoint = new Cube(leftMiddleArmConnectorPos);
     rightArmJoint.color = solidColor;
     rightArmJoint.matrix.translate(1.1, .575, 0);
-    rightArmJoint.matrix.rotate(-g_rightShoulderAngleLateral, 0, 0, 1);
+    if (animateElbow) {
+        // rightArmJoint.matrix.rotate(240, 0, 0, 1);
+        rightArmJoint.matrix.rotate(-230 - 5 * Math.sin(g_seconds * 5) + 180, 0, 0, 1);
+    } else {
+        rightArmJoint.matrix.rotate(-g_rightShoulderAngleLateral, 0, 0, 1);
+    }
     const rightArmJointPos = new Matrix4(rightArmJoint.matrix);
     rightArmJoint.matrix.scale(.05,.05,.05);
     rightArmJoint.render();
@@ -1025,7 +1064,8 @@ function renderAllShapes() {
     leftArmJoint.color = solidColor;
     leftArmJoint.matrix.translate(0.1,  0.575, 0);
     if (animateElbow) {
-        leftArmJoint.matrix.rotate(240, 0, 0, 1);
+        // leftArmJoint.matrix.rotate(240, 0, 0, 1);
+        leftArmJoint.matrix.rotate(230 + 5 * Math.sin(g_seconds * 5), 0, 0, 1);
     }
     else {
         leftArmJoint.matrix.rotate(  g_leftShoulderAngleLateral, 0, 0, 1);
@@ -1169,7 +1209,7 @@ function renderAllShapes() {
     rightLegJoint.matrix.translate(.925, .05, .5);
     rightLegJoint.matrix.scale(.25,.1,.25);
     if (animateLegs) {
-        rightLegJoint.matrix.rotate(45 * Math.sin(g_seconds * 5) - 180, 1, 0, 0);
+        rightLegJoint.matrix.rotate(60 * Math.sin(g_seconds * 5) - 200, 1, 0, 0);
     }
     else {
         rightLegJoint.matrix.rotate(g_rightHipAngle, 1,0,0);
@@ -1191,7 +1231,7 @@ function renderAllShapes() {
     rightKneeJoint.color = solidColor;
     rightKneeJoint.matrix.translate(1, 11, 0.5);
     if (animateLegs) {
-        rightKneeJoint.matrix.rotate(45 + 5 * Math.sin(g_seconds * 5) - 180, 1, 0, 0);
+        rightKneeJoint.matrix.rotate(60 + 5 * Math.sin(g_seconds * 5) - 200, 1, 0, 0);
     }
     else {
         rightKneeJoint.matrix.rotate(g_rightKneeAngle, 1,0,0);
