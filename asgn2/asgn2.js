@@ -42,7 +42,7 @@ function main() {
     clearCanvas();
     setupUICallbacks();
 
-    // requestAnimationFrame(tick);
+    requestAnimationFrame(tick);
 }
 
 function setupWebGL() {
@@ -492,6 +492,19 @@ function setupUICallbacks() {
 
     registerArmCallbacks();
 
+    document.getElementById('enableAnimate').addEventListener('click', function() {
+        console.log('enableAnimate clicked');
+        animateElbow = true;
+        animateArms = true;
+        animateLegs = true;
+    });
+
+    document.getElementById('disableAnimate').addEventListener('click', function() {
+        animateElbow = false;
+        animateArms = false;
+        animateLegs = false;
+    });
+
     const parentElement = document.getElementById('sliderContainer');
 
     sliders.forEach(sliderCategory => {
@@ -770,6 +783,11 @@ function updateSelectedValues() {
     renderAllShapes();
 }
 
+let animateElbow = false;
+let animateArms = false;
+let animateLegs = false;
+
+
 function renderAllShapes() {
     // console.log('renderAllShapes');
     var startTime = performance.now();
@@ -798,7 +816,10 @@ function renderAllShapes() {
     var upperBodyPosScaled = new Matrix4(upperBody.matrix);
     upperBody.matrix.scale(1,1,1.1)
     
-    var heart = new Cube(upperBodyPosScaled);
+    var heart = new Cylinder(upperBodyPosScaled);
+    heart.height = 1;
+    heart.size = .75;
+    // var heart = new Cube(upperBodyPosScaled);
     heart.color = [1,0,0,1];
     heart.matrix.translate(.3, .275, .5);
     heart.matrix.scale(0.15, 0.2, .25);
@@ -875,14 +896,23 @@ function renderAllShapes() {
     var rightShoulder = new Cube(rightArmJointPos) //Cylinder(leftArmJointPos);
     rightShoulder.color = solidColor;
     rightShoulder.matrix.translate(0.05, -.235, 0.1);
-    rightShoulder.matrix.rotate(g_rightShoulderAngleForward, 0, 1, 0);
+    if (animateArms) {
+        rightShoulder.matrix.rotate(25 * Math.sin(g_seconds * 5 - 10), 0, 1, 0);
+    } else {
+        rightShoulder.matrix.rotate(-g_rightShoulderAngleForward, 0, 1, 0);
+    }
+    // rightShoulder.matrix.rotate(g_rightShoulderAngleForward, 0, 1, 0);
     const rightShoulderPos = new Matrix4(rightShoulder.matrix);
     rightShoulder.matrix.scale(.9,.5,.7);
     rightShoulder.render();
 
     var rightElbowJoint = new Cube(rightShoulderPos);
     rightElbowJoint.matrix.translate(.75, 0.3, .5);
-    rightElbowJoint.matrix.rotate(g_rightElbowAngle, 0, 1, 0);
+    if (animateElbow) {
+        rightElbowJoint.matrix.rotate(240, 0, 1, 0);
+    } else {
+        rightElbowJoint.matrix.rotate(g_rightElbowAngle, 0, 1, 0);
+    }
     rightElbowJoint.matrix.rotate(180, 1, 0, 0);
     const rightElbowJointPos = new Matrix4(rightElbowJoint.matrix);
     rightElbowJoint.matrix.scale(.25,.1,.1);
@@ -920,7 +950,12 @@ function renderAllShapes() {
     var leftArmJoint = new Cube(leftMiddleArmConnectorPos);
     leftArmJoint.color = solidColor;
     leftArmJoint.matrix.translate(0.1,  0.575, 0);
-    leftArmJoint.matrix.rotate(  g_leftShoulderAngleLateral, 0, 0, 1);
+    if (animateElbow) {
+        leftArmJoint.matrix.rotate(240, 0, 0, 1);
+    }
+    else {
+        leftArmJoint.matrix.rotate(  g_leftShoulderAngleLateral, 0, 0, 1);
+    }
     const leftArmJointPos = new Matrix4(leftArmJoint.matrix);
     leftArmJoint.matrix.scale(.05, .05, .05);
     leftArmJoint.render();
@@ -928,7 +963,12 @@ function renderAllShapes() {
     var leftShoulder = new Cube(leftArmJointPos);
     leftShoulder.color = solidColor;
     leftShoulder.matrix.translate(0, -0.25, 0);
-    leftShoulder.matrix.rotate(g_leftShoulderAngleForward, 0, 1, 0);
+    if (animateArms) {
+        leftShoulder.matrix.rotate(-25 * Math.sin(g_seconds * 5 - 10), 0, 1, 0);
+    }
+    else {
+        leftShoulder.matrix.rotate(g_leftShoulderAngleForward, 0, 1, 0);
+    }
     const leftShoulderPos = new Matrix4(leftShoulder.matrix);
     leftShoulder.matrix.scale(.95, .5, .7);
     leftShoulder.render();
@@ -936,7 +976,12 @@ function renderAllShapes() {
     var leftElbowJoint = new Cube(leftShoulderPos);
     leftElbowJoint.color = solidColor;
     leftElbowJoint.matrix.translate(.9, 0.3, .5);
-    leftElbowJoint.matrix.rotate(g_leftElbowAngle, 0, 1, 0);
+    if (animateElbow) {
+        leftElbowJoint.matrix.rotate(240, 0, 1, 0);
+    }
+    else {
+        leftElbowJoint.matrix.rotate(g_leftElbowAngle, 0, 1, 0);
+    }
     leftElbowJoint.matrix.rotate(180, 1, 0, 0);
     const leftElbowJointPos = new Matrix4(leftElbowJoint.matrix);
     leftElbowJoint.matrix.scale(.25, .1, .1);
@@ -1049,7 +1094,12 @@ function renderAllShapes() {
     rightLegJoint.color = solidColor;
     rightLegJoint.matrix.translate(.925, .05, .5);
     rightLegJoint.matrix.scale(.25,.1,.25);
-    rightLegJoint.matrix.rotate(g_rightHipAngle, 1,0,0);
+    if (animateLegs) {
+        rightLegJoint.matrix.rotate(45 * Math.sin(g_seconds * 5) - 180, 1, 0, 0);
+    }
+    else {
+        rightLegJoint.matrix.rotate(g_rightHipAngle, 1,0,0);
+    }
     const rightLegJointPos = new Matrix4(rightLegJoint.matrix);
     rightLegJoint.matrix.scale(1.3,1.5,.5);
     rightLegJoint.render();
@@ -1066,7 +1116,12 @@ function renderAllShapes() {
     const rightKneeJoint = new Cube(rightThighPos);
     rightKneeJoint.color = solidColor;
     rightKneeJoint.matrix.translate(1, 11, 0.5);
-    rightKneeJoint.matrix.rotate(g_rightKneeAngle, 1,0,0);
+    if (animateLegs) {
+        rightKneeJoint.matrix.rotate(10 + 10 * Math.sin(g_seconds) - 180, 1, 0, 0);
+    }
+    else {
+        rightKneeJoint.matrix.rotate(g_rightKneeAngle, 1,0,0);
+    }
     rightKneeJoint.matrix.rotate(180, 1,0,0);
     // rightKneeJoint.matrix.scale(.25,.1,.25);
     const rightKneeJointPos = new Matrix4(rightKneeJoint.matrix);
@@ -1102,7 +1157,12 @@ function renderAllShapes() {
     leftLegJoint.color = solidColor;
     leftLegJoint.matrix.translate(.25, -.1, .5);
     leftLegJoint.matrix.scale(.25,.1,.25);
-    leftLegJoint.matrix.rotate(g_leftHipAngle, 1,0,0);
+    if (animateLegs) {
+        leftLegJoint.matrix.rotate(45 * Math.sin(g_seconds * 5 - 10) - 180, 1, 0, 0);
+    }
+    else {
+        leftLegJoint.matrix.rotate(g_leftHipAngle, 1,0,0);
+    }
     const leftLegJointPos = new Matrix4(leftLegJoint.matrix);
     leftLegJoint.matrix.scale(.5,1,.5);
     leftLegJoint.render();
@@ -1119,7 +1179,12 @@ function renderAllShapes() {
     const leftKneeJoint = new Cube(leftThighPos);
     leftKneeJoint.color = solidColor;
     leftKneeJoint.matrix.translate(1, 10, 0.5);
-    leftKneeJoint.matrix.rotate(g_leftKneeAngle, 1,0,0);
+    if (animateLegs) {
+        leftKneeJoint.matrix.rotate(10 + 10 * Math.sin(g_seconds), 1, 0, 0);
+    }
+    else {
+        leftKneeJoint.matrix.rotate(g_leftKneeAngle, 1,0,0);
+    }
     // leftKneeJoint.matrix.rotate(180, 1,0,0);
     // leftKneeJoint.matrix.scale(.25,.1,.25);
     const leftKneeJointPos = new Matrix4(leftKneeJoint.matrix);
@@ -1180,8 +1245,13 @@ function renderAllShapes() {
     neckJoint.matrix.translate(.55, .5, .45);
     neckJoint.matrix.rotate(180, 0, 1,0);
     neckJoint.matrix.rotate(-90, 1, 0, 0);
-    neckJoint.matrix.rotate(g_neckAngleVertical, 1, 0, 0);
-    neckJoint.matrix.rotate(g_neckAngleHorizontal, 0, 0, 1);
+    if (animateElbow) {
+        neckJoint.matrix.rotate(10 * Math.sin(g_seconds * 5), 1, 0, 0);
+    }
+    else {
+        neckJoint.matrix.rotate(g_neckAngleVertical, 1, 0, 0);
+        neckJoint.matrix.rotate(g_neckAngleHorizontal, 0, 0, 1);
+    }
     neckJoint.matrix.scale(1,.9,1);
     const neckJointPos = new Matrix4(neckJoint.matrix);
     neckJoint.matrix.scale(.1,.05,1);
@@ -1359,10 +1429,10 @@ let g_startTime = performance.now() / 1000;
 let g_seconds = performance.now() / 1000 - g_startTime;
 
 function tick() {
-    console.log(performance.now());
+    // console.log(performance.now());
 
     g_seconds = performance.now() / 1000 - g_startTime;
-    console.log('g_seconds: ' + g_seconds);
+    // console.log('g_seconds: ' + g_seconds);
 
     renderAllShapes(); // Render all shapes
 
@@ -1445,20 +1515,32 @@ function registerArmCallbacks() {
     //     document.getElementById('wristAngleLabel').innerText = 'Wrist Angle: ' + this.value;
     //     renderAllShapes();
     // });
-    document.getElementById('resetAllSliders').addEventListener('click', function() {
-        g_leftShoulderAngle = 0;
-        g_rightElbowAngle = 0;
-        g_rightWristAngle = 0;
-        g_globalAngleHorizontal = 180;
-        g_globalAngleVertical = 0;
+    // document.getElementById('resetAllSliders').addEventListener('click', function() {
+    //     g_leftShoulderAngle = 0;
+    //     g_rightElbowAngle = 0;
+    //     g_rightWristAngle = 0;
+    //     g_globalAngleHorizontal = 180;
+    //     g_globalAngleVertical = 0;
+    //     g_leftShoulderAngleLateral = 0;
+    //     g_leftShoulderAngleForward = 0;
+    //     g_rightShoulderAngleLateral = 0;
+    //     g_rightShoulderAngleForward = 0;
+    //     g_leftHipAngle = 0;
+    //     g_rightHipAngle = 0;
+    //     g_leftKneeAngle = 0;
+    //     g_rightKneeAngle = 0;
+    //     g_leftAnkleAngle = 0;
+    //     g_rightAnkleAngle = 0;
+    //     g_neckAngleVertical = 0;
 
-        sliders.forEach(slider => {
-            console.log(slider.id + 'Label', slider.value);
-            document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + slider.value;
-            document.getElementById(slider.id + 'Slider').value = slider.value;
-        })
-        renderAllShapes();
-    });
+
+    //     sliders.forEach(slider => {
+    //         console.log(slider.id + 'Label', slider.value);
+    //         document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + slider.value;
+    //         document.getElementById(slider.id + 'Slider').value = slider.value;
+    //     })
+    //     renderAllShapes();
+    // });
 }
 function convertCoordinatesEventToGL(event) {
     var x = event.clientX; // x coordinate of a mouse pointer
