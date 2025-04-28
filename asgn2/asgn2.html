@@ -12,7 +12,8 @@
   </head>
 
   <body onload="main()" style="background-color: black; color: white; font-family: VCR;">
-    <p style="font-size: 19px; margin: 30px 15%; color: red;">Ah... free at last. O Gabriel... now dawns thy reckoning, and thy gore shall glisten before the temples of man! Creature of steel, my gratitude upon thee for my freedom. But the crimes thy kind have committed against humanity are not forgotten! And thy punishment... is death!</p>
+    <audio id="minosSpeech" src="./assets/minos_speech_music.mp3"></audio>
+    <p style="font-size: 24px; margin: 30px 15%; color: red;">Ah... free at last. O Gabriel... now dawns thy reckoning, and thy gore shall glisten before the temples of man! Creature of steel, my gratitude upon thee for my freedom. But the crimes thy kind have committed against humanity are not forgotten! And thy punishment... is death!</p>
     <span style="display: flex; flex-direction: row; align-items: center;">
       <div>
         <canvas id="canvas" width="450" height="800" style="margin-right: 20px; margin-left: 20px;">
@@ -29,6 +30,9 @@
         <br/>
         <button id="enableAnimate">Enable Animation</button>
         <button id="disableAnimate">Disable Animation</button>
+        <br/>
+        <br/>
+        <label id="performanceLabel"></label>
 
         </div>
       <div>

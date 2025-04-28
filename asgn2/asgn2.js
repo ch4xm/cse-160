@@ -161,14 +161,14 @@ let g_neckAngleVertical = 0;
 let g_neckAngleHorizontal = 0;
 
 let g_rightShoulderAngleForward = 0;
-let g_rightShoulderAngleLateral = 50;
+let g_rightShoulderAngleLateral = 70;
 let g_rightShoulderAngleInOut = 0;
 
 let g_rightElbowAngle = 0;
 let g_rightWristAngle = 0;
 
 let g_leftShoulderAngleForward = 0;
-let g_leftShoulderAngleLateral = 225;
+let g_leftShoulderAngleLateral = 250;
 let g_leftShoulderAngleInOut = 0;
 
 let g_leftElbowAngle = 0;
@@ -267,7 +267,7 @@ const sliders = [
             label: 'Shoulder Angle (Lateral)',
             min: -60,
             max: 80,
-            value: 50,
+            value: 70,
             step: 1,
             onChange: function(event, slider) {
                 if (event.buttons != 1) {
@@ -339,7 +339,7 @@ const sliders = [
             label: 'Shoulder Angle (Lateral)',
             min: 120,
             max: 260,
-            value: 225,
+            value: 250,
             step: 1,
             onChange: function(event, slider) {
                 if (event.buttons != 1) {
@@ -493,6 +493,7 @@ function setupUICallbacks() {
     registerArmCallbacks();
 
     document.getElementById('enableAnimate').addEventListener('click', function() {
+        document.getElementById('minosSpeech').play();
         console.log('enableAnimate clicked');
         animateElbow = true;
         animateArms = true;
@@ -500,6 +501,10 @@ function setupUICallbacks() {
     });
 
     document.getElementById('disableAnimate').addEventListener('click', function() {
+        const audio = document.getElementById('minosSpeech');
+        audio.pause();
+        audio.currentTime = 0;
+        
         animateElbow = false;
         animateArms = false;
         animateLegs = false;
@@ -789,7 +794,6 @@ let animateLegs = false;
 
 
 function renderAllShapes() {
-    // console.log('renderAllShapes');
     var startTime = performance.now();
     // Clear <canvas>
     var globalRotMat = new Matrix4().rotate(-g_globalAngleHorizontal, 0, 1, 0);
@@ -897,7 +901,7 @@ function renderAllShapes() {
     rightShoulder.color = solidColor;
     rightShoulder.matrix.translate(0.05, -.235, 0.1);
     if (animateArms) {
-        rightShoulder.matrix.rotate(25 * Math.sin(g_seconds * 5 - 10), 0, 1, 0);
+        rightShoulder.matrix.rotate(45 * Math.sin(g_seconds * 5 - 10) + 45, 0, 1, 0);
     } else {
         rightShoulder.matrix.rotate(-g_rightShoulderAngleForward, 0, 1, 0);
     }
@@ -941,7 +945,7 @@ function renderAllShapes() {
     // leftWristJoint.render();
 
     const rightWrist = new Cube(rightWristJointPos);
-    rightWrist.color = solidColor;
+    rightWrist.color = [1,1,0,.8];
     rightWrist.matrix.translate(-0.1, -.175, -.175);
     rightWrist.matrix.scale(.55,.5,.45);
     rightWrist.render();
@@ -964,7 +968,7 @@ function renderAllShapes() {
     leftShoulder.color = solidColor;
     leftShoulder.matrix.translate(0, -0.25, 0);
     if (animateArms) {
-        leftShoulder.matrix.rotate(-25 * Math.sin(g_seconds * 5 - 10), 0, 1, 0);
+        leftShoulder.matrix.rotate(-45 * Math.sin(g_seconds * 5 - 10) + 45, 0, 1, 0);
     }
     else {
         leftShoulder.matrix.rotate(g_leftShoulderAngleForward, 0, 1, 0);
@@ -1117,7 +1121,7 @@ function renderAllShapes() {
     rightKneeJoint.color = solidColor;
     rightKneeJoint.matrix.translate(1, 11, 0.5);
     if (animateLegs) {
-        rightKneeJoint.matrix.rotate(10 + 10 * Math.sin(g_seconds) - 180, 1, 0, 0);
+        rightKneeJoint.matrix.rotate(45 + 5 * Math.sin(g_seconds * 5) - 180, 1, 0, 0);
     }
     else {
         rightKneeJoint.matrix.rotate(g_rightKneeAngle, 1,0,0);
@@ -1180,7 +1184,7 @@ function renderAllShapes() {
     leftKneeJoint.color = solidColor;
     leftKneeJoint.matrix.translate(1, 10, 0.5);
     if (animateLegs) {
-        leftKneeJoint.matrix.rotate(10 + 10 * Math.sin(g_seconds), 1, 0, 0);
+        leftKneeJoint.matrix.rotate(45 + 5 * Math.sin(g_seconds * 5), 1, 0, 0);
     }
     else {
         leftKneeJoint.matrix.rotate(g_leftKneeAngle, 1,0,0);
@@ -1419,10 +1423,9 @@ function renderAllShapes() {
     neckRight2.matrix.scale(-.4,.25,1);
     neckRight2.render();
     
-    // var duration = performance.now() - startTime;
-    // document.getElementById('performanceLabel').innerText = 'numdot: ' + ' ms: ' + Math.floor(duration) + ' fps: ' +
-    // Math.floor(10000.0 /duration);
-    // console.log('numdot: ' + ' ms: ' + Math.floor(duration) + ' fps: ' + Math.floor(10000.0 /duration));
+    var duration = performance.now() - startTime;
+    document.getElementById('performanceLabel').innerText = 'ms: ' + Math.floor(duration) + ' fps: ' + Math.floor(1000.0 /duration) / 10;
+    // console.log('ms: ' + Math.floor(duration) + ' fps: ' + Math.floor(1000.0 /duration) / 10);
 }
 
 let g_startTime = performance.now() / 1000;
