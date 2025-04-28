@@ -173,6 +173,8 @@ let g_leftShoulderAngleInOut = 0;
 
 let g_leftElbowAngle = 0;
 let g_leftWristAngle = 0;
+let g_wristPosition = 0.0; // The current position of the wrist
+let g_wristSize = 1; // The current size of the wrist
 
 let g_rightHipAngle   = 180;
 let g_rightKneeAngle  = 180;
@@ -481,14 +483,78 @@ const sliders = [
       }
 ];
 
+function easeOut(x) {
+    return 1 - (1 - x) * (1 - x);
+
+}
+
+function poke() {
+    const audio = document.getElementById('pokeSound');
+    audio.currentTime = 0; // Reset the audio to the beginning
+    audio.play(); // Play the sound
+
+    duration = 2000; // Duration of the animation in milliseconds
+    
+
+    let lastTimestamp = performance.now();
+    function animation(timestamp) {
+        let elapsed = timestamp - lastTimestamp;
+        let progress = Math.min(elapsed / duration, 1); // Limit progress to 1 second
+        progress = easeOut(progress); // Apply easing function
+        // console.log('elapsed: ' + elapsed, progress);
+        if (progress < 0.8) {
+            g_rightShoulderAngleLateral = -Math.sin(progress * Math.PI) * 20;
+            g_neckAngleVertical = Math.sin(progress * Math.PI) * 20;
+            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI) * 50;
+            // g_wristSize = Math.sin(progress * Math.PI) * 5;
+            g_leftShoulderAngleForward = -Math.sin(progress * Math.PI) * 50;
+            g_leftElbowAngle = -Math.sin(progress * Math.PI) * 100;
+        }
+        else {
+            g_wristPosition = Math.sin(progress * Math.PI) * 0.5;
+            g_rightShoulderAngleForward = Math.sin(progress * Math.PI) * 50;
+            g_leftShoulderAngleForward = -Math.sin(progress * Math.PI) * 10;
+            g_rightElbowAngle = -Math.sin(progress * Math.PI) * 100;
+        }
+        console.log('progress: ' + progress);
+
+        if (progress < 1) {
+            requestAnimationFrame(animation);
+        }
+        else {
+            // g_rightShoulderAngleLateral = 0;
+            // g_neckAngleVertical = 0;
+            // g_rightShoulderAngleForward = 0;
+            // g_rightElbowAngle = 0;
+            // g_leftShoulderAngleForward = 0;
+            // g_leftElbowAngle = 0;
+            // g_wristPosition = 0.0;
+            // g_wristSize = 1.0;
+            return;
+        }
+
+           
+    }
+    requestAnimationFrame(animation);
+}
+
+
 function setupUICallbacks() {
-    canvas.onmousedown = click;
+    canvas.onmousedown = function(event) {
+        if (event.shiftKey) {
+            poke();
+            return;
+        }
+            
+        click(event);
+    }
     canvas.onmousemove = function(event) {
         if (event.buttons != 1) {
             return;
         }
         rotateView(event);
     }
+
 
     registerArmCallbacks();
 
@@ -815,6 +881,7 @@ function renderAllShapes() {
     var upperBody = new Cube();
     upperBody.color = solidColor;
     upperBody.matrix.translate(-.1, 0.27, 0);
+    upperBody.matrix.scale(0.75, 0.75, 0.75);
     const upperBodyPos = new Matrix4(upperBody.matrix);
     upperBody.matrix.scale(0.5,.235,.25);
     var upperBodyPosScaled = new Matrix4(upperBody.matrix);
@@ -942,12 +1009,15 @@ function renderAllShapes() {
     rightWristJoint.matrix.rotate(180, 1, 0, 0);
     const rightWristJointPos = new Matrix4(rightWristJoint.matrix);
     rightWristJoint.matrix.scale(.25,.1,.1);
+    
     // leftWristJoint.render();
 
     const rightWrist = new Cube(rightWristJointPos);
     rightWrist.color = [1,1,0,.8];
+    rightWrist.matrix.translate(0,g_wristPosition * 50, g_wristPosition * 50);
     rightWrist.matrix.translate(-0.1, -.175, -.175);
-    rightWrist.matrix.scale(.55,.5,.45);
+    rightWrist.matrix.scale(.55,.5,.75);
+    rightWrist.matrix.scale(g_wristSize, g_wristSize, g_wristSize);
     rightWrist.render();
 
 
