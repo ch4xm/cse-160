@@ -487,8 +487,30 @@ const sliders = [
 
 function easeOut(x) {
     return 1 - (1 - x) * (1 - x);
-
 }
+
+function doSpawnAnimation() {
+    const audio = document.getElementById('minosSpeech');
+    audio.currentTime = 0; // Reset the audio to the beginning
+    audio.play();
+
+    duration = 50 * 1000; // Duration of the animation in milliseconds
+
+    function animation(timestamp) {
+
+        const elapsed = timestamp - lastTimestamp;
+        const progress = easeOut(x);
+
+        if (progress >= 1) {
+            resetAngles();
+            return;
+        }
+        requestAnimationFrame(animation);
+    }
+    requestAnimationFrame(animation(timestamp));
+}
+
+
 
 function poke() {
     const audio = document.getElementById('pokeSound');
@@ -1354,15 +1376,15 @@ function renderAllShapes() {
     var neckMiddle = new Cube(upperBodyPosScaled);
     neckMiddle.color = solidColor;
     neckMiddle.matrix.translate(.33, .95, 0);
-    neckMiddle.matrix.scale(.33,.35,.95);
     const neckMiddlePos = new Matrix4(neckMiddle.matrix);
     neckMiddle.matrix.translate(.05, 0, 0);
-    neckMiddle.matrix.scale(.9,1,1);
-    // neckMiddle.render();
+    neckMiddle.matrix.scale(.25,0.25,1);
+    neckMiddle.render();
 
     var neckJoint = new Cube(neckMiddlePos);
     neckJoint.color = [0,0,0,0];
-    neckJoint.matrix.translate(.55, .5, .45);
+    // neckJoint.matrix.scale(.1,.1,.1);
+    neckJoint.matrix.translate(.2, 0, .5);
     neckJoint.matrix.rotate(180, 0, 1,0);
     neckJoint.matrix.rotate(-90, 1, 0, 0);
     if (shouldAnimate) {
@@ -1372,17 +1394,22 @@ function renderAllShapes() {
         neckJoint.matrix.rotate(g_neckAngleVertical, 1, 0, 0);
         neckJoint.matrix.rotate(g_neckAngleHorizontal, 0, 0, 1);
     }
+    neckJoint.matrix.scale(.4,.75,.4);
+
     neckJoint.matrix.scale(1,.9,1);
     const neckJointPos = new Matrix4(neckJoint.matrix);
     neckJoint.matrix.scale(.1,.05,1);
     
     const upperNeck = new Cube(neckJointPos);
     upperNeck.color = solidColor;
-    upperNeck.matrix.translate(-.45, -.45, -.2);
-    upperNeck.matrix.scale(1,.95,.75);
+    upperNeck.matrix.translate(0, -.05, .7);
+    const upperNeckPos = new Matrix4(upperNeck.matrix);
+    upperNeck.matrix.translate(-.45, -.45, -.35);
+    // upperNeck.matrix.translate(0, 0, .5);
+    upperNeck.matrix.scale(1,.95,.9);
     upperNeck.render();
 
-    const headTop = new Cube(neckJointPos);
+    const headTop = new Cube(upperNeckPos);
     headTop.color = solidColor;
     headTop.matrix.translate(-.6, -.6, .75);
     headTop.matrix.scale(1.3,1.4,1.15);
