@@ -578,7 +578,9 @@ function resetAngles() {
 function setupUICallbacks() {
     canvas.onmousedown = function(event) {
         if (event.shiftKey) {
-            poke();
+            if (!shouldAnimate) {
+                poke();
+            }
             return;
         }
             
@@ -598,9 +600,9 @@ function setupUICallbacks() {
         resetAngles();
         document.getElementById('minosSpeech').play();
         console.log('enableAnimate clicked');
-        animateElbow = true;
-        animateArms = true;
-        animateLegs = true;
+        shouldAnimate = true;
+        shouldAnimate = true;
+        shouldAnimate = true;
     });
 
     document.getElementById('disableAnimate').addEventListener('click', function() {
@@ -608,9 +610,9 @@ function setupUICallbacks() {
         audio.pause();
         audio.currentTime = 0;
         
-        animateElbow = false;
-        animateArms = false;
-        animateLegs = false;
+        shouldAnimate = false;
+        shouldAnimate = false;
+        shouldAnimate = false;
     });
 
     const parentElement = document.getElementById('sliderContainer');
@@ -891,10 +893,7 @@ function updateSelectedValues() {
     renderAllShapes();
 }
 
-let animateElbow = false;
-let animateArms = false;
-let animateLegs = false;
-
+let shouldAnimate = false;
 
 function renderAllShapes() {
     var startTime = performance.now();
@@ -918,7 +917,7 @@ function renderAllShapes() {
     var upperBody = new Cube();
     upperBody.color = solidColor;
     upperBody.matrix.translate(-.1, 0.27, 0);
-    if (animateLegs) {
+    if (shouldAnimate) {
         upperBody.matrix.rotate(5 * Math.sin(g_seconds * 5), 1,0,0);
         upperBody.matrix.translate(0, .025 * Math.sin(g_seconds * 10), 0);
     }
@@ -1000,7 +999,7 @@ function renderAllShapes() {
     var rightArmJoint = new Cube(leftMiddleArmConnectorPos);
     rightArmJoint.color = solidColor;
     rightArmJoint.matrix.translate(1.1, .575, 0);
-    if (animateElbow) {
+    if (shouldAnimate) {
         // rightArmJoint.matrix.rotate(240, 0, 0, 1);
         rightArmJoint.matrix.rotate(-230 - 5 * Math.sin(g_seconds * 5) + 180, 0, 0, 1);
     } else {
@@ -1013,7 +1012,7 @@ function renderAllShapes() {
     var rightShoulder = new Cube(rightArmJointPos) //Cylinder(leftArmJointPos);
     rightShoulder.color = solidColor;
     rightShoulder.matrix.translate(0.05, -.235, 0.1);
-    if (animateArms) {
+    if (shouldAnimate) {
         rightShoulder.matrix.rotate(45 * Math.sin(g_seconds * 5 - 10) + 45, 0, 1, 0);
     } else {
         rightShoulder.matrix.rotate(-g_rightShoulderAngleForward, 0, 1, 0);
@@ -1025,7 +1024,7 @@ function renderAllShapes() {
 
     var rightElbowJoint = new Cube(rightShoulderPos);
     rightElbowJoint.matrix.translate(.75, 0.3, .5);
-    if (animateElbow) {
+    if (shouldAnimate) {
         rightElbowJoint.matrix.rotate(240, 0, 1, 0);
     } else {
         rightElbowJoint.matrix.rotate(g_rightElbowAngle, 0, 1, 0);
@@ -1070,7 +1069,7 @@ function renderAllShapes() {
     var leftArmJoint = new Cube(leftMiddleArmConnectorPos);
     leftArmJoint.color = solidColor;
     leftArmJoint.matrix.translate(0.1,  0.575, 0);
-    if (animateElbow) {
+    if (shouldAnimate) {
         // leftArmJoint.matrix.rotate(240, 0, 0, 1);
         leftArmJoint.matrix.rotate(230 + 5 * Math.sin(g_seconds * 5), 0, 0, 1);
     }
@@ -1084,7 +1083,7 @@ function renderAllShapes() {
     var leftShoulder = new Cube(leftArmJointPos);
     leftShoulder.color = solidColor;
     leftShoulder.matrix.translate(0, -0.25, 0);
-    if (animateArms) {
+    if (shouldAnimate) {
         leftShoulder.matrix.rotate(-45 * Math.sin(g_seconds * 5 - 10) + 45, 0, 1, 0);
     }
     else {
@@ -1097,7 +1096,7 @@ function renderAllShapes() {
     var leftElbowJoint = new Cube(leftShoulderPos);
     leftElbowJoint.color = solidColor;
     leftElbowJoint.matrix.translate(.9, 0.3, .5);
-    if (animateElbow) {
+    if (shouldAnimate) {
         leftElbowJoint.matrix.rotate(240, 0, 1, 0);
     }
     else {
@@ -1215,7 +1214,7 @@ function renderAllShapes() {
     rightLegJoint.color = solidColor;
     rightLegJoint.matrix.translate(.925, .05, .5);
     rightLegJoint.matrix.scale(.25,.1,.25);
-    if (animateLegs) {
+    if (shouldAnimate) {
         rightLegJoint.matrix.rotate(60 * Math.sin(g_seconds * 5) - 200, 1, 0, 0);
     }
     else {
@@ -1237,7 +1236,7 @@ function renderAllShapes() {
     const rightKneeJoint = new Cube(rightThighPos);
     rightKneeJoint.color = solidColor;
     rightKneeJoint.matrix.translate(1, 11, 0.5);
-    if (animateLegs) {
+    if (shouldAnimate) {
         rightKneeJoint.matrix.rotate(60 + 5 * Math.sin(g_seconds * 5) - 200, 1, 0, 0);
     }
     else {
@@ -1278,7 +1277,7 @@ function renderAllShapes() {
     leftLegJoint.color = solidColor;
     leftLegJoint.matrix.translate(.25, -.1, .5);
     leftLegJoint.matrix.scale(.25,.1,.25);
-    if (animateLegs) {
+    if (shouldAnimate) {
         leftLegJoint.matrix.rotate(60 * Math.sin(g_seconds * 5 - 10) - 200, 1, 0, 0);
     }
     else {
@@ -1300,7 +1299,7 @@ function renderAllShapes() {
     const leftKneeJoint = new Cube(leftThighPos);
     leftKneeJoint.color = solidColor;
     leftKneeJoint.matrix.translate(1, 10, 0.5);
-    if (animateLegs) {
+    if (shouldAnimate) {
         leftKneeJoint.matrix.rotate(45 + 5 * Math.sin(g_seconds * 5), 1, 0, 0);
     }
     else {
@@ -1366,7 +1365,7 @@ function renderAllShapes() {
     neckJoint.matrix.translate(.55, .5, .45);
     neckJoint.matrix.rotate(180, 0, 1,0);
     neckJoint.matrix.rotate(-90, 1, 0, 0);
-    if (animateElbow) {
+    if (shouldAnimate) {
         neckJoint.matrix.rotate(10 * Math.sin(g_seconds * 5), 1, 0, 0);
     }
     else {
