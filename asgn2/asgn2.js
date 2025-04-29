@@ -155,6 +155,8 @@ let g_selectedColor = [1.0, 1.0, 1.0, 1.0]; // The current color of the selected
 let g_selectedSize = 10.0; // The current size of the selected point
 let g_selectedSegments = 10; // The current number of segments for the selected circle
 
+let verticalOffset = 0.0;
+
 let g_globalAngleHorizontal = 180;
 let g_globalAngleVertical = 0;
 let g_neckAngleVertical = 0;
@@ -491,6 +493,7 @@ function easeOut(x) {
 function poke() {
     const audio = document.getElementById('pokeSound');
     audio.currentTime = 0; // Reset the audio to the beginning
+    audio.volume = 0.2; // Set the volume to 50%
     audio.play(); // Play the sound
 
     duration = 2000; // Duration of the animation in milliseconds
@@ -915,6 +918,10 @@ function renderAllShapes() {
     var upperBody = new Cube();
     upperBody.color = solidColor;
     upperBody.matrix.translate(-.1, 0.27, 0);
+    if (animateLegs) {
+        upperBody.matrix.rotate(5 * Math.sin(g_seconds * 5), 1,0,0);
+        upperBody.matrix.translate(0, .025 * Math.sin(g_seconds * 10), 0);
+    }
     upperBody.matrix.scale(0.75, 0.75, 0.75);
     const upperBodyPos = new Matrix4(upperBody.matrix);
     upperBody.matrix.scale(0.5,.235,.25);
@@ -1272,7 +1279,7 @@ function renderAllShapes() {
     leftLegJoint.matrix.translate(.25, -.1, .5);
     leftLegJoint.matrix.scale(.25,.1,.25);
     if (animateLegs) {
-        leftLegJoint.matrix.rotate(45 * Math.sin(g_seconds * 5 - 10) - 180, 1, 0, 0);
+        leftLegJoint.matrix.rotate(60 * Math.sin(g_seconds * 5 - 10) - 200, 1, 0, 0);
     }
     else {
         leftLegJoint.matrix.rotate(g_leftHipAngle, 1,0,0);
