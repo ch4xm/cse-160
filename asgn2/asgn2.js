@@ -945,7 +945,7 @@ function renderAllShapes() {
     }
     upperBody.matrix.scale(0.75, 0.75, 0.75);
     const upperBodyPos = new Matrix4(upperBody.matrix);
-    upperBody.matrix.scale(0.5,.235,.25);
+    upperBody.matrix.scale(0.5,.235,.3);
     var upperBodyPosScaled = new Matrix4(upperBody.matrix);
     upperBody.matrix.scale(1,1,1.1)
     
@@ -1235,7 +1235,7 @@ function renderAllShapes() {
     const rightLegJoint = new Cube(pelvisPos);
     rightLegJoint.color = solidColor;
     rightLegJoint.matrix.translate(.925, .05, .5);
-    rightLegJoint.matrix.scale(.25,.1,.25);
+    rightLegJoint.matrix.scale(.25,.1,.2);
     if (shouldAnimate) {
         rightLegJoint.matrix.rotate(60 * Math.sin(g_seconds * 5) - 200, 1, 0, 0);
     }
@@ -1252,12 +1252,12 @@ function renderAllShapes() {
     // rightThigh.matrix.rotate(180, 1,0,0);
     // rightThigh.matrix.rotate(-g_rightKneeAngle, 1,0,0);
     const rightThighPos = new Matrix4(rightThigh.matrix);
-    rightThigh.matrix.scale(2.2,12,5);
+    rightThigh.matrix.scale(2.2,12,5.25);
     rightThigh.render();
 
     const rightKneeJoint = new Cube(rightThighPos);
     rightKneeJoint.color = solidColor;
-    rightKneeJoint.matrix.translate(1, 11, 0.5);
+    rightKneeJoint.matrix.translate(.85, 11, 0.9);
     if (shouldAnimate) {
         rightKneeJoint.matrix.rotate(60 + 5 * Math.sin(g_seconds * 5) - 200, 1, 0, 0);
     }
@@ -1289,7 +1289,7 @@ function renderAllShapes() {
 
     const rightFoot = new Cube(rightAnkleJointPos);
     rightFoot.color = solidColor;
-    rightFoot.matrix.translate(-1, -4, 0);
+    rightFoot.matrix.translate(-1.2, -4, 0);
     const rightFootPos = new Matrix4(rightFoot.matrix);
     rightFoot.matrix.scale(2.5,4,8.75);
     rightFoot.render();
@@ -1298,7 +1298,7 @@ function renderAllShapes() {
     const leftLegJoint = new Cube(pelvisPos);
     leftLegJoint.color = solidColor;
     leftLegJoint.matrix.translate(.25, -.1, .5);
-    leftLegJoint.matrix.scale(.25,.1,.25);
+    leftLegJoint.matrix.scale(.25,.1,.2);
     if (shouldAnimate) {
         leftLegJoint.matrix.rotate(60 * Math.sin(g_seconds * 5 - 10) - 200, 1, 0, 0);
     }
@@ -1315,12 +1315,12 @@ function renderAllShapes() {
     // leftThigh.matrix.rotate(180, 1,0,0);
     // leftThigh.matrix.rotate(-g_leftKneeAngle, 1,0,0);
     const leftThighPos = new Matrix4(leftThigh.matrix);
-    leftThigh.matrix.scale(2.2,11,5);
+    leftThigh.matrix.scale(2.2,11,5.25);
     leftThigh.render();
 
     const leftKneeJoint = new Cube(leftThighPos);
     leftKneeJoint.color = solidColor;
-    leftKneeJoint.matrix.translate(1, 10, 0.5);
+    leftKneeJoint.matrix.translate(.85, 10, 0.9);
     if (shouldAnimate) {
         leftKneeJoint.matrix.rotate(45 + 5 * Math.sin(g_seconds * 5), 1, 0, 0);
     }
@@ -1353,7 +1353,7 @@ function renderAllShapes() {
 
     const leftFoot = new Cube(leftAnkleJointPos);
     leftFoot.color = solidColor;
-    leftFoot.matrix.translate(-1, -4, 0);
+    leftFoot.matrix.translate(-1.3, -4, 0);
     const leftFootPos = new Matrix4(leftFoot.matrix);
     leftFoot.matrix.scale(2.5,4,8.75);
     leftFoot.render();
