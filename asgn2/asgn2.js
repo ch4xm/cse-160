@@ -618,23 +618,23 @@ function setupUICallbacks() {
 
     registerArmCallbacks();
 
-    document.getElementById('enableAnimate').addEventListener('click', function() {
+    document.getElementById('enableWalk').addEventListener('click', function() {
         resetAngles();
         document.getElementById('minosSpeech').play();
         console.log('enableAnimate clicked');
         shouldAnimate = true;
-        shouldAnimate = true;
-        shouldAnimate = true;
     });
 
-    document.getElementById('disableAnimate').addEventListener('click', function() {
+    document.getElementById('disableWalk').addEventListener('click', function() {
         const audio = document.getElementById('minosSpeech');
         audio.pause();
         audio.currentTime = 0;
         
         shouldAnimate = false;
-        shouldAnimate = false;
-        shouldAnimate = false;
+    });
+
+    document.getElementById('resetCharacter').addEventListener('click', function() {
+        resetAngles();
     });
 
     const parentElement = document.getElementById('sliderContainer');
