@@ -953,6 +953,7 @@ function renderAllShapes() {
     upperBody.matrix.scale(0.5,.235,.3);
     var upperBodyPosScaled = new Matrix4(upperBody.matrix);
     upperBody.matrix.scale(1,1,1.1)
+    upperBody.matrix.translate(0, 0, -.05);
     
     var heart = new Cylinder(upperBodyPosScaled);
     heart.height = 1;
@@ -966,10 +967,11 @@ function renderAllShapes() {
 
     var lowerBody = new Cube(upperBodyPosScaled);
     lowerBody.color = solidColor;
-    lowerBody.matrix.translate(0.07, -1, .05);
+    lowerBody.matrix.translate(0.07, -1, .06);
     var lowerBodyPosNonScaled = new Matrix4(lowerBody.matrix);
     lowerBody.matrix.scale(.85,1,.9);
     var lowerBodyPos = new Matrix4(lowerBody.matrix);
+    lowerBody.matrix.scale(1,1,1.05);
     lowerBody.render();
 
     var upperleftBody = new Cube(upperBodyPosScaled);
