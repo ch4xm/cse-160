@@ -43,6 +43,8 @@ function main() {
     setupUICallbacks();
 
     requestAnimationFrame(tick);
+
+    // doSpawnAnimation();
 }
 
 function setupWebGL() {
@@ -492,22 +494,43 @@ function easeOut(x) {
 function doSpawnAnimation() {
     const audio = document.getElementById('minosSpeech');
     audio.currentTime = 0; // Reset the audio to the beginning
-    audio.play();
-
+    // audio.play();
+    
     duration = 50 * 1000; // Duration of the animation in milliseconds
+
+    let lastTimestamp = performance.now();
 
     function animation(timestamp) {
 
         const elapsed = timestamp - lastTimestamp;
-        const progress = easeOut(x);
+        const progress = easeOut(Math.min(elapsed / duration, 1));
 
-        if (progress >= 1) {
+        g_leftHipAngle = 90;
+        g_rightHipAngle = 90;
+        g_leftKneeAngle = 90;
+        g_rightKneeAngle = -90;
+        g_leftShoulderAngleForward = -60;
+        g_leftElbowAngle = -50;
+        g_rightShoulderAngleForward = 60;
+        g_rightElbowAngle = -50;
+        // g_leftShoulderAngleLateral = 250;
+
+        g_neckAngleVertical = 5;
+
+        console.log('elapsed: ' + elapsed, progress);
+        if (progress < 0.8) {
+        }
+        
+        if (progress >= 1 || shouldAnimate || stopAnimation) {
+            stopAnimation = false;
+            console.log('progress: ' + progress);
+            document.getElementById('minosSpeech').pause();
             resetAngles();
             return;
         }
         requestAnimationFrame(animation);
     }
-    requestAnimationFrame(animation(timestamp));
+    requestAnimationFrame(animation);
 }
 
 
@@ -618,10 +641,30 @@ function setupUICallbacks() {
 
     registerArmCallbacks();
 
+    document.getElementById('enableSpeech').addEventListener('click', function() {
+        // const audio = document.getElementById('minosSpeech');
+        // audio.currentTime = 0; // Reset the audio to the beginning
+        // // audio.volume = 0.2; // Set the volume to 50%
+        // audio.play(); // Play the sound
+        shouldAnimate = false;
+        doSpawnAnimation();
+    });
+
+    document.getElementById('disableSpeech').addEventListener('click', function() {
+        stopAnimation = true;
+        const audio = document.getElementById('minosSpeech');
+        audio.pause();
+        audio.currentTime = 0; // Reset the audio to the beginning
+
+        shouldAnimate = false;
+        resetAngles();
+    });
+
     document.getElementById('enableWalk').addEventListener('click', function() {
         resetAngles();
         document.getElementById('minosSpeech').play();
         shouldAnimate = true;
+        stopAnimation = true;
     });
 
     document.getElementById('disableWalk').addEventListener('click', function() {
@@ -630,6 +673,7 @@ function setupUICallbacks() {
         audio.currentTime = 0;
         
         shouldAnimate = false;
+        stopAnimation = true;
     });
 
     document.getElementById('resetCharacter').addEventListener('click', function() {
