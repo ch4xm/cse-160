@@ -723,8 +723,8 @@ function rotateView(event) {
     g_globalAngleHorizontal = gl_x * 90 + 180;
     g_globalAngleVertical = gl_y * 90;
 
-    document.getElementById('globalRotateHorizontalLabel').innerText = '\xa0\xa0Global Rotate Horizontal: ' + g_globalAngleHorizontal.toFixed(2);
-    document.getElementById('globalRotateVerticalLabel').innerText = '\xa0\xa0Global Rotate Vertical: ' + g_globalAngleVertical.toFixed(2);
+    document.getElementById('globalRotateHorizontalLabel').innerText = '\xa0\xa0Global Rotate Horizontal: ' + g_globalAngleHorizontal.toFixed(0);
+    document.getElementById('globalRotateVerticalLabel').innerText = '\xa0\xa0Global Rotate Vertical: ' + g_globalAngleVertical.toFixed(0);
 
     renderAllShapes();
 }
@@ -943,7 +943,7 @@ function renderAllShapes() {
     
     var upperBody = new Cube();
     upperBody.color = solidColor;
-    upperBody.matrix.translate(-.1, 0.27, 0);
+    upperBody.matrix.translate(-.1, 0.4, 0);
     if (shouldAnimate) {
         upperBody.matrix.rotate(5 * Math.sin(g_seconds * 5), 1,0,0);
         upperBody.matrix.translate(0, .025 * Math.sin(g_seconds * 10), 0);
