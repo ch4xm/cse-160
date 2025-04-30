@@ -44,7 +44,7 @@ function main() {
 
     requestAnimationFrame(tick);
 
-    doSpawnAnimation();
+    // doSpawnAnimation();
 }
 
 function setupWebGL() {
@@ -152,6 +152,8 @@ function click(event) {
     
     renderAllShapes();
 }
+
+let POSITION_OFFSET_X = 0;
 
 let g_selectedColor = [1.0, 1.0, 1.0, 1.0]; // The current color of the selected point
 let g_selectedSize = 10.0; // The current size of the selected point
@@ -579,7 +581,7 @@ function poke() {
     resetAngles();
     duration = 2000; // Duration of the animation in milliseconds
     
-
+    POSITION_OFFSET_X = -.5;
     let lastTimestamp = performance.now();
     function animation(timestamp) {
         let elapsed = timestamp - lastTimestamp;
@@ -650,6 +652,8 @@ function resetAngles() {
     // let g_globalAngleVertical = 0;
     g_neckAngleVertical = 0;
     g_neckAngleHorizontal = 0;
+
+    POSITION_OFFSET_X = 0;
 
     g_rightShoulderAngleForward = 0;
     g_rightShoulderAngleLateral = 70;
@@ -1022,6 +1026,7 @@ function updateSelectedValues() {
 }
 
 let shouldAnimate = false;
+let stopAnimation = false;
 
 function renderAllShapes() {
     var startTime = performance.now();
@@ -1045,7 +1050,7 @@ function renderAllShapes() {
     
     var upperBody = new Cube();
     upperBody.color = solidColor;
-    upperBody.matrix.translate(-.1, 0.4, -.5);
+    upperBody.matrix.translate(-.1, 0.4, POSITION_OFFSET_X);
     if (shouldAnimate) {
         upperBody.matrix.rotate(5 * Math.sin(g_seconds * 5), 1,0,0);
         upperBody.matrix.translate(0, .025 * Math.sin(g_seconds * 10), 0);
@@ -1192,7 +1197,7 @@ function renderAllShapes() {
     let rightWrist = null;
     if (g_wristPosition > 0) {
         rightWrist = new Cube();
-        rightWrist.matrix.translate(.2,.5,g_wristPosition * 10);
+        rightWrist.matrix.translate(.2,.5,(g_wristPosition) * 15 + POSITION_OFFSET_X);
         rightWrist.matrix.scale(.325,.225,.175);
     }
     else {
@@ -1348,7 +1353,7 @@ function renderAllShapes() {
     // pelvis.matrix.setTranslate(0, 0, 0);
     // var pelvis = new Cube(lowerBodyPos);
     pelvis.color = solidColor;
-    pelvis.matrix.translate(-.135,.13,-.5);
+    pelvis.matrix.translate(-.135,.13,POSITION_OFFSET_X);
     if (shouldAnimate) {
         pelvis.matrix.rotate(5 * Math.sin(g_seconds * 5), 1,0,0);
         pelvis.matrix.translate(0, .025 * Math.sin(g_seconds * 10), 0);
