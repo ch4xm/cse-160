@@ -489,26 +489,26 @@ function easeOut(x) {
     return 1 - (1 - x) * (1 - x);
 }
 
-function doSpawnAnimation() {
-    const audio = document.getElementById('minosSpeech');
-    audio.currentTime = 0; // Reset the audio to the beginning
-    audio.play();
+// function doSpawnAnimation() {
+//     const audio = document.getElementById('minosSpeech');
+//     audio.currentTime = 0; // Reset the audio to the beginning
+//     audio.play();
 
-    duration = 50 * 1000; // Duration of the animation in milliseconds
+//     duration = 50 * 1000; // Duration of the animation in milliseconds
 
-    function animation(timestamp) {
+//     function animation(timestamp) {
 
-        const elapsed = timestamp - lastTimestamp;
-        const progress = easeOut(x);
+//         const elapsed = timestamp - lastTimestamp;
+//         const progress = easeOut(x);
 
-        if (progress >= 1) {
-            resetAngles();
-            return;
-        }
-        requestAnimationFrame(animation);
-    }
-    requestAnimationFrame(animation(timestamp));
-}
+//         if (progress >= 1) {
+//             resetAngles();
+//             return;
+//         }
+//         requestAnimationFrame(animation);
+//     }
+//     requestAnimationFrame(animation(timestamp));
+// }
 
 
 
