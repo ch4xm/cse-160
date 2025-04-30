@@ -621,7 +621,6 @@ function setupUICallbacks() {
     document.getElementById('enableWalk').addEventListener('click', function() {
         resetAngles();
         document.getElementById('minosSpeech').play();
-        console.log('enableAnimate clicked');
         shouldAnimate = true;
     });
 

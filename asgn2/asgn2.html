@@ -11,7 +11,7 @@
     </style>
   </head>
 
-  <body onload="main()" style="background-color: black; color: white; font-family: VCR;">
+  <body onload="main()" style="background-color: black; color: white; font-family: VCR; overflow: hidden;">
     <audio id="minosSpeech" src="./assets/minos_speech_music.mp3"></audio>
     <audio id="pokeSound" src="./assets/prepare_thyself.ogg"></audio>
     <div style="display: flex; flex-direction: row; gap: 75px; align-items: center; margin-right: 200px;">
@@ -31,8 +31,8 @@
           <button id="disableSpeech">Stop Speech</button>
         </span>
         <span class="button-row">
-          <button id="enableWalk">Enable Walk</button>
-          <button id="disableWalk">Disable Walk</button>
+          <button id="enableWalk">Play Walk</button>
+          <button id="disableWalk">Stop Walk</button>
         </span>
 
         <button id="resetCharacter" style="width: 100%;">Reset Character</button>
