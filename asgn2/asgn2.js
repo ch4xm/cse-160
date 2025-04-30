@@ -489,26 +489,26 @@ function easeOut(x) {
     return 1 - (1 - x) * (1 - x);
 }
 
-// function doSpawnAnimation() {
-//     const audio = document.getElementById('minosSpeech');
-//     audio.currentTime = 0; // Reset the audio to the beginning
-//     audio.play();
+function doSpawnAnimation() {
+    const audio = document.getElementById('minosSpeech');
+    audio.currentTime = 0; // Reset the audio to the beginning
+    audio.play();
 
-//     duration = 50 * 1000; // Duration of the animation in milliseconds
+    duration = 50 * 1000; // Duration of the animation in milliseconds
 
-//     function animation(timestamp) {
+    function animation(timestamp) {
 
-//         const elapsed = timestamp - lastTimestamp;
-//         const progress = easeOut(x);
+        const elapsed = timestamp - lastTimestamp;
+        const progress = easeOut(x);
 
-//         if (progress >= 1) {
-//             resetAngles();
-//             return;
-//         }
-//         requestAnimationFrame(animation);
-//     }
-//     requestAnimationFrame(animation(timestamp));
-// }
+        if (progress >= 1) {
+            resetAngles();
+            return;
+        }
+        requestAnimationFrame(animation);
+    }
+    requestAnimationFrame(animation(timestamp));
+}
 
 
 
@@ -644,8 +644,10 @@ function setupUICallbacks() {
         sectionTitle.innerText = sliderCategory.sectionTitle;
         parentElement.appendChild(sectionTitle);
 
+        const sectionContainer = document.createElement('div');
+        sectionContainer.appendChild(sectionTitle);
         sliderCategory.sliders.forEach(slider => {
-            const sliderContainer = document.createElement('span');
+            const sliderContainer = document.createElement('div');
         
             const labelElement = document.createElement('label');
             const sliderElement = document.createElement('input');
@@ -666,7 +668,11 @@ function setupUICallbacks() {
             sliderElement.addEventListener('mousemove', function(event) {
                 slider.onChange(event, slider);
             });
+
+            sectionContainer.appendChild(sliderContainer);
         });
+
+        parentElement.appendChild(sectionContainer);
     });
     
     // document.getElementById('clear').addEventListener('click', function() {
@@ -1281,7 +1287,7 @@ function renderAllShapes() {
 
     const rightAnkleJoint = new Cube(rightCalfPos);
     rightAnkleJoint.color = solidColor;
-    rightAnkleJoint.matrix.translate(1, 22, 5);
+    rightAnkleJoint.matrix.translate(1, 22, 4);
     rightAnkleJoint.matrix.rotate(g_rightAnkleAngle, 1,0,0);
     rightAnkleJoint.matrix.rotate(180, 1,0,0);
     const rightAnkleJointPos = new Matrix4(rightAnkleJoint.matrix);
@@ -1289,9 +1295,9 @@ function renderAllShapes() {
 
     const rightFoot = new Cube(rightAnkleJointPos);
     rightFoot.color = solidColor;
-    rightFoot.matrix.translate(-1.2, -4, 0);
+    rightFoot.matrix.translate(-1.2, -4, -1);
     const rightFootPos = new Matrix4(rightFoot.matrix);
-    rightFoot.matrix.scale(2.5,4,8.75);
+    rightFoot.matrix.scale(2.5,4,7);
     rightFoot.render();
 
     
@@ -1344,7 +1350,7 @@ function renderAllShapes() {
 
     const leftAnkleJoint = new Cube(leftCalfPos);
     leftAnkleJoint.color = solidColor;
-    leftAnkleJoint.matrix.translate(1, 22, 5);
+    leftAnkleJoint.matrix.translate(1, 22, 4);
     leftAnkleJoint.matrix.rotate(g_leftAnkleAngle, 1,0,0);
     leftAnkleJoint.matrix.rotate(180, 1,0,0);
     const leftAnkleJointPos = new Matrix4(leftAnkleJoint.matrix);
@@ -1353,9 +1359,9 @@ function renderAllShapes() {
 
     const leftFoot = new Cube(leftAnkleJointPos);
     leftFoot.color = solidColor;
-    leftFoot.matrix.translate(-1.3, -4, 0);
+    leftFoot.matrix.translate(-1.4, -4, -1);
     const leftFootPos = new Matrix4(leftFoot.matrix);
-    leftFoot.matrix.scale(2.5,4,8.75);
+    leftFoot.matrix.scale(2.5,4,7);
     leftFoot.render();
 
 
