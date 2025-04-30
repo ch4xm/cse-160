@@ -44,7 +44,7 @@ function main() {
 
     requestAnimationFrame(tick);
 
-    // doSpawnAnimation();
+    doSpawnAnimation();
 }
 
 function setupWebGL() {
@@ -159,8 +159,8 @@ let g_selectedSegments = 10; // The current number of segments for the selected 
 
 let verticalOffset = 0.0;
 
-let g_globalAngleHorizontal = 180;
-let g_globalAngleVertical = 0;
+let g_globalAngleHorizontal = 190;
+let g_globalAngleVertical = -5;
 let g_neckAngleVertical = 0;
 let g_neckAngleHorizontal = 0;
 
@@ -174,6 +174,9 @@ let g_rightWristAngle = 0;
 let g_leftShoulderAngleForward = 0;
 let g_leftShoulderAngleLateral = 250;
 let g_leftShoulderAngleInOut = 0;
+
+
+let g_pelvisAngle = 0;
 
 let g_leftElbowAngle = 0;
 let g_leftWristAngle = 0;
@@ -189,6 +192,8 @@ let g_leftHipAngle    = 180;
 let g_leftKneeAngle   = 0;
 let g_leftAnkleAngle  = 0;
 
+let g_bodyAngle = 0.0; // The current angle of the body
+
 const sliders = [
     {sectionTitle: 'Global Rotation', 
     sliders: [
@@ -197,7 +202,7 @@ const sliders = [
             label: 'Global Rotate Horizontal',
             min: 0,
             max: 360,
-            value: 180,
+            value: 200,
             step: 1,
             onChange: function(event, slider) {
                 if (event.buttons != 1) {
@@ -214,7 +219,7 @@ const sliders = [
             label: 'Global Rotate Vertical',
             min: -90,
             max: 90,
-            value: 0,
+            value: -10,
             step: 1,
             onChange: function(event, slider) {
                 if (event.buttons != 1) {
@@ -484,7 +489,31 @@ const sliders = [
             }
         }
         ]
-      }
+      },
+    //   {
+    //     sectionTitle: 'Body',
+    //     sliders: [
+    //     {
+    //         // id: 'pelvisAngle',
+    //         // label: 'Pelvis Angle',
+    //         // min: -30, max: 30, value: 0, step: 1,
+    //         // onChange(e, s) {
+    //         //     if (e.buttons!=1) return;
+    //         //     g_pelvisAngle = Number(e.target.value);
+    //         //     document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
+    //         //     renderAllShapes();
+    //         // }
+    //         id: 'bodyAngle',
+    //         label: 'Body Angle',
+    //         min: -20, max: 20, value: 0.0, step: 0.01,
+    //         onChange(e, s) {
+    //             if (e.buttons!=1) return;
+    //             g_bodyAngle = Number(e.target.value);
+    //             document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
+    //             renderAllShapes();
+    //         }
+    //     },]
+    //   }
 ];
 
 function easeOut(x) {
@@ -499,8 +528,10 @@ function doSpawnAnimation() {
     duration = 50 * 1000; // Duration of the animation in milliseconds
 
     let lastTimestamp = performance.now();
+    g_globalAngleVertical = -90;
+    g_globalAngleHorizontal = 160;
 
-    function animation(timestamp) {
+    function spawnAnimation(timestamp) {
 
         const elapsed = timestamp - lastTimestamp;
         const progress = easeOut(Math.min(elapsed / duration, 1));
@@ -510,10 +541,14 @@ function doSpawnAnimation() {
         g_leftKneeAngle = 90;
         g_rightKneeAngle = -90;
         g_leftShoulderAngleForward = -60;
+        g_pelvisAngle = 0;
         g_leftElbowAngle = -50;
         g_rightShoulderAngleForward = 60;
         g_rightElbowAngle = -50;
         // g_leftShoulderAngleLateral = 250;
+
+        
+        // a_Position = Vector4(1, 1, 1, 1);
 
         g_neckAngleVertical = 5;
 
@@ -528,9 +563,9 @@ function doSpawnAnimation() {
             resetAngles();
             return;
         }
-        requestAnimationFrame(animation);
+        requestAnimationFrame(spawnAnimation);
     }
-    requestAnimationFrame(animation);
+    requestAnimationFrame(spawnAnimation);
 }
 
 
@@ -541,6 +576,7 @@ function poke() {
     audio.volume = 0.2; // Set the volume to 50%
     audio.play(); // Play the sound
 
+    resetAngles();
     duration = 2000; // Duration of the animation in milliseconds
     
 
@@ -550,19 +586,40 @@ function poke() {
         let progress = Math.min(elapsed / duration, 1); // Limit progress to 1 second
         progress = easeOut(progress); // Apply easing function
         // console.log('elapsed: ' + elapsed, progress);
+        g_leftHipAngle = 180;
+        g_rightHipAngle = 180;
+        g_rightShoulderAngleLateral = 70;
+
+        g_leftHipAngle = 180 + Math.sin(progress * Math.PI) * 20;
+        g_rightHipAngle = 180 - Math.sin(progress * Math.PI) * 20;
+        g_rightKneeAngle = 180 + Math.sin(progress * Math.PI) * 20;
+        g_rightShoulderAngleForward = 0;
+        g_rightShoulderAngleLateral = 20;
+        // g_rightShoulderAngleLateral = 70 - Math.sin(progress * Math.PI) * 60;
         if (progress < 0.8) {
-            g_rightShoulderAngleLateral = -Math.sin(progress * Math.PI) * 20;
-            g_neckAngleVertical = Math.sin(progress * Math.PI) * 20;
-            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI) * 50;
+            g_neckAngleVertical = Math.sin(progress * Math.PI / 0.8) * 30;
+            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI / .8) * 100;
+            g_rightElbowAngle = -Math.sin(progress * Math.PI / 10) * 200;
             // g_wristSize = Math.sin(progress * Math.PI) * 5;
             g_leftShoulderAngleForward = -Math.sin(progress * Math.PI) * 50;
             g_leftElbowAngle = -Math.sin(progress * Math.PI) * 100;
+
+            // g_rightHipAngle = Math.sin(progress * Math.PI) * 90;
         }
         else {
-            // g_wristPosition = Math.sin(progress * Math.PI) * 0.5;
-            g_rightShoulderAngleForward = Math.sin(progress * Math.PI) * 50;
-            g_leftShoulderAngleForward = -Math.sin(progress * Math.PI) * 10;
-            g_rightElbowAngle = -Math.sin(progress * Math.PI) * 100;
+            // g_rightShoulderAngleLateral = 35 + Math.sin(progress * Math.PI + 10) * 60;
+            // g_rightElbowAngle = -Math.sin(progress * Math.PI) * 100;
+            g_rightShoulderAngleForward = -50 - Math.sin(progress * Math.PI * 1.5) * 125;
+
+            g_leftShoulderAngleForward = 0 + Math.sin(progress * Math.PI) * 50;
+            g_leftElbowAngle = -Math.sin(progress * Math.PI) * 100;
+            // g_leftHipAngle = Math.sin(progress * Math.PI) * 90;
+            // g_rightHipAngle = Math.sin(progress * Math.PI) * 90;
+            g_wristPosition = progress - 0.8;
+            // g_rightShoulderAngleForward = progress * 10;
+            // g_rightShoulderAngleForward = Math.sin(progress * Math.PI) * 50;
+            // g_leftShoulderAngleForward = -Math.sin(progress * Math.PI) * 10;
+            // g_rightElbowAngle = -Math.sin(progress * Math.PI) * 100;
         }
         console.log('progress: ' + progress);
 
@@ -969,10 +1026,11 @@ let shouldAnimate = false;
 function renderAllShapes() {
     var startTime = performance.now();
     // Clear <canvas>
-    var globalRotMat = new Matrix4().rotate(-g_globalAngleHorizontal, 0, 1, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    var globalRotMat = new Matrix4()
+    globalRotMat.rotate(-g_globalAngleHorizontal, 0, 1, 0);
     globalRotMat.rotate(-g_globalAngleVertical, 1, 0, 0);
     gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     // gl.clear(gl.COLOR_BUFFER_BIT);
     
 
@@ -987,11 +1045,12 @@ function renderAllShapes() {
     
     var upperBody = new Cube();
     upperBody.color = solidColor;
-    upperBody.matrix.translate(-.1, 0.4, 0);
+    upperBody.matrix.translate(-.1, 0.4, -.5);
     if (shouldAnimate) {
         upperBody.matrix.rotate(5 * Math.sin(g_seconds * 5), 1,0,0);
         upperBody.matrix.translate(0, .025 * Math.sin(g_seconds * 10), 0);
     }
+    upperBody.matrix.rotate(g_bodyAngle, 1,0,0);
     upperBody.matrix.scale(0.75, 0.75, 0.75);
     const upperBodyPos = new Matrix4(upperBody.matrix);
     upperBody.matrix.scale(0.5,.235,.3);
@@ -1130,9 +1189,16 @@ function renderAllShapes() {
     
     // leftWristJoint.render();
 
-    const rightWrist = new Cube(rightWristJointPos);
+    let rightWrist = null;
+    if (g_wristPosition > 0) {
+        rightWrist = new Cube();
+        rightWrist.matrix.translate(.2,.5,g_wristPosition * 10);
+        rightWrist.matrix.scale(.325,.225,.175);
+    }
+    else {
+        rightWrist = new Cube(rightWristJointPos);
+    }
     rightWrist.color = [1,1,0,.8];
-    // rightWrist.matrix.translate(0,g_wristPosition * 50, g_wristPosition * 50);
     rightWrist.matrix.translate(-0.1, -.175, -.175);
     rightWrist.matrix.scale(.55,.5,.75);
     rightWrist.matrix.scale(g_wristSize, g_wristSize, g_wristSize);
@@ -1141,7 +1207,9 @@ function renderAllShapes() {
 
     var leftArmJoint = new Cube(leftMiddleArmConnectorPos);
     leftArmJoint.color = solidColor;
-    leftArmJoint.matrix.translate(0.1,  0.575, 0);
+    leftArmJoint.matrix.translate(.1,  0.575, 0);
+    // leftArmJoint.matrix.rotate(-10, 0,1, 0);
+    // leftArmJoint.matrix.translate(0,0,1)
     if (shouldAnimate) {
         // leftArmJoint.matrix.rotate(240, 0, 0, 1);
         leftArmJoint.matrix.rotate(230 + 5 * Math.sin(g_seconds * 5), 0, 0, 1);
@@ -1277,12 +1345,16 @@ function renderAllShapes() {
     rightTopArmConnector.render();
 
     var pelvis = new Cube();
+    // pelvis.matrix.setTranslate(0, 0, 0);
     // var pelvis = new Cube(lowerBodyPos);
     pelvis.color = solidColor;
-    pelvis.matrix.translate(-.135,.13,0);
+    pelvis.matrix.translate(-.135,.13,-.5);
     if (shouldAnimate) {
         pelvis.matrix.rotate(5 * Math.sin(g_seconds * 5), 1,0,0);
         pelvis.matrix.translate(0, .025 * Math.sin(g_seconds * 10), 0);
+    }
+    else {
+        pelvis.matrix.rotate(g_pelvisAngle, 1,0,0);
     }
     // pelvis.matrix.translate(0, g_wristPosition, 0)
     pelvis.matrix.scale(0.32, 0.32, 0.32);
