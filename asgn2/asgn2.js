@@ -492,87 +492,163 @@ const sliders = [
         }
         ]
       },
-    //   {
-    //     sectionTitle: 'Body',
-    //     sliders: [
-    //     {
-    //         // id: 'pelvisAngle',
-    //         // label: 'Pelvis Angle',
-    //         // min: -30, max: 30, value: 0, step: 1,
-    //         // onChange(e, s) {
-    //         //     if (e.buttons!=1) return;
-    //         //     g_pelvisAngle = Number(e.target.value);
-    //         //     document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
-    //         //     renderAllShapes();
-    //         // }
-    //         id: 'bodyAngle',
-    //         label: 'Body Angle',
-    //         min: -20, max: 20, value: 0.0, step: 0.01,
-    //         onChange(e, s) {
-    //             if (e.buttons!=1) return;
-    //             g_bodyAngle = Number(e.target.value);
-    //             document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
-    //             renderAllShapes();
-    //         }
-    //     },]
-    //   }
+      {
+        sectionTitle: 'Body',
+        sliders: [
+        {
+            // id: 'pelvisAngle',
+            // label: 'Pelvis Angle',
+            // min: -30, max: 30, value: 0, step: 1,
+            // onChange(e, s) {
+            //     if (e.buttons!=1) return;
+            //     g_pelvisAngle = Number(e.target.value);
+            //     document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
+            //     renderAllShapes();
+            // }
+            id: 'bodyAngle',
+            label: 'Body Angle',
+            min: -20, max: 20, value: 0.0, step: 0.01,
+            onChange(e, s) {
+                if (e.buttons!=1) return;
+                g_bodyAngle = Number(e.target.value);
+                document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
+                renderAllShapes();
+            }
+        },]
+      }
 ];
 
 function easeOut(x) {
     return 1 - (1 - x) * (1 - x);
 }
 
-function doSpawnAnimation() {
-    const audio = document.getElementById('minosSpeech');
-    audio.currentTime = 0; // Reset the audio to the beginning
-    // audio.play();
+// function doSpawnAnimation() {
+//     const audio = document.getElementById('minosSpeech');
+//     audio.currentTime = 0; // Reset the audio to the beginning
+//     // audio.play();
     
-    duration = 50 * 1000; // Duration of the animation in milliseconds
+//     duration = 50 * 1000; // Duration of the animation in milliseconds
+
+//     let lastTimestamp = performance.now();
+//     g_globalAngleVertical = -90;
+//     g_globalAngleHorizontal = 160;
+
+//     function spawnAnimation(timestamp) {
+
+//         const elapsed = timestamp - lastTimestamp;
+//         const progress = easeOut(Math.min(elapsed / duration, 1));
+
+//         g_leftHipAngle = 90;
+//         g_rightHipAngle = 90;
+//         g_leftKneeAngle = 90;
+//         g_rightKneeAngle = -90;
+//         g_leftShoulderAngleForward = -60;
+//         g_pelvisAngle = 0;
+//         g_leftElbowAngle = -50;
+//         g_rightShoulderAngleForward = 60;
+//         g_rightElbowAngle = -50;
+//         // g_leftShoulderAngleLateral = 250;
+
+        
+//         // a_Position = Vector4(1, 1, 1, 1);
+
+//         g_neckAngleVertical = 5;
+
+//         console.log('elapsed: ' + elapsed, progress);
+//         if (progress < 0.8) {
+//         }
+        
+//         if (progress >= 1 || shouldAnimate || stopAnimation) {
+//             stopAnimation = false;
+//             console.log('progress: ' + progress);
+//             document.getElementById('minosSpeech').pause();
+//             resetAngles();
+//             return;
+//         }
+//         requestAnimationFrame(spawnAnimation);
+//     }
+//     requestAnimationFrame(spawnAnimation);
+// }
+
+let overheadRunning = false;
+function doOverhead() {
+    console.log('doOverhead');
+    if (overheadRunning || pokeRunning || shouldAnimate) {
+        return;
+    }
+    overheadRunning = true;
+    const audio = document.getElementById('crushSound');
+    audio.currentTime = 0; // Reset the audio to the beginning
+    audio.volume = 0.3; // Set the volume to 50%
+    audio.play(); // Play the sound
+
+    duration = 1000; // Duration of the animation in milliseconds
 
     let lastTimestamp = performance.now();
-    g_globalAngleVertical = -90;
-    g_globalAngleHorizontal = 160;
 
-    function spawnAnimation(timestamp) {
+    function animation(timestamp) {
+        let elapsed = timestamp - lastTimestamp;
+        let progress = Math.min(elapsed / duration, 1); // Limit progress to 1 second
+        progress = easeOut(progress); // Apply easing function
 
-        const elapsed = timestamp - lastTimestamp;
-        const progress = easeOut(Math.min(elapsed / duration, 1));
+        if (progress < 0.1) {
+            g_leftHipAngle = 180 + Math.sin(progress * Math.PI * 5) * 30;
+            g_leftKneeAngle = 0 + Math.sin(progress * Math.PI * 5) * 100;
 
-        g_leftHipAngle = 90;
-        g_rightHipAngle = 90;
-        g_leftKneeAngle = 90;
-        g_rightKneeAngle = -90;
-        g_leftShoulderAngleForward = -60;
-        g_pelvisAngle = 0;
-        g_leftElbowAngle = -50;
-        g_rightShoulderAngleForward = 60;
-        g_rightElbowAngle = -50;
-        // g_leftShoulderAngleLateral = 250;
+            console.log(g_leftHipAngle, g_leftKneeAngle);
+            g_rightShoulderAngleLateral = 70 - Math.sin(progress * Math.PI * 5) * 100;
+            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI * 5) * 100;
 
-        
-        // a_Position = Vector4(1, 1, 1, 1);
+            g_leftShoulderAngleForward = Math.sin(progress * Math.PI * 5) * 100;
+            g_leftShoulderAngleLateral = 250 - Math.sin(progress * Math.PI * 5) * 100;
 
-        g_neckAngleVertical = 5;
-
-        console.log('elapsed: ' + elapsed, progress);
-        if (progress < 0.8) {
+            g_pelvisAngle = Math.sin(progress * Math.PI * 5) * 5;
+            console.log('pelvisAngle: ' + g_pelvisAngle);
+            g_rightHipAngle = 180 + Math.sin(progress * Math.PI * 5) * 20;
+            g_rightKneeAngle = 180 + Math.sin(progress * Math.PI * 5) * 100;
+            g_neckAngleVertical = Math.sin(progress * Math.PI * 5) * 50;
+        } else if (progress < 0.5) {
+            // g_leftKneeAngle = lastAngle + Math.sin(progress * Math.PI) * 160;
+            // g_pelvisAngle = 1 - Math.sin(progress * Math.PI) * 5;
         }
-        
-        if (progress >= 1 || shouldAnimate || stopAnimation) {
-            stopAnimation = false;
-            console.log('progress: ' + progress);
-            document.getElementById('minosSpeech').pause();
+        else if (progress < 0.8) {
+            g_neckAngleVertical = 0 + Math.sin(progress * Math.PI * 5) * 5;
+            g_leftHipAngle = 210 - Math.sin(progress * Math.PI * 1) * 100;
+            g_leftKneeAngle = 0 + progress * 30;
+
+            g_rightHipAngle = 210 - Math.sin(progress * Math.PI * 1) * 100;
+            g_rightKneeAngle = 180 - Math.sin(progress * Math.PI * 1) * 30;
+
+
+            g_leftShoulderAngleForward = 0 + Math.sin(progress * Math.PI * 5) * 100;
+            // g_rightShoulderAngleLateral = 70 - Math.sin(progress * Math.PI * 1) * 100;
+            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI * 5) * 100;
+            g_pelvisAngle = 5 - Math.sin(progress * Math.PI) * 20;
+        } else if (progress < .85) {
+
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(animation);
+        }
+        else {
             resetAngles();
+            overheadRunning = false;
             return;
         }
-        requestAnimationFrame(spawnAnimation);
+
     }
-    requestAnimationFrame(spawnAnimation);
+    requestAnimationFrame(animation);
 }
 
 
+let pokeRunning = false;
 
 function poke() {
+    if (pokeRunning || overheadRunning || shouldAnimate) {
+        return;
+    }
+    pokeRunning = true;
     const audio = document.getElementById('pokeSound');
     audio.currentTime = 0; // Reset the audio to the beginning
     audio.volume = 0.2; // Set the volume to 50%
@@ -581,7 +657,7 @@ function poke() {
     resetAngles();
     duration = 2000; // Duration of the animation in milliseconds
     
-    POSITION_OFFSET_X = -.5;
+    POSITION_OFFSET_X = -.25;
     let lastTimestamp = performance.now();
     function animation(timestamp) {
         let elapsed = timestamp - lastTimestamp;
@@ -597,10 +673,12 @@ function poke() {
         g_rightKneeAngle = 180 + Math.sin(progress * Math.PI) * 20;
         g_rightShoulderAngleForward = 0;
         g_rightShoulderAngleLateral = 20;
+
+        const keyframe1 = 0.8;
         // g_rightShoulderAngleLateral = 70 - Math.sin(progress * Math.PI) * 60;
-        if (progress < 0.8) {
-            g_neckAngleVertical = Math.sin(progress * Math.PI / 0.8) * 30;
-            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI / .8) * 100;
+        if (progress < keyframe1) {
+            g_neckAngleVertical = Math.sin(progress * Math.PI / keyframe1) * 30;
+            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI / keyframe1) * 100;
             g_rightElbowAngle = -Math.sin(progress * Math.PI / 10) * 200;
             // g_wristSize = Math.sin(progress * Math.PI) * 5;
             g_leftShoulderAngleForward = -Math.sin(progress * Math.PI) * 50;
@@ -617,7 +695,7 @@ function poke() {
             g_leftElbowAngle = -Math.sin(progress * Math.PI) * 100;
             // g_leftHipAngle = Math.sin(progress * Math.PI) * 90;
             // g_rightHipAngle = Math.sin(progress * Math.PI) * 90;
-            g_wristPosition = progress - 0.8;
+            g_wristPosition = progress - keyframe1;
             // g_rightShoulderAngleForward = progress * 10;
             // g_rightShoulderAngleForward = Math.sin(progress * Math.PI) * 50;
             // g_leftShoulderAngleForward = -Math.sin(progress * Math.PI) * 10;
@@ -629,21 +707,15 @@ function poke() {
             requestAnimationFrame(animation);
         }
         else {
-            // g_rightShoulderAngleLateral = 0;
-            // g_neckAngleVertical = 0;
-            // g_rightShoulderAngleForward = 0;
-            // g_rightElbowAngle = 0;
-            // g_leftShoulderAngleForward = 0;
-            // g_leftElbowAngle = 0;
-            // g_wristPosition = 0.0;
-            // g_wristSize = 1.0;
             resetAngles();
+            pokeRunning = false;
             return;
         }
 
            
     }
     requestAnimationFrame(animation);
+    
 }
 
 function resetAngles() {
@@ -679,6 +751,8 @@ function resetAngles() {
     g_leftHipAngle    = 180;
     g_leftKneeAngle   = 0;
     g_leftAnkleAngle  = 0;
+
+    g_pelvisAngle = 0;
 }
 
 function setupUICallbacks() {
@@ -702,36 +776,36 @@ function setupUICallbacks() {
 
     registerArmCallbacks();
 
-    document.getElementById('enableSpeech').addEventListener('click', function() {
-        // const audio = document.getElementById('minosSpeech');
-        // audio.currentTime = 0; // Reset the audio to the beginning
-        // // audio.volume = 0.2; // Set the volume to 50%
-        // audio.play(); // Play the sound
-        shouldAnimate = false;
-        doSpawnAnimation();
-    });
+    // document.getElementById('enableSpeech').addEventListener('click', function() {
+    //     // const audio = document.getElementById('minosSpeech');
+    //     // audio.currentTime = 0; // Reset the audio to the beginning
+    //     // // audio.volume = 0.2; // Set the volume to 50%
+    //     // audio.play(); // Play the sound
+    //     shouldAnimate = false;
+    //     doSpawnAnimation();
+    // });
 
-    document.getElementById('disableSpeech').addEventListener('click', function() {
-        stopAnimation = true;
-        const audio = document.getElementById('minosSpeech');
-        audio.pause();
-        audio.currentTime = 0; // Reset the audio to the beginning
+    // document.getElementById('disableSpeech').addEventListener('click', function() {
+    //     stopAnimation = true;
+    //     const audio = document.getElementById('minosSpeech');
+    //     audio.pause();
+    //     audio.currentTime = 0; // Reset the audio to the beginning
 
-        shouldAnimate = false;
-        resetAngles();
-    });
+    //     shouldAnimate = false;
+    //     resetAngles();
+    // });
 
     document.getElementById('enableWalk').addEventListener('click', function() {
         resetAngles();
-        document.getElementById('minosSpeech').play();
+        // document.getElementById('minosSpeech').play();
         shouldAnimate = true;
         stopAnimation = true;
     });
 
     document.getElementById('disableWalk').addEventListener('click', function() {
-        const audio = document.getElementById('minosSpeech');
-        audio.pause();
-        audio.currentTime = 0;
+        // const audio = document.getElementById('minosSpeech');
+        // audio.pause();
+        // audio.currentTime = 0;
         
         shouldAnimate = false;
         stopAnimation = true;
@@ -739,6 +813,10 @@ function setupUICallbacks() {
 
     document.getElementById('resetCharacter').addEventListener('click', function() {
         resetAngles();
+    });
+
+    document.getElementById('overhead').addEventListener('click', function() {
+        doOverhead();
     });
 
     const parentElement = document.getElementById('sliderContainer');
@@ -1055,7 +1133,9 @@ function renderAllShapes() {
         upperBody.matrix.rotate(5 * Math.sin(g_seconds * 5), 1,0,0);
         upperBody.matrix.translate(0, .025 * Math.sin(g_seconds * 10), 0);
     }
-    upperBody.matrix.rotate(g_bodyAngle, 1,0,0);
+    else {
+        // upperBody.matrix.rotate(g_bodyAngle, 0,0,1);
+    }
     upperBody.matrix.scale(0.75, 0.75, 0.75);
     const upperBodyPos = new Matrix4(upperBody.matrix);
     upperBody.matrix.scale(0.5,.235,.3);
@@ -1373,7 +1453,7 @@ function renderAllShapes() {
     rightLegJoint.matrix.translate(.825, .05, .5);
     rightLegJoint.matrix.scale(.25,.1,.2);
     if (shouldAnimate) {
-        rightLegJoint.matrix.rotate(60 * Math.sin(g_seconds * 5) - 200, 1, 0, 0);
+        rightLegJoint.matrix.rotate(60 * Math.sin(g_seconds * 5) - 180, 1, 0, 0);
     }
     else {
         rightLegJoint.matrix.rotate(g_rightHipAngle, 1,0,0);
