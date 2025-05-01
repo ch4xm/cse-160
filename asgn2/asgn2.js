@@ -572,8 +572,7 @@ function easeOut(x) {
 
 let overheadRunning = false;
 function doOverhead() {
-    console.log('doOverhead');
-    if (overheadRunning || pokeRunning || shouldAnimate) {
+    if (poseRunning || pokeRunning || overheadRunning || shouldAnimate) {
         return;
     }
     overheadRunning = true;
@@ -591,41 +590,47 @@ function doOverhead() {
         let progress = Math.min(elapsed / duration, 1); // Limit progress to 1 second
         progress = easeOut(progress); // Apply easing function
 
-        if (progress < 0.1) {
-            g_leftHipAngle = 180 + Math.sin(progress * Math.PI * 5) * 30;
-            g_leftKneeAngle = 0 + Math.sin(progress * Math.PI * 5) * 100;
+        const speed = 2.5;
+        if (progress < 0.25) {
+            g_leftHipAngle = 180 + Math.sin(progress * Math.PI * speed) * 30;
+            g_leftKneeAngle = 0 + Math.sin(progress * Math.PI * speed) * 100;
 
             console.log(g_leftHipAngle, g_leftKneeAngle);
-            g_rightShoulderAngleLateral = 70 - Math.sin(progress * Math.PI * 5) * 100;
-            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI * 5) * 100;
+            g_rightShoulderAngleLateral = 70 - Math.sin(progress * Math.PI * speed) * 100;
+            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI * speed) * 100;
 
-            g_leftShoulderAngleForward = Math.sin(progress * Math.PI * 5) * 100;
-            g_leftShoulderAngleLateral = 250 - Math.sin(progress * Math.PI * 5) * 100;
+            g_leftShoulderAngleForward = Math.sin(progress * Math.PI * speed) * 100;
+            g_leftShoulderAngleLateral = 250 - Math.sin(progress * Math.PI * speed) * 100;
 
-            g_pelvisAngle = Math.sin(progress * Math.PI * 5) * 5;
+            g_pelvisAngle = Math.sin(progress * Math.PI * speed) * 5;
             console.log('pelvisAngle: ' + g_pelvisAngle);
-            g_rightHipAngle = 180 + Math.sin(progress * Math.PI * 5) * 20;
-            g_rightKneeAngle = 180 + Math.sin(progress * Math.PI * 5) * 100;
-            g_neckAngleVertical = Math.sin(progress * Math.PI * 5) * 50;
+            g_rightHipAngle = 180 + Math.sin(progress * Math.PI * speed) * 20;
+            g_rightKneeAngle = 180 + Math.sin(progress * Math.PI * speed) * 100;
+            g_neckAngleVertical = Math.sin(progress * Math.PI * speed) * 50;
         } else if (progress < 0.5) {
             // g_leftKneeAngle = lastAngle + Math.sin(progress * Math.PI) * 160;
             // g_pelvisAngle = 1 - Math.sin(progress * Math.PI) * 5;
         }
-        else if (progress < 0.8) {
-            g_neckAngleVertical = 0 + Math.sin(progress * Math.PI * 5) * 5;
-            g_leftHipAngle = 210 - Math.sin(progress * Math.PI * 1) * 100;
-            g_leftKneeAngle = 0 + progress * 30;
+        else if (progress < 0.7) {
+            g_neckAngleVertical = 0 + Math.sin(progress * Math.PI * speed) * 5;
+            g_leftHipAngle = 210 - Math.sin(progress * Math.PI * speed / 5) * 100;
+            // g_leftKneeAngle = 0 + progress * 30;
 
             g_rightHipAngle = 210 - Math.sin(progress * Math.PI * 1) * 100;
-            g_rightKneeAngle = 180 - Math.sin(progress * Math.PI * 1) * 30;
+            // g_rightKneeAngle = 180 - Math.sin(progress * Math.PI * 1) * 30;
 
+            g_rightKneeAngle = 180 - Math.sin(progress * Math.PI * speed) * 10;
 
-            g_leftShoulderAngleForward = 0 + Math.sin(progress * Math.PI * 5) * 100;
+            g_leftKneeAngle = 0 - Math.sin(progress * Math.PI * speed) * 10;
+
+            g_leftShoulderAngleForward = 0 + Math.sin(progress * Math.PI * speed) * 100;
             // g_rightShoulderAngleLateral = 70 - Math.sin(progress * Math.PI * 1) * 100;
-            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI * 5) * 100;
+            g_rightShoulderAngleForward = -Math.sin(progress * Math.PI * speed) * 100;
             g_pelvisAngle = 5 - Math.sin(progress * Math.PI) * 20;
         } else if (progress < .85) {
-
+        } else if (progress < .9) {
+            g_leftHipAngle = 180 - Math.sin(progress * Math.PI * 5) * 20;
+            g_rightHipAngle = 180 + Math.sin(progress * Math.PI * 5) * 20;
         }
 
         if (progress < 1) {
@@ -641,11 +646,72 @@ function doOverhead() {
     requestAnimationFrame(animation);
 }
 
+let poseRunning = false;
+function doPose() {
+    if (poseRunning || pokeRunning || overheadRunning || shouldAnimate) {
+        return;
+    }
+    poseRunning = true;
+
+    g_globalAngleHorizontal = 200;
+    g_globalAngleVertical = -5;
+
+    const hor = Number(g_globalAngleHorizontal)
+    const ver = Number(g_globalAngleVertical)
+    const audio = document.getElementById('minosSpeech');
+    audio.currentTime = 0; // Reset the audio to the beginning
+    // audio.volume = 0.3; // Set the volume to 50%
+    audio.play(); // Play the sound
+    duration = 50000; // Duration of the animation in milliseconds
+    let lastTimestamp = performance.now();
+    function animation(timestamp) {
+        let elapsed = timestamp - lastTimestamp;
+        let progress = Math.min(elapsed / duration, 1); // Limit progress to 1 second
+        progress = easeOut(progress); // Apply easing function
+        const speed = 0.5;
+        g_neckAngleVertical = 0 + Math.sin(progress * Math.PI * 0.5) * 70;
+        if (progress < 0.3) {
+            g_globalAngleHorizontal = 220 - Math.sin(progress * Math.PI * speed * 3) * 20;
+            g_globalAngleVertical = -10 - Math.sin(progress * Math.PI * speed * 3) * 10;
+            
+            g_leftShoulderAngleLateral = 250 - Math.sin(progress * Math.PI * speed) * 45;
+            g_leftShoulderAngleForward = 0 - Math.sin(progress * Math.PI * speed) * 50;
+
+            g_rightShoulderAngleLateral = 70 - Math.sin(progress * Math.PI * speed) * 45;
+            g_rightShoulderAngleForward = Math.sin(progress * Math.PI * speed) * 50;
+            
+            
+        }
+        else if (progress < 0.5) {
+            // g_neckAngleVertical = 0 + Math.sin(progress * Math.PI * 0.5) * 70;
+            g_leftShoulderAngleLateral = 250 - Math.sin(progress * Math.PI * speed) * 45;
+            g_leftShoulderAngleForward = 0 - Math.sin(progress * Math.PI * speed) * 50;
+
+            g_rightShoulderAngleLateral = 70 - Math.sin(progress * Math.PI * speed) * 45;
+            g_rightShoulderAngleForward = Math.sin(progress * Math.PI * speed) * 50;
+            
+            g_neckAngleVertical = 0 + Math.sin(progress * Math.PI * speed) * 50;
+        }
+        
+        
+        if (progress < 1 && poseRunning) {
+            requestAnimationFrame(animation);
+        }
+        else {
+            resetAngles();
+            poseRunning = false;
+            stopAnimation = false;
+            return;
+        }
+    }
+    requestAnimationFrame(animation);
+}
 
 let pokeRunning = false;
 
 function poke() {
-    if (pokeRunning || overheadRunning || shouldAnimate) {
+    console.log('poke', pokeRunning, poseRunning, overheadRunning, shouldAnimate);
+    if (poseRunning || pokeRunning || overheadRunning || shouldAnimate) {
         return;
     }
     pokeRunning = true;
@@ -795,8 +861,27 @@ function setupUICallbacks() {
     //     resetAngles();
     // });
 
+    document.getElementById('enablePose').addEventListener('click', function() {
+        resetAngles();
+        shouldAnimate = false;
+        stopAnimation = true;
+        doPose();
+    });
+
+    document.getElementById('disablePose').addEventListener('click', function() {
+        stopAnimation = true;
+        shouldAnimate = false;
+        poseRunning = false;
+        g_globalAngleHorizontal = 190;
+        g_globalAngleVertical = -5;
+        const audio = document.getElementById('minosSpeech');
+        audio.pause();
+        audio.currentTime = 0; // Reset the audio to the beginning
+    });
+
     document.getElementById('enableWalk').addEventListener('click', function() {
         resetAngles();
+
         // document.getElementById('minosSpeech').play();
         shouldAnimate = true;
         stopAnimation = true;
@@ -1134,7 +1219,6 @@ function renderAllShapes() {
         upperBody.matrix.translate(0, .025 * Math.sin(g_seconds * 10), 0);
     }
     else {
-        // upperBody.matrix.rotate(g_bodyAngle, 0,0,1);
     }
     upperBody.matrix.scale(0.75, 0.75, 0.75);
     const upperBodyPos = new Matrix4(upperBody.matrix);
