@@ -218,10 +218,58 @@ function connectVariablesToGLSL() {
     return;
   }
 
-  // Get the storage location of u_PointSize
-  // u_PointSize = gl.getUniformLocation(gl.program, 'u_PointSize');
-  // if (!u_PointSize) {
-  //     console.log('Failed to get the storage location of u_PointSize');
-  //     return;
-  // }
+  u_Sampler0 = gl.getUniformLocation(gl.program, "u_Sampler0"); // Get the storage location of u_Sampler0
+  if (!u_Sampler0) {
+    console.log("Failed to get the storage location of u_Sampler0");
+    return false;
+  }
+
+  u_whichTexture = gl.getUniformLocation(gl.program, "u_whichTexture"); // Get the storage location of u_whichTexture
+  if (!u_whichTexture) {
+    console.log("Failed to get the storage location of u_whichTexture");
+    return false;
+  }
+}
+
+function initTextures() {
+
+  var image = new Image(); // Create the image object
+  if (!image) {
+    console.log("Failed to create the image object");
+    return false;
+  }
+
+  image.onload = function () {
+    sendTextureToGLSL(image); // Initialize the texture when the image is loaded
+  };
+
+  image.src = './assets/sky.jpg';
+
+  return true;
+}
+
+function sendTextureToGLSL(image) {
+  var texture = gl.createTexture(); // Create a texture object
+  if (!texture) {
+    console.log("Failed to create the texture object");
+    return false;
+  }
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y-axis
+
+  gl.activeTexture(gl.TEXTURE0); // Activate texture unit 0
+  gl.bindTexture(gl.TEXTURE_2D, texture); // Bind the texture object to the target
+
+  // Set the texture parameters
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+  // Assign the image object to the texture object
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+
+  // Pass the texture
+  gl.uniform1i(u_Sampler0, 0); // Set the texture unit 0 to the sampler
+
+  // gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n); // Draw the rectangle
 }

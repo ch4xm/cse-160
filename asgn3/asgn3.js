@@ -12,6 +12,13 @@ let u_ModelMatrix;
 let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_GlobalRotateMatrix;
+let u_Sampler0;
+
+let u_whichTexture;
+
+const COLOR = 0;
+const UV = 1;
+const TEXTURE = 2;
 
 var VSHADER_SOURCE = `
     precision mediump float;
@@ -32,9 +39,22 @@ var FSHADER_SOURCE = `
     precision mediump float;
     varying vec2 v_UV;
     uniform vec4 u_FragColor;
+    uniform sampler2D u_Sampler0;
+    uniform int u_whichTexture; // The texture type
+
     void main() {
+        // gl_FragColor = u_FragColor;                 // Set the point color
+        // gl_FragColor = vec4(v_UV, 1.0, 1.0); // Set the point color
+        // gl_FragColor = texture2D(u_Sampler0, v_UV); // Set the point color
+      if (u_whichTexture == ${COLOR}) {
         gl_FragColor = u_FragColor;                 // Set the point color
+      } else if (u_whichTexture == ${UV}) {
         gl_FragColor = vec4(v_UV, 1.0, 1.0); // Set the point color
+      } else if (u_whichTexture == ${TEXTURE}) {
+        gl_FragColor = texture2D(u_Sampler0, v_UV); // Set the point color
+      } else {
+        gl_FragColor = vec4(1, 0, 1, 1); // Set the point color to magenta
+      }
     }`;
 
 function main() {
@@ -43,12 +63,12 @@ function main() {
 
   connectVariablesToGLSL();
 
-  clearCanvas();
   setupUICallbacks();
 
-  requestAnimationFrame(tick);
+  initTextures();
 
-  // doSpawnAnimation();
+  clearCanvas();
+  requestAnimationFrame(tick);
 }
 
 function clearCanvas() {
@@ -1035,9 +1055,11 @@ function renderAllShapes() {
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
 
   var viewMatrix = new Matrix4();
+  viewMatrix.setLookAt(0,0,3,  0,0,-100,  0,1,1);
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
 
   var projectionMatrix = new Matrix4();
+  projectionMatrix.setPerspective(60, canvas.width / canvas.height, .1, 100);
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, projectionMatrix.elements);
 
   // var body = new Cube();

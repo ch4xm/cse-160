@@ -3,10 +3,13 @@ class Cube {
     this.matrix = new Matrix4(startMatrix) || new Matrix4(); // Use the provided matrix or create a new one
     this.type = "cube";
     this.color = [1.0, 1.0, 1.0, 1.0]; // Default color is white
+    this.textureNum = COLOR;
   }
 
   render() {
     var rgba = this.color;
+
+    gl.uniform1i(u_whichTexture, this.textureNum); // Set the texture number
 
     gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
 
