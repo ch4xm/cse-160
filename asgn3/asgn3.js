@@ -66,7 +66,7 @@ function main() {
 
   setupUICallbacks();
 
-  setupKeybinds();
+//   setupKeybinds();
 
   initTextures();
 
@@ -1181,7 +1181,7 @@ var g_map = [
   ],
 ];
 
-addWalls(g_map, 2);
+addWalls(g_map, 3);
 
 function createRandomMap(x, y, randomChance = 0.5) {
   var map = [];
@@ -1211,7 +1211,7 @@ function addWalls(map, height = 1) {
 }
 
 let randomMap = createRandomMap(32, 32, 0);
-addWalls(randomMap, 2);
+addWalls(randomMap, 5);
 
 function drawMap(map) {
   const cube = new Cube();
@@ -1267,7 +1267,7 @@ function renderAllShapes() {
   var solidColor = [1, 1, 1, 0.9];
 
   drawMap(g_map);
-  //   drawMap(randomMap);
+    // drawMap(randomMap);
   var groundPlane = new Cube();
   groundPlane.color = [0.5, 0.5, 0.5, 1];
   groundPlane.textureNum = SKY_TEXTURE;
@@ -1968,8 +1968,45 @@ function renderAllShapes() {
 let g_startTime = performance.now() / 1000;
 let g_seconds = performance.now() / 1000 - g_startTime;
 
+var pressedKeys = {}
+
+document.onkeydown = function(event) {
+    event.preventDefault();
+    pressedKeys[event.keyCode] = true
+    console.log(pressedKeys)
+}
+
+document.onkeyup = function(event) {
+    event.preventDefault();
+    pressedKeys[event.keyCode] = false
+}
+
+let g_camera = new Camera();
+function moveCamera() {
+    if (pressedKeys[37] || pressedKeys[65]) {
+        g_camera.left();
+    }
+    if (pressedKeys[39] || pressedKeys[68]) {
+        g_camera.right();
+    }
+    if (pressedKeys[38] || pressedKeys[87]) {
+        g_camera.forward();
+    }
+    if (pressedKeys[40] || pressedKeys[83]) {
+        g_camera.backward();
+    }
+    if (pressedKeys[32]) {
+        g_camera.moveUp();
+    }
+    if (pressedKeys[17]) {
+        g_camera.moveDown();
+    }
+}
+
 function tick() {
   g_seconds = performance.now() / 1000 - g_startTime;
+
+  moveCamera();
 
   renderAllShapes(); // Render all shapes
 

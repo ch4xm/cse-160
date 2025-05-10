@@ -320,9 +320,9 @@ const sliders = [
       }
 ];
 
-function setupKeybinds() {
-    document.onkeydown = keydown;
-}
+// function setupKeybinds() {
+//     document.onkeydown = keydown;
+// }
 
 
 function setupUICallbacks() {
@@ -342,6 +342,9 @@ function setupUICallbacks() {
     }
     rotateView(event);
   };
+
+  // setupKeybinds();
+
 
   // document.getElementById('enableSpeech').addEventListener('click', function() {
   //     // const audio = document.getElementById('minosSpeech');
@@ -602,37 +605,29 @@ function sendTextureToGLSL(image) {
 }
 
 
-let g_camera = new Camera();
-function keydown(event) {
-    console.log(event.keyCode);
-    switch (event.keyCode) {
-        case 37: // Left arrow key
-        case 65: // 'A' key
-            // g_eye[0] -= 0.05;
-            g_camera.left();
-            break;
-        case 39: // Right arrow key
-        case 68: // 'D' key
-            g_camera.right();
-            // g_eye[0] += 0.05;
-            break;
-        case 38: // Up arrow key
-        case 87: // 'W' key
-            // g_eye[2] -= 0.05;
-            g_camera.forward();
-            break;
-        case 40: // Down arrow key
-        case 83: // 'S' key
-            // g_eye[2] += 0.05;
-            g_camera.backward();
-            break;
-        case 16: // Shift key
-            g_camera.moveUp();
-            break;
-        case 17: // Ctrl key
-            g_camera.moveDown();
-            break;
-        default:
-            break;
-    }
-}
+// function keydown(event) {
+//     switch (event.keyCode) {
+//         case 37: // Left arrow key
+//         case 65: // 'A' key
+//             // g_eye[0] -= 0.05;
+//             break;
+//         case 39: // Right arrow key
+//         case 68: // 'D' key
+//             // g_eye[0] += 0.05;
+//             break;
+//         case 38: // Up arrow key
+//         case 87: // 'W' key
+//             // g_eye[2] -= 0.05;
+//             break;
+//         case 40: // Down arrow key
+//         case 83: // 'S' key
+//             // g_eye[2] += 0.05;
+//             break;
+//         case 16: // Shift key
+//             break;
+//         case 17: // Ctrl key
+//             break;
+//         default:
+//             break;
+//     }
+// }

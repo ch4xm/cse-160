@@ -57,8 +57,6 @@ class Triangle {
 
 function drawTriangle(vertices, n, color, dimensions = 2, uv = null) {
 
-  console.log(n)
-
   if (!g_vertexBuffer){
     initTriangle3D(dimensions)
   }
