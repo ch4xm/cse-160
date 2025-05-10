@@ -409,41 +409,41 @@ function setupUICallbacks() {
 
   const parentElement = document.getElementById("sliderContainer");
 
-  sliders.forEach((sliderCategory) => {
-    const sectionTitle = document.createElement("h3");
-    sectionTitle.innerText = sliderCategory.sectionTitle;
-    parentElement.appendChild(sectionTitle);
+  // sliders.forEach((sliderCategory) => {
+  //   const sectionTitle = document.createElement("h3");
+  //   sectionTitle.innerText = sliderCategory.sectionTitle;
+  //   parentElement.appendChild(sectionTitle);
 
-    const sectionContainer = document.createElement("div");
-    sectionContainer.appendChild(sectionTitle);
-    sliderCategory.sliders.forEach((slider) => {
-      const sliderContainer = document.createElement("div");
+  //   const sectionContainer = document.createElement("div");
+  //   sectionContainer.appendChild(sectionTitle);
+  //   sliderCategory.sliders.forEach((slider) => {
+  //     const sliderContainer = document.createElement("div");
 
-      const labelElement = document.createElement("label");
-      const sliderElement = document.createElement("input");
-      sliderElement.type = "range";
-      sliderElement.id = slider.id + "Slider";
-      sliderElement.min = slider.min;
-      sliderElement.max = slider.max;
-      sliderElement.value = slider.value;
-      sliderElement.step = slider.step;
-      sliderContainer.appendChild(sliderElement);
-      labelElement.innerText = "\xa0\xa0" + slider.label + ": " + slider.value;
-      labelElement.id = slider.id + "Label";
-      labelElement.setAttribute("for", slider.id);
-      sliderContainer.appendChild(labelElement);
-      parentElement.appendChild(sliderContainer);
-      parentElement.appendChild(document.createElement("br"));
-      slider.label = "\xa0\xa0" + slider.label;
-      sliderElement.addEventListener("mousemove", function (event) {
-        slider.onChange(event, slider);
-      });
+  //     const labelElement = document.createElement("label");
+  //     const sliderElement = document.createElement("input");
+  //     sliderElement.type = "range";
+  //     sliderElement.id = slider.id + "Slider";
+  //     sliderElement.min = slider.min;
+  //     sliderElement.max = slider.max;
+  //     sliderElement.value = slider.value;
+  //     sliderElement.step = slider.step;
+  //     sliderContainer.appendChild(sliderElement);
+  //     labelElement.innerText = "\xa0\xa0" + slider.label + ": " + slider.value;
+  //     labelElement.id = slider.id + "Label";
+  //     labelElement.setAttribute("for", slider.id);
+  //     sliderContainer.appendChild(labelElement);
+  //     parentElement.appendChild(sliderContainer);
+  //     parentElement.appendChild(document.createElement("br"));
+  //     slider.label = "\xa0\xa0" + slider.label;
+  //     sliderElement.addEventListener("mousemove", function (event) {
+  //       slider.onChange(event, slider);
+  //     });
 
-      sectionContainer.appendChild(sliderContainer);
-    });
+  //     sectionContainer.appendChild(sliderContainer);
+  //   });
 
-    parentElement.appendChild(sectionContainer);
-  });
+  //   parentElement.appendChild(sectionContainer);
+  // });
 
   // document.getElementById('clear').addEventListener('click', function() {
   //     clearCanvas();
@@ -609,9 +609,11 @@ function keydown(event) {
         case 37: // Left arrow key
         case 65: // 'A' key
             // g_eye[0] -= 0.05;
+            g_camera.left();
             break;
         case 39: // Right arrow key
         case 68: // 'D' key
+            g_camera.right();
             // g_eye[0] += 0.05;
             break;
         case 38: // Up arrow key
@@ -622,6 +624,13 @@ function keydown(event) {
         case 40: // Down arrow key
         case 83: // 'S' key
             // g_eye[2] += 0.05;
+            g_camera.backward();
+            break;
+        case 16: // Shift key
+            g_camera.moveUp();
+            break;
+        case 17: // Ctrl key
+            g_camera.moveDown();
             break;
         default:
             break;
