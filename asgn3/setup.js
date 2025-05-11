@@ -333,18 +333,16 @@ function setupUICallbacks() {
       }
       return;
     }
-
-    click(event);
+    [g_mousePosX, g_mousePosY] = convertCoordinatesEventToGL(event);
+    // click(event);
   };
   canvas.onmousemove = function (event) {
     if (event.buttons != 1) {
       return;
     }
-    rotateView(event);
+    click(event)
+    // rotateView(event);
   };
-
-  // setupKeybinds();
-
 
   // document.getElementById('enableSpeech').addEventListener('click', function() {
   //     // const audio = document.getElementById('minosSpeech');

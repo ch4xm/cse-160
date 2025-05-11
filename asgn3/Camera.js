@@ -55,6 +55,21 @@ class Camera {
         this.at = this.at.sub(down);
         this.eye = this.eye.sub(down);
     }
-    
-    panLeft
+
+    panLeft() {
+        let left = new Vector3(this.eye.elements);
+        left = left.sub(this.at);
+        left = left.normalize();
+        left = left.mul(5);
+        left = Vector3.cross(left, this.up).normalize();
+        this.at = this.at.add(left);
+    }
+
+    panRight() {
+        let right = new Vector3(this.eye.elements);
+        right = right.sub(this.at);
+        right = right.normalize();
+        right = Vector3.cross(this.up, right).normalize();
+        this.at = this.at.add(right);
+    }
 }

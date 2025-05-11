@@ -40,10 +40,10 @@ class Cylinder {
             let pt2 = [center[0] + vec2[0], center[1] + vec2[1]];
 
             // drawTriangle([xy[0], xy[1], pt1[0], pt1[1], pt2[0], pt2[1]]);
-            drawTriangle3D([xy[0], xy[1], 0, pt1[0], pt1[1], baseZ, pt2[0], pt2[1], baseZ]);
-            drawTriangle3D([pt1[0], pt1[1], 0, pt2[0], pt2[1], baseZ, pt1[0], pt1[1], topZ]);
-            drawTriangle3D([pt2[0], pt2[1], 0, pt2[0], pt2[1], topZ, pt1[0], pt1[1], topZ]);
-            drawTriangle3D([xy[0], xy[1], topZ, pt2[0], pt2[1], topZ, pt1[0], pt1[1], topZ]);
+            drawTriangle2D([xy[0], xy[1], 0, pt1[0], pt1[1], baseZ, pt2[0], pt2[1], baseZ]);
+            drawTriangle2D([pt1[0], pt1[1], 0, pt2[0], pt2[1], baseZ, pt1[0], pt1[1], topZ]);
+            drawTriangle2D([pt2[0], pt2[1], 0, pt2[0], pt2[1], topZ, pt1[0], pt1[1], topZ]);
+            drawTriangle2D([xy[0], xy[1], topZ, pt2[0], pt2[1], topZ, pt1[0], pt1[1], topZ]);
         }
     }
 }
