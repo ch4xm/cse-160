@@ -571,7 +571,7 @@ function initTextures() {
     sendTextureToGLSL(image); // Initialize the texture when the image is loaded
   };
 
-  image.src = './assets/sky.jpg';
+  image.src = './assets/veins.png';
 
   return true;
 }
