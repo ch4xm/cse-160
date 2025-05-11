@@ -81,13 +81,13 @@ class Cube {
     drawTriangle3DUV([0, 0, 0, 1, 0, 1, 0, 0, 1], [0,0,  1,1,  1,0]);
 
     // Restore the old color
-    // gl.uniform4f(
-    //   u_FragColor,
-    //   g_selectedColor[0],
-    //   g_selectedColor[1],
-    //   g_selectedColor[2],
-    //   g_selectedColor[3]
-    // );
+    gl.uniform4f(
+      u_FragColor,
+      g_selectedColor[0],
+      g_selectedColor[1],
+      g_selectedColor[2],
+      g_selectedColor[3]
+    );
     gl.uniform1i(u_whichTexture, oldWhichTexture); // Restore the old texture number
   }
   

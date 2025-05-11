@@ -55,4 +55,6 @@ class Camera {
         this.at = this.at.sub(down);
         this.eye = this.eye.sub(down);
     }
+    
+    panLeft
 }
