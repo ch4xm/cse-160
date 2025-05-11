@@ -13,6 +13,8 @@ let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_GlobalRotateMatrix;
 let u_Sampler0;
+let u_Sampler1;
+let u_Sampler2;
 
 let g_startTime = performance.now() / 1000;
 let g_seconds = performance.now() / 1000 - g_startTime;
@@ -39,8 +41,9 @@ let u_whichTexture;
 
 const COLOR = 0;
 const UV = 1;
-const SKY_TEXTURE = 2;
+const EYE_TEXTURE = 2;
 const GROUND_TEXTURE = 3;
+const BONE_TEXTURE = 4;
 
 var VSHADER_SOURCE = `
     precision mediump float;
@@ -62,18 +65,21 @@ var FSHADER_SOURCE = `
     varying vec2 v_UV;
     uniform vec4 u_FragColor;
     uniform sampler2D u_Sampler0;
+    uniform sampler2D u_Sampler1;
+    uniform sampler2D u_Sampler2;
     uniform int u_whichTexture; // The texture type
 
     void main() {
-        // gl_FragColor = u_FragColor;                 // Set the point color
-        // gl_FragColor = vec4(v_UV, 1.0, 1.0); // Set the point color
-        // gl_FragColor = texture2D(u_Sampler0, v_UV); // Set the point color
       if (u_whichTexture == ${COLOR}) {
         gl_FragColor = u_FragColor;                 // Set the point color
       } else if (u_whichTexture == ${UV}) {
         gl_FragColor = vec4(v_UV, 1.0, 1.0); // Set the point color
-      } else if (u_whichTexture == ${SKY_TEXTURE}) {
+      } else if (u_whichTexture == ${EYE_TEXTURE}) {
         gl_FragColor = texture2D(u_Sampler0, v_UV); // Set the point color
+      } else if (u_whichTexture == ${GROUND_TEXTURE}) {
+        gl_FragColor = texture2D(u_Sampler1, v_UV); // Set the point color
+      } else if (u_whichTexture == ${BONE_TEXTURE}) {
+        gl_FragColor = texture2D(u_Sampler2, v_UV); // Set the point color
       } else {
         gl_FragColor = vec4(1, 0, 1, 1); // Set the point color to magenta
       }
@@ -115,7 +121,7 @@ function click(event) {
   // g_camera.horizontalAngle = Math.max(Math.min((g_mousePosX - x) * 20, 90), -90);
 
   // g_camera.verticalAngle += (g_mousePosY - y) * 20;
-  g_camera.verticalAngle = Math.max(Math.min(g_camera.verticalAngle + (g_mousePosY - y) * 20, 90), -90);
+  g_camera.verticalAngle = Math.max(Math.min(g_camera.verticalAngle + (g_mousePosY - y) * 20, 60), -60);
   // g_camera.updateViewMatrix();
   // g_camera.mousePan()
   // g_camera.mouse_pan_vertical((g_mousePosY - y) * 50);
@@ -1128,12 +1134,12 @@ function createMap(map, wallHeight = 1) {
         for (y = 0; y < map[x].length; y++) {
             if (x == 0 || x == map.length - 1 || y == 0 || y == map[x].length - 1) {
                 for (z = 0; z < wallHeight; z++){
-                    const coords = [x - map.length / 2, -0.445 + z, y - map.length / 2]
+                    const coords = [x - map.length / 2, -0.445 + z, y - map.length / 2, GROUND_TEXTURE]
                     blocksMap.add(coords)
                 }
             }
             for (i = 0; i < map[x][y].length; i++) {
-                const coords = [x - map.length / 2, -0.445 + map[x][y][i], y - map.length / 2]
+                const coords = [x - map.length / 2, -0.445 + map[x][y][i], y - map.length / 2, EYE_TEXTURE]
                 blocksMap.add(coords)
             }
         }
@@ -1146,8 +1152,8 @@ createMap(mapBase, 3)
 function renderBlocks() {
     const cube = new Cube();
     for (const block of blocksMap) {
-        const [x, y, z] = block
-        cube.textureNum = SKY_TEXTURE;
+        const [x, y, z, textureNum] = block
+        cube.textureNum = textureNum;
         cube.color = [0.5, 0.5, 0.5, 1];
         cube.matrix.setTranslate(0, 0, 0);
         cube.matrix.scale(BLOCKS_SCALE, BLOCKS_SCALE, BLOCKS_SCALE);
@@ -1194,7 +1200,7 @@ function renderAllShapes() {
     // drawMap(randomMap);
   var groundPlane = new Cube();
   groundPlane.color = [0.5, 0.5, 0.5, 1];
-  groundPlane.textureNum = SKY_TEXTURE;
+  groundPlane.textureNum = BONE_TEXTURE;
   groundPlane.matrix.translate(0, -0.45, 0);
   groundPlane.matrix.scale(32 * BLOCKS_SCALE, 0, 32 * BLOCKS_SCALE);
   groundPlane.matrix.translate(-0.5, 0, -0.5);

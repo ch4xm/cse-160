@@ -81,8 +81,8 @@ class Camera {
     }
 
     updateViewMatrix() {
-        const horizontal = this.horizontalAngle * Math.PI / 90;
-        const vertical = this.verticalAngle * Math.PI / 90;
+        const horizontal = this.horizontalAngle * Math.PI / 135;
+        const vertical = this.verticalAngle * Math.PI / 135;
     
         const newDirection = new Vector3([
             Math.cos(vertical) * Math.sin(horizontal),

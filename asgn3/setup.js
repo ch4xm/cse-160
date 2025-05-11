@@ -552,6 +552,18 @@ function connectVariablesToGLSL() {
     return false;
   }
 
+  u_Sampler1 = gl.getUniformLocation(gl.program, "u_Sampler1"); // Get the storage location of u_Sampler1
+  if (!u_Sampler1) {
+    console.log("Failed to get the storage location of u_Sampler1");
+    return false;
+  }
+
+  u_Sampler2 = gl.getUniformLocation(gl.program, "u_Sampler2"); // Get the storage location of u_Sampler2
+  if (!u_Sampler2) {
+    console.log("Failed to get the storage location of u_Sampler2");
+    return false;
+  }
+
   u_whichTexture = gl.getUniformLocation(gl.program, "u_whichTexture"); // Get the storage location of u_whichTexture
   if (!u_whichTexture) {
     console.log("Failed to get the storage location of u_whichTexture");
@@ -561,22 +573,42 @@ function connectVariablesToGLSL() {
 
 function initTextures() {
 
-  var image = new Image(); // Create the image object
-  if (!image) {
+  var image0 = new Image(); // Create the image object
+  if (!image0) {
+    console.log("Failed to create the image object");
+    return false;
+  }
+  var image1 = new Image(); // Create the image object
+  if (!image1) {
+    console.log("Failed to create the image object");
+    return false;
+  }
+  var image2 = new Image(); // Create the image object
+  if (!image2) {
     console.log("Failed to create the image object");
     return false;
   }
 
-  image.onload = function () {
-    sendTextureToGLSL(image); // Initialize the texture when the image is loaded
+  image0.onload = function () {
+    console.log("Sending texture 0 to GLSL");
+    sendTexture0ToGLSL(image0); // Initialize the texture when the image is loaded
   };
-
-  image.src = './assets/veins.png';
-
+  image1.onload = function () {
+    console.log("Sending texture 1 to GLSL");
+    sendTexture1ToGLSL(image1); // Initialize the texture when the image is loaded
+  }
+  image2.onload = function () {
+    console.log("Sending texture 2 to GLSL");
+    sendTexture2ToGLSL(image2); // Initialize the texture when the image is loaded
+  }
+  image0.src = "./assets/eye.png";
+  image1.src = "./assets/flesh.png"; // Set the image source
+  image2.src = "./assets/lava.png"; // Set the image source
   return true;
 }
 
-function sendTextureToGLSL(image) {
+function sendTexture0ToGLSL(image) {
+  console.log("Sending texture 0 to GLSL");
   var texture = gl.createTexture(); // Create a texture object
   if (!texture) {
     console.log("Failed to create the texture object");
@@ -596,12 +628,53 @@ function sendTextureToGLSL(image) {
 
   // Pass the texture
   gl.uniform1i(u_Sampler0, 0); // Set the texture unit 0 to the sampler
-
-  // gl.clear(gl.COLOR_BUFFER_BIT);
-
-  // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n); // Draw the rectangle
 }
 
+function sendTexture1ToGLSL(image) {
+  var texture = gl.createTexture(); // Create a texture object
+  if (!texture) {
+    console.log("Failed to create the texture object");
+    return false;
+  }
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y-axis
+
+  gl.activeTexture(gl.TEXTURE1); // Activate texture unit 0
+  gl.bindTexture(gl.TEXTURE_2D, texture); // Bind the texture object to the target
+
+  // Set the texture parameters
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+  // Assign the image object to the texture object
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+
+  // Pass the texture
+  gl.uniform1i(u_Sampler1, 1); // Set the texture unit 0 to the sampler
+
+}
+
+function sendTexture2ToGLSL(image) {
+  var texture = gl.createTexture(); // Create a texture object
+  if (!texture) {
+    console.log("Failed to create the texture object");
+    return false;
+  }
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y-axis
+
+  gl.activeTexture(gl.TEXTURE2); // Activate texture unit 0
+  gl.bindTexture(gl.TEXTURE_2D, texture); // Bind the texture object to the target
+
+  // Set the texture parameters
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+  // Assign the image object to the texture object
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+
+  // Pass the texture
+  gl.uniform1i(u_Sampler2, 2); // Set the texture unit 0 to the sampler
+
+}
 
 // function keydown(event) {
 //     switch (event.keyCode) {
