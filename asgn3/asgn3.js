@@ -110,6 +110,15 @@ function click(event) {
   [x, y] = convertCoordinatesEventToGL(event);
 
   // g_camera.mousePanHorizontal(g_mousePosX - x)
+  // g_camera.mouse_pan_horizontal((g_mousePosX - x) * 50);\
+  g_camera.horizontalAngle += (g_mousePosX - x) * 20;
+  // g_camera.horizontalAngle = Math.max(Math.min((g_mousePosX - x) * 20, 90), -90);
+
+  // g_camera.verticalAngle += (g_mousePosY - y) * 20;
+  g_camera.verticalAngle = Math.max(Math.min(g_camera.verticalAngle + (g_mousePosY - y) * 20, 90), -90);
+  // g_camera.updateViewMatrix();
+  // g_camera.mousePan()
+  // g_camera.mouse_pan_vertical((g_mousePosY - y) * 50);
 
   g_mousePosX = x;
   g_mousePosY = y;
@@ -1158,23 +1167,24 @@ function renderAllShapes() {
   projectionMatrix.setPerspective(60, canvas.width / canvas.height, 0.1, 100);
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, projectionMatrix.elements);
 
-  var viewMatrix = new Matrix4();
-  viewMatrix.setLookAt(
-    g_camera.eye.elements[0],
-    g_camera.eye.elements[1],
-    g_camera.eye.elements[2],
-    g_camera.at.elements[0],
-    g_camera.at.elements[1],
-    g_camera.at.elements[2],
-    g_camera.up.elements[0],
-    g_camera.up.elements[1],
-    g_camera.up.elements[2]
-  );
-  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+  // var viewMatrix = new Matrix4();
+  g_camera.updateViewMatrix();
+  // g_camera.viewMatrix.lookAt(
+  //   g_camera.eye.elements[0],
+  //   g_camera.eye.elements[1],
+  //   g_camera.eye.elements[2],
+  //   g_camera.at.elements[0],
+  //   g_camera.at.elements[1],
+  //   g_camera.at.elements[2],
+  //   g_camera.up.elements[0],
+  //   g_camera.up.elements[1],
+  //   g_camera.up.elements[2]
+  // );
+  gl.uniformMatrix4fv(u_ViewMatrix, false, g_camera.viewMatrix.elements);
 
   var globalRotMat = new Matrix4();
-  globalRotMat.rotate(-g_globalAngleHorizontal, 0, 1, 0);
-  globalRotMat.rotate(-g_globalAngleVertical, 1, 0, 0);
+  // globalRotMat.rotate(-g_globalAngleHorizontal, 0, 1, 0);
+  // globalRotMat.rotate(-g_globalAngleVertical, 1, 0, 0);
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
 
   var solidColor = [1, 1, 1, 0.9];

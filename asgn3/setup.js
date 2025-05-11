@@ -334,6 +334,7 @@ function setupUICallbacks() {
       return;
     }
     [g_mousePosX, g_mousePosY] = convertCoordinatesEventToGL(event);
+    // g_camera.mousePan((g_mousePosX - x), g_mousePosY - y);
     // click(event);
   };
   canvas.onmousemove = function (event) {
@@ -341,7 +342,6 @@ function setupUICallbacks() {
       return;
     }
     click(event)
-    // rotateView(event);
   };
 
   // document.getElementById('enableSpeech').addEventListener('click', function() {
