@@ -398,11 +398,11 @@ function setupUICallbacks() {
     stopAnimation = true;
   });
 
-  document
-    .getElementById("resetCharacter")
-    .addEventListener("click", function () {
-      resetAngles();
-    });
+  // document
+  //   .getElementById("resetCharacter")
+  //   .addEventListener("click", function () {
+  //     resetAngles();
+  //   });
 
   document.getElementById("overhead").addEventListener("click", function () {
     doOverhead();

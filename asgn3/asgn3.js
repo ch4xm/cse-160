@@ -35,13 +35,25 @@ document.onkeydown = function(event) {
 
 document.onmousedown = function(event) {
     event.preventDefault();
-    if (event.button == 0) {
-      // console.log("Left mouse button clicked", g_camera.at.add(g_camera.eye));
-      let [x, y, z] = g_camera.at.add(g_camera.eye).elements;
-      x = Math.round(x);
-      y = Math.round(y);
-      z = Math.round(z);
-      placeBlock(x, y, z);
+    console.log(event.button);
+    // console.log("Left mouse button clicked", g_camera.at.add(g_camera.eye));
+    const newVector = new Vector3();
+    newVector.set(g_camera.at) //.normalize();
+    // newVector.mul(3)
+    newVector.sub(g_camera.eye).normalize();
+
+    const target = new Vector3()
+    target.set(g_camera.eye)
+    target.add(newVector.mul(3))
+
+    let [x, z, y] = target.elements;
+    x = Math.round(x);
+    y = Math.round(y);
+    z = Math.round(z);
+    if (event.button == 2) {
+      placeBlock(x, y, -0.445 + z, EYE_TEXTURE);
+    } else if (event.button == 0) {
+      removeBlock(x, y, -0.445 + z);
     }
 }
 
@@ -1147,26 +1159,40 @@ function createMap(map, wallHeight = 1) {
         for (y = 0; y < map[x].length; y++) {
             if (x == 0 || x == map.length - 1 || y == 0 || y == map[x].length - 1) {
                 for (z = 0; z < wallHeight; z++){
-                    const coords = [x - map.length / 2, -0.445 + z, y - map.length / 2, GROUND_TEXTURE]
-                    blocksMap.add(coords)
+                    // const coords = [x - map.length / 2, -0.445 + z, y - map.length / 2, GROUND_TEXTURE]
+                    // const coordsString = coords.join(',')
+                    placeBlock(x - mapBase.length / 2, y - mapBase.length / 2, -0.445 + z, GROUND_TEXTURE)
+                    // blocksMap.add(coordsString)
                 }
             }
             for (i = 0; i < map[x][y].length; i++) {
-                const coords = [x - map.length / 2, -0.445 + map[x][y][i], y - map.length / 2, EYE_TEXTURE]
-                blocksMap.add(coords)
+                placeBlock(x - mapBase.length / 2, y - mapBase.length / 2, -0.445 + i, EYE_TEXTURE)
+                // const coords = [x - map.length / 2, -0.445 + map[x][y][i], y - map.length / 2, EYE_TEXTURE]
+                // const coordsString = coords.join(',')
+                // blocksMap.add(coordsString)
             }
         }
     }
 }
 
-function placeBlock(x, y, z) {
-    const coords = [x - mapBase.length / 2, -0.445 + z, y - mapBase.length / 2, EYE_TEXTURE]
-    blocksMap.add(coords)
+function placeBlock(x, y, z, textureNum) {
+    const coords = [x, z, y, textureNum]
+    const coordsString = coords.join(',')
+
+    blocksMap.add(coordsString) 
 }
 
 function removeBlock(x, y, z) {
-    const coords = [x - mapBase.length / 2, -0.445 + z, y - mapBase.length / 2, EYE_TEXTURE]
+    const coords = [x, z, y, GROUND_TEXTURE].join(',')
+    const coords2 = [x, z, y, EYE_TEXTURE].join(',')
+    const coords3 = [x, z, y, BONE_TEXTURE].join(',')
+
     blocksMap.delete(coords)
+    blocksMap.delete(coords2)
+    blocksMap.delete(coords3)
+    // blocksMap.delete(coordsString)
+    // blocksMap.delete(coordsString)
+    // blocksMap.delete(coordsString)
 }
 
 const BLOCKS_SCALE = 1
@@ -1175,7 +1201,11 @@ createMap(mapBase, 3)
 function renderBlocks() {
     const cube = new Cube();
     for (const block of blocksMap) {
-        const [x, y, z, textureNum] = block
+        const coords = block.split(',')
+        const x = parseFloat(coords[0])
+        const y = parseFloat(coords[1])
+        const z = parseFloat(coords[2])
+        const textureNum = parseInt(coords[3])
         cube.textureNum = textureNum;
         cube.color = [0.5, 0.5, 0.5, 1];
         cube.matrix.setTranslate(0, 0, 0);
