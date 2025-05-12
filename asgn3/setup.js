@@ -410,6 +410,9 @@ function setupUICallbacks() {
 
   const parentElement = document.getElementById("sliderContainer");
 
+  document.oncontextmenu = function (event) {
+    event.preventDefault();
+  }
   // sliders.forEach((sliderCategory) => {
   //   const sectionTitle = document.createElement("h3");
   //   sectionTitle.innerText = sliderCategory.sectionTitle;
@@ -603,7 +606,7 @@ function initTextures() {
   }
   image0.src = "./assets/eye.png";
   image1.src = "./assets/flesh.png"; // Set the image source
-  image2.src = "./assets/lava.png"; // Set the image source
+  image2.src = "./assets/lava.png"; // Set the image source   
   return true;
 }
 

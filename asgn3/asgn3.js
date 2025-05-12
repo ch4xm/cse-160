@@ -29,7 +29,17 @@ var pressedKeys = {}
 
 document.onkeydown = function(event) {
     event.preventDefault();
+    console.log(event.keyCode);
     pressedKeys[event.keyCode] = true
+}
+
+document.onmousedown = function(event) {
+    event.preventDefault();
+    if (event.button == 0) {
+      console.log("Left mouse button clicked", g_camera.at.add(g_camera.eye));
+
+      placeBlock(0, 1, 0);
+    }
 }
 
 document.onkeyup = function(event) {
@@ -1146,6 +1156,16 @@ function createMap(map, wallHeight = 1) {
     }
 }
 
+function placeBlock(x, y, z) {
+    const coords = [x - mapBase.length / 2, -0.445 + z, y - mapBase.length / 2, EYE_TEXTURE]
+    blocksMap.add(coords)
+}
+
+function removeBlock(x, y, z) {
+    const coords = [x - mapBase.length / 2, -0.445 + z, y - mapBase.length / 2, EYE_TEXTURE]
+    blocksMap.delete(coords)
+}
+
 const BLOCKS_SCALE = 1
 createMap(mapBase, 3)
 
@@ -1897,7 +1917,7 @@ function renderAllShapes() {
 
 
 
-function moveCamera() {
+function keyboardPressed() {
     if (pressedKeys[37] || pressedKeys[65]) {
         g_camera.left();
     }
@@ -1922,12 +1942,13 @@ function moveCamera() {
     if (pressedKeys[69]) {  // 'E' key
         g_camera.panRight();
     }
+
 }
 
 function tick() {
   g_seconds = performance.now() / 1000 - g_startTime;
 
-  moveCamera();
+  keyboardPressed();
 
   renderAllShapes(); // Render all shapes
 
