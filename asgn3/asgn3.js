@@ -24,43 +24,42 @@ let stopAnimation = false;
 
 let g_camera = new Camera();
 
+var pressedKeys = {};
 
-var pressedKeys = {}
+document.onkeydown = function (event) {
+  event.preventDefault();
+  console.log(event.keyCode);
+  pressedKeys[event.keyCode] = true;
+};
 
-document.onkeydown = function(event) {
-    event.preventDefault();
-    console.log(event.keyCode);
-    pressedKeys[event.keyCode] = true
-}
+document.onmousedown = function (event) {
+  event.preventDefault();
+  console.log(event.button);
+  // console.log("Left mouse button clicked", g_camera.at.add(g_camera.eye));
+  const newVector = new Vector3();
+  newVector.set(g_camera.at); //.normalize();
+  // newVector.mul(3)
+  newVector.sub(g_camera.eye).normalize();
 
-document.onmousedown = function(event) {
-    event.preventDefault();
-    console.log(event.button);
-    // console.log("Left mouse button clicked", g_camera.at.add(g_camera.eye));
-    const newVector = new Vector3();
-    newVector.set(g_camera.at) //.normalize();
-    // newVector.mul(3)
-    newVector.sub(g_camera.eye).normalize();
+  const target = new Vector3();
+  target.set(g_camera.eye);
+  target.add(newVector.mul(3));
 
-    const target = new Vector3()
-    target.set(g_camera.eye)
-    target.add(newVector.mul(3))
+  let [x, z, y] = target.elements;
+  x = Math.round(x) - 1;
+  y = Math.round(y);
+  z = Math.round(z);
+  if (event.button == 2) {
+    placeBlock(x, y, -0.445 + z, EYE_TEXTURE);
+  } else if (event.button == 0) {
+    removeBlock(x, y, -0.445 + z);
+  }
+};
 
-    let [x, z, y] = target.elements;
-    x = Math.round(x) - 1;
-    y = Math.round(y);
-    z = Math.round(z);
-    if (event.button == 2) {
-      placeBlock(x, y, -0.445 + z, EYE_TEXTURE);
-    } else if (event.button == 0) {
-      removeBlock(x, y, -0.445 + z);
-    }
-}
-
-document.onkeyup = function(event) {
-    event.preventDefault();
-    pressedKeys[event.keyCode] = false
-}
+document.onkeyup = function (event) {
+  event.preventDefault();
+  pressedKeys[event.keyCode] = false;
+};
 
 let u_whichTexture;
 
@@ -118,7 +117,7 @@ function main() {
 
   setupUICallbacks();
 
-//   setupKeybinds();
+  //   setupKeybinds();
 
   initTextures();
 
@@ -146,7 +145,10 @@ function click(event) {
   // g_camera.horizontalAngle = Math.max(Math.min((g_mousePosX - x) * 20, 90), -90);
 
   // g_camera.verticalAngle += (g_mousePosY - y) * 20;
-  g_camera.verticalAngle = Math.max(Math.min(g_camera.verticalAngle + (g_mousePosY - y) * 20, 60), -60);
+  g_camera.verticalAngle = Math.max(
+    Math.min(g_camera.verticalAngle + (g_mousePosY - y) * 20, 60),
+    -60
+  );
   // g_camera.updateViewMatrix();
   // g_camera.mousePan()
   // g_camera.mouse_pan_vertical((g_mousePosY - y) * 50);
@@ -159,6 +161,8 @@ function click(event) {
 
 let POSITION_OFFSET_X = 0;
 
+const MINOS_HITBOX = 1;
+
 let g_selectedColor = [1.0, 1.0, 1.0, 1.0]; // The current color of the selected point
 let g_selectedSize = 10.0; // The current size of the selected point
 let g_selectedSegments = 10; // The current number of segments for the selected circle
@@ -167,6 +171,8 @@ let verticalOffset = 0.0;
 
 let g_mousePosX = 0;
 let g_mousePosY = 0;
+
+let g_bodyPos = [0,0,0];
 
 let g_globalAngleHorizontal = 180;
 let g_globalAngleVertical = 0;
@@ -1115,107 +1121,1171 @@ function updateSelectedValues() {
   renderAllShapes();
 }
 
-// let g_map = []  // 3d array of x, y, z, can be sparse 
+// let g_map = []  // 3d array of x, y, z, can be sparse
 
 let mapBase = [
-    [[1,2,3,4,5],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[0,1,2,3],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[0,1,2,3],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[0],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[0,1,2,3,4,5],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[0],[],[0],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[0],[1],[],[],[],[],[],[],[],[],[],[],[],[],[],[0],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[0,1,2,3],[],[],[],[],[],[],[],[],[],[],[],[],[0],[0,1,2],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[0],[0,1],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[0,1,2,3,4,5,6],[0,6],[0,6],[0,6],[0,6],[0,1,2,3,4,5,6],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[0],[],[0,1,2],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[0,1,2,3,4,5],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[0,1,2,3],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[0,1],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[1],[0,1,2],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[3,4,5],[],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[2],[3],[]],
-    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-]
-blocksMap = new Set()
-
+  [
+    [1, 2, 3, 4, 5],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0, 1, 2, 3],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0, 1, 2, 3],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [0],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [0, 1, 2, 3, 4, 5],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [0],
+    [],
+    [0],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0],
+    [1],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0, 1, 2, 3],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0],
+    [0, 1, 2],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0],
+    [0, 1],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0, 1, 2, 3, 4, 5, 6],
+    [0, 6],
+    [0, 6],
+    [0, 6],
+    [0, 6],
+    [0, 1, 2, 3, 4, 5, 6],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0],
+    [],
+    [0, 1, 2],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0, 1, 2, 3, 4, 5],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0, 1, 2, 3],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [0, 1],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [1],
+    [0, 1, 2],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [3, 4, 5],
+    [],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [2],
+    [3],
+    [],
+  ],
+  [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+];
+blocksMap = new Set();
 
 function createMap(map, wallHeight = 1) {
-    for (x = 0; x < map.length; x++) {
-        for (y = 0; y < map[x].length; y++) {
-            if (x == 0 || x == map.length - 1 || y == 0 || y == map[x].length - 1) {
-                for (z = 0; z < wallHeight; z++){
-                    // const coords = [x - map.length / 2, -0.445 + z, y - map.length / 2, GROUND_TEXTURE]
-                    // const coordsString = coords.join(',')
-                    placeBlock(x - mapBase.length / 2, y - mapBase.length / 2, -0.445 + z, GROUND_TEXTURE)
-                    // blocksMap.add(coordsString)
-                }
-            }
-            for (i = 0; i < map[x][y].length; i++) {
-                placeBlock(x - mapBase.length / 2, y - mapBase.length / 2, -0.445 + i, EYE_TEXTURE)
-                // const coords = [x - map.length / 2, -0.445 + map[x][y][i], y - map.length / 2, EYE_TEXTURE]
-                // const coordsString = coords.join(',')
-                // blocksMap.add(coordsString)
-            }
+  for (x = 0; x < map.length; x++) {
+    for (y = 0; y < map[x].length; y++) {
+      if (x == 0 || x == map.length - 1 || y == 0 || y == map[x].length - 1) {
+        for (z = 0; z < wallHeight; z++) {
+          // const coords = [x - map.length / 2, -0.445 + z, y - map.length / 2, GROUND_TEXTURE]
+          // const coordsString = coords.join(',')
+          placeBlock(
+            x - mapBase.length / 2,
+            y - mapBase.length / 2,
+            -0.445 + z,
+            GROUND_TEXTURE
+          );
+          // blocksMap.add(coordsString)
         }
+      }
+      for (i = 0; i < map[x][y].length; i++) {
+        placeBlock(
+          x - mapBase.length / 2,
+          y - mapBase.length / 2,
+          -0.445 + i,
+          EYE_TEXTURE
+        );
+        // const coords = [x - map.length / 2, -0.445 + map[x][y][i], y - map.length / 2, EYE_TEXTURE]
+        // const coordsString = coords.join(',')
+        // blocksMap.add(coordsString)
+      }
     }
+  }
 }
 
 function placeBlock(x, y, z, textureNum) {
-    const coords = [x, z, y, textureNum]
-    const coordsString = coords.join(',')
+  const coords = [x, z, y, textureNum];
+  const coordsString = coords.join(",");
 
-    blocksMap.add(coordsString) 
+  blocksMap.add(coordsString);
 }
 
 function removeBlock(x, y, z) {
-    const coords = [x, z, y, GROUND_TEXTURE].join(',')
-    const coords2 = [x, z, y, EYE_TEXTURE].join(',')
-    const coords3 = [x, z, y, BONE_TEXTURE].join(',')
+  const coords = [x, z, y, GROUND_TEXTURE].join(",");
+  const coords2 = [x, z, y, EYE_TEXTURE].join(",");
+  const coords3 = [x, z, y, BONE_TEXTURE].join(",");
 
-    blocksMap.delete(coords)
-    blocksMap.delete(coords2)
-    blocksMap.delete(coords3)
-    // blocksMap.delete(coordsString)
-    // blocksMap.delete(coordsString)
-    // blocksMap.delete(coordsString)
+  blocksMap.delete(coords);
+  blocksMap.delete(coords2);
+  blocksMap.delete(coords3);
+  // blocksMap.delete(coordsString)
+  // blocksMap.delete(coordsString)
+  // blocksMap.delete(coordsString)
 }
 
-const BLOCKS_SCALE = 1
-createMap(mapBase, 3)
+const BLOCKS_SCALE = 1;
+createMap(mapBase, 3);
 
 function renderBlocks() {
-    const cube = new Cube();
-    for (const block of blocksMap) {
-        const coords = block.split(',')
-        const x = parseFloat(coords[0])
-        const y = parseFloat(coords[1])
-        const z = parseFloat(coords[2])
-        const textureNum = parseInt(coords[3])
-        cube.textureNum = textureNum;
-        cube.color = [0.5, 0.5, 0.5, 1];
-        cube.matrix.setTranslate(0, 0, 0);
-        cube.matrix.scale(BLOCKS_SCALE, BLOCKS_SCALE, BLOCKS_SCALE);
-        cube.matrix.translate(x, y, z);
-        cube.renderFast();
-    }
+  const cube = new Cube();
+  for (const block of blocksMap) {
+    const coords = block.split(",");
+    const x = parseFloat(coords[0]);
+    const y = parseFloat(coords[1]);
+    const z = parseFloat(coords[2]);
+    const textureNum = parseInt(coords[3]);
+    cube.textureNum = textureNum;
+    cube.color = [0.5, 0.5, 0.5, 1];
+    cube.matrix.setTranslate(0, 0, 0);
+    cube.matrix.scale(BLOCKS_SCALE, BLOCKS_SCALE, BLOCKS_SCALE);
+    cube.matrix.translate(x, y, z);
+    cube.renderFast();
+  }
 }
 // renderBlocks()
-
 
 function renderAllShapes() {
   var startTime = performance.now();
@@ -1248,9 +2318,9 @@ function renderAllShapes() {
 
   var solidColor = [1, 1, 1, 0.9];
 
-//   drawMap(mapBase);
-  renderBlocks()
-    // drawMap(randomMap);
+  //   drawMap(mapBase);
+  renderBlocks();
+  // drawMap(randomMap);
   var groundPlane = new Cube();
   groundPlane.color = [0.5, 0.5, 0.5, 1];
   groundPlane.textureNum = BONE_TEXTURE;
@@ -1274,6 +2344,7 @@ function renderAllShapes() {
   var upperBody = new Cube();
   upperBody.color = solidColor;
   upperBody.matrix.translate(-0.1, 0.4, POSITION_OFFSET_X);
+  upperBody.matrix.translate(g_bodyPos[0], g_bodyPos[2], g_bodyPos[1]);
   if (shouldAnimate) {
     upperBody.matrix.rotate(5 * Math.sin(g_seconds * 5), 1, 0, 0);
     upperBody.matrix.translate(0, 0.025 * Math.sin(g_seconds * 10), 0);
@@ -1299,6 +2370,7 @@ function renderAllShapes() {
   var lowerBody = new Cube(upperBodyPosScaled);
   lowerBody.color = solidColor;
   lowerBody.matrix.translate(0.07, -1, 0.06);
+
   var lowerBodyPosNonScaled = new Matrix4(lowerBody.matrix);
   lowerBody.matrix.scale(0.85, 1, 0.9);
   var lowerBodyPos = new Matrix4(lowerBody.matrix);
@@ -1591,6 +2663,8 @@ function renderAllShapes() {
   // var pelvis = new Cube(lowerBodyPos);
   pelvis.color = solidColor;
   pelvis.matrix.translate(-0.135, 0.13, POSITION_OFFSET_X);
+  pelvis.matrix.translate(g_bodyPos[0], g_bodyPos[2], g_bodyPos[1]);
+
   if (shouldAnimate) {
     pelvis.matrix.rotate(5 * Math.sin(g_seconds * 5), 1, 0, 0);
     pelvis.matrix.translate(0, 0.025 * Math.sin(g_seconds * 10), 0);
@@ -1948,44 +3022,74 @@ function renderAllShapes() {
     Math.floor(1000.0 / duration) / 10;
 }
 
-
-
 function keyboardPressed() {
-    if (pressedKeys[37] || pressedKeys[65]) {
-        g_camera.left();
-    }
-    if (pressedKeys[39] || pressedKeys[68]) {
-        g_camera.right();
-    }
-    if (pressedKeys[38] || pressedKeys[87]) {
-        g_camera.forward();
-    }
-    if (pressedKeys[40] || pressedKeys[83]) {
-        g_camera.backward();
-    }
-    if (pressedKeys[32]) {
-        g_camera.moveUp();
-    }
-    if (pressedKeys[17]) {
-        g_camera.moveDown();
-    }
-    if (pressedKeys[81]) { // 'Q' key
-        g_camera.panLeft();
-    }
-    if (pressedKeys[69]) {  // 'E' key
-        g_camera.panRight();
-    }
-
+  if (pressedKeys[37] || pressedKeys[65]) {
+    g_camera.left();
+  }
+  if (pressedKeys[39] || pressedKeys[68]) {
+    g_camera.right();
+  }
+  if (pressedKeys[38] || pressedKeys[87]) {
+    g_camera.forward();
+  }
+  if (pressedKeys[40] || pressedKeys[83]) {
+    g_camera.backward();
+  }
+  if (pressedKeys[32]) {
+    g_camera.moveUp();
+  }
+  if (pressedKeys[17]) {
+    g_camera.moveDown();
+  }
+  if (pressedKeys[81]) {
+    // 'Q' key
+    g_camera.panLeft();
+  }
+  if (pressedKeys[69]) {
+    // 'E' key
+    g_camera.panRight();
+  }
 }
+
+let score = 0;
+const TIMEOUT = 20;
+let timeLeft = TIMEOUT;
 
 function tick() {
   g_seconds = performance.now() / 1000 - g_startTime;
 
   keyboardPressed();
 
+  touchMinos();
+
   renderAllShapes(); // Render all shapes
 
   requestAnimationFrame(tick); // Request the next frame
+}
+
+function touchMinos() {
+  timeLeft = TIMEOUT - (performance.now() / 1000 - g_startTime)
+  if (timeLeft < 0) {
+    timeLeft = 0;
+  }
+  // console.log(g_camera.eye.elements[0], g_camera.eye.elements[1], g_camera.eye.elements[2]);
+  // console.log('body', g_bodyPos[0], g_bodyPos[1], g_bodyPos[2]);
+  const touching =
+    g_camera.eye.elements[0] > g_bodyPos[0] - MINOS_HITBOX &&
+    g_camera.eye.elements[0] < g_bodyPos[0] + MINOS_HITBOX &&
+    g_camera.eye.elements[1] > g_bodyPos[2] - MINOS_HITBOX &&
+    g_camera.eye.elements[1] < g_bodyPos[2] + MINOS_HITBOX &&
+    g_camera.eye.elements[2] > g_bodyPos[1] - MINOS_HITBOX &&
+    g_camera.eye.elements[2] < g_bodyPos[1] + MINOS_HITBOX;
+
+  if (touching) {
+    score += Math.max(Math.round((timeLeft / TIMEOUT) * 50) * 10, 50);
+    // console.log("Score: " + score, (1 / timeLeft) * 10);
+    timeLeft = TIMEOUT;
+    document.getElementById("scoreLabel").innerText = "Score: " + score;
+
+    g_bodyPos = [Math.random() * 30 - 15, Math.random() * 30 - 16, 0];
+  }
 }
 
 function convertCoordinatesEventToGL(event) {
