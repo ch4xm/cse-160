@@ -47,7 +47,7 @@ document.onmousedown = function(event) {
     target.add(newVector.mul(3))
 
     let [x, z, y] = target.elements;
-    x = Math.round(x);
+    x = Math.round(x) - 1;
     y = Math.round(y);
     z = Math.round(z);
     if (event.button == 2) {
