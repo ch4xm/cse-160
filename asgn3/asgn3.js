@@ -36,9 +36,12 @@ document.onkeydown = function(event) {
 document.onmousedown = function(event) {
     event.preventDefault();
     if (event.button == 0) {
-      console.log("Left mouse button clicked", g_camera.at.add(g_camera.eye));
-
-      placeBlock(0, 1, 0);
+      // console.log("Left mouse button clicked", g_camera.at.add(g_camera.eye));
+      let [x, y, z] = g_camera.at.add(g_camera.eye).elements;
+      x = Math.round(x);
+      y = Math.round(y);
+      z = Math.round(z);
+      placeBlock(x, y, z);
     }
 }
 
