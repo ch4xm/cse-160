@@ -1,6 +1,6 @@
 class Map {
   constructor(mapBase, wallHeight = 0) {
-    this.map = null
+    this.map = null;
     this.mapBase = mapBase;
     this.blocksMap = new Set();
     this.wallHeight = wallHeight;
@@ -8,7 +8,7 @@ class Map {
 
   render() {
     if (!this.map) {
-        this.map = this.createMap(this.mapBase, this.wallHeight);
+      this.map = this.createMap(this.mapBase, this.wallHeight);
     }
     const cube = new Cube();
     for (const block of this.blocksMap) {

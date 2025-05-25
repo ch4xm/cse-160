@@ -100,6 +100,38 @@ function drawTriangle3DUV(vertices, uv, color) {
   drawTriangle(vertices, vertices.length / 3, color, 3, uv);
 }
 
+function drawTriangle3DUVNormal(vertices, uv, normal) {
+
+
+function drawTriangle3DOld(vertices, color) {
+  var n = 3; // The number of vertices
+  
+  // Create a buffer object
+  var vertexBuffer = gl.createBuffer();
+  if (!vertexBuffer) {
+      console.log('Failed to create the buffer object');
+      return -1;
+  }
+  
+  // Bind the buffer object to target
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  // Write date into the buffer object
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+  
+  // Assign the buffer object to a_Position variable
+  gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+  
+  // Enable the assignment to a_Position variable
+  gl.enableVertexAttribArray(a_Position);
+  
+  if (color) {
+      gl.uniform4f(u_FragColor, color[0], color[1], color[2], color[3]);
+  }
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+  // gl.uniform4f(u_FragColor, g_selectedColor[0], g_selectedColor[1], g_selectedColor[2], g_selectedColor[3]);
+
+}
+
 var g_vertexBuffer = null;
 function initTriangle3D(dimensions) {  
   // Create a buffer object

@@ -517,6 +517,12 @@ function connectVariablesToGLSL() {
     return;
   }
 
+  a_Normal = gl.getAttribLocation(gl.program, "a_Normal");
+  if (a_Normal < 0) {
+    console.log("Failed to get the storage location of a_Normal");
+    return;
+  }
+
   // Get the storage location of u_FragColor
   u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
   if (!u_FragColor) {

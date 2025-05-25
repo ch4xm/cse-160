@@ -63,6 +63,7 @@ document.onkeyup = function (event) {
 
 let u_whichTexture;
 
+const LIGHTING = -1;
 const COLOR = 0;
 const UV = 1;
 const EYE_TEXTURE = 2;
@@ -73,7 +74,9 @@ var VSHADER_SOURCE = `
     precision mediump float;
     attribute vec4 a_Position;                      // Vertex position
     attribute vec2 a_UV;
+    attribute vec3 a_Normal;                      // Vertex normal
     varying vec2 v_UV;
+    varying vec3 v_Normal;
     uniform mat4 u_ModelMatrix;
     uniform mat4 u_GlobalRotateMatrix;
     uniform mat4 u_ViewMatrix;
@@ -81,6 +84,7 @@ var VSHADER_SOURCE = `
     void main() {
         gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;                   // Set the vertex coordinates of the point
         v_UV = a_UV;
+        v_Normal = a_Normal; // Simply pass the normal to the fragment shader for now
     }`;
 
 // Fragment shader program
@@ -94,7 +98,9 @@ var FSHADER_SOURCE = `
     uniform int u_whichTexture; // The texture type
 
     void main() {
-      if (u_whichTexture == ${COLOR}) {
+      if (u_whichTexture == ${LIGHTING}) {
+        gl_FragColor = vec4((v_Normal + 1.0)/2.0, 1.0);
+      } else if (u_whichTexture == ${COLOR}) {
         gl_FragColor = u_FragColor;                 // Set the point color
       } else if (u_whichTexture == ${UV}) {
         gl_FragColor = vec4(v_UV, 1.0, 1.0); // Set the point color
@@ -2249,11 +2255,13 @@ function renderAllShapes() {
 
   var solidColor = [1, 1, 1, 0.9];
 
+  // map.render();
+  var cube = new Cube();
+  cube.color = [0.4, 0, 0, 1];
+  cube.matrix.scale(10, 10, 10);
+  cube.matrix.translate(-0.5, -0.5, -0.5);
+  cube.render();
 
-  map.render();
-  //   drawMap(mapBase);
-  // renderBlocks();
-  // drawMap(randomMap);
   var groundPlane = new Cube();
   groundPlane.color = [0.5, 0.5, 0.5, 1];
   groundPlane.textureNum = BONE_TEXTURE;
