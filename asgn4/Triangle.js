@@ -100,8 +100,70 @@ function drawTriangle3DUV(vertices, uv, color) {
   drawTriangle(vertices, vertices.length / 3, color, 3, uv);
 }
 
-function drawTriangle3DUVNormal(vertices, uv, normal) {
+function drawTriangle3DUVNormal(vertices, uv, normals, color) {
+  var n = vertices.length / 3; // The number of vertices
 
+  var vertexBuffer = gl.createBuffer();
+  if (!vertexBuffer) {
+    console.log("Failed to create the buffer object");
+    return -1;
+  }
+
+  // Bind the buffer object to target
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+
+  // Write date into the buffer object
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+
+  gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+
+  // Enable the assignment to a_Position variable
+  gl.enableVertexAttribArray(a_Position);
+
+  var uvBuffer = gl.createBuffer();
+  if (!uvBuffer) {
+    console.log("Failed to create the buffer object");
+    return -1;
+  }
+
+  // Bind the buffer object to target
+  gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+
+  // Write date into the buffer object
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uv), gl.DYNAMIC_DRAW);
+
+  // Assign the buffer object to a_Position variable
+  gl.vertexAttribPointer(a_UV, 2, gl.FLOAT, false, 0, 0);
+
+  gl.enableVertexAttribArray(a_UV);
+
+  var normalBuffer = gl.createBuffer();
+  if (!normalBuffer) {
+    console.log("Failed to create the buffer object");
+    return -1;
+  }
+
+  // Bind the buffer object to target
+  gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+
+  // Write date into the buffer object
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.DYNAMIC_DRAW);
+
+  // Assign the buffer object to a_Position variable
+  gl.vertexAttribPointer(a_Normal, 3, gl.FLOAT, false, 0, 0);
+
+  // Enable the assignment to a_Position variable
+  gl.enableVertexAttribArray(a_Normal);
+
+  // if (color) {
+  //   gl.uniform4f(u_FragColor, color[0], color[1], color[2], color[3]);
+  // }
+
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+
+  vertexBuffer = null;
+  // gl.uniform4f(u_FragColor, g_selectedColor[0], g_selectedColor[1], g_selectedColor[2], g_selectedColor[3]);
+}
 
 function drawTriangle3DOld(vertices, color) {
   var n = 3; // The number of vertices

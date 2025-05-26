@@ -6,6 +6,7 @@ let canvas;
 let gl;
 let a_Position;
 let a_UV;
+let a_Normal;
 let u_FragColor;
 let u_Size;
 let u_ModelMatrix;
@@ -18,6 +19,7 @@ let u_Sampler2;
 
 let g_startTime = performance.now() / 1000;
 let g_seconds = performance.now() / 1000 - g_startTime;
+let g_normalsOn = false;
 
 let shouldAnimate = false;
 let stopAnimation = false;
@@ -63,7 +65,7 @@ document.onkeyup = function (event) {
 
 let u_whichTexture;
 
-const LIGHTING = -1;
+const NORMALS = -1;
 const COLOR = 0;
 const UV = 1;
 const EYE_TEXTURE = 2;
@@ -91,6 +93,7 @@ var VSHADER_SOURCE = `
 var FSHADER_SOURCE = `
     precision mediump float;
     varying vec2 v_UV;
+    varying vec3 v_Normal; // The normal vector
     uniform vec4 u_FragColor;
     uniform sampler2D u_Sampler0;
     uniform sampler2D u_Sampler1;
@@ -98,7 +101,7 @@ var FSHADER_SOURCE = `
     uniform int u_whichTexture; // The texture type
 
     void main() {
-      if (u_whichTexture == ${LIGHTING}) {
+      if (u_whichTexture == ${NORMALS}) {
         gl_FragColor = vec4((v_Normal + 1.0)/2.0, 1.0);
       } else if (u_whichTexture == ${COLOR}) {
         gl_FragColor = u_FragColor;                 // Set the point color
@@ -2258,6 +2261,7 @@ function renderAllShapes() {
   // map.render();
   var cube = new Cube();
   cube.color = [0.4, 0, 0, 1];
+  // cube.textureNum = NORMALS;
   cube.matrix.scale(10, 10, 10);
   cube.matrix.translate(-0.5, -0.5, -0.5);
   cube.render();

@@ -344,6 +344,16 @@ function setupUICallbacks() {
     click(event)
   };
 
+  document.getElementById('normalsOn').addEventListener('click', function () {
+    g_normalsOn = true;
+    renderAllShapes();
+  });
+
+  document.getElementById('normalsOff').addEventListener('click', function () {
+    g_normalsOn = false;
+    renderAllShapes();
+  });
+
   // document.getElementById('enableSpeech').addEventListener('click', function() {
   //     // const audio = document.getElementById('minosSpeech');
   //     // audio.currentTime = 0; // Reset the audio to the beginning
