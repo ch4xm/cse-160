@@ -422,7 +422,33 @@ function setupUICallbacks() {
     g_normalsOn = false;
     renderAllShapes();
   });
+  
+  document.getElementById("startMadeInHeaven").addEventListener("click", function () {
+    g_lightSpeed = 1;
+    g_lightOn = true;
+    g_accelerateTime = true;
+    g_accelerateStart = performance.now() / 1000;
+  });
 
+  document.getElementById("stopMadeInHeaven").addEventListener("click", function () {
+    g_accelerateTime = false;
+    g_rotateLight = false;
+    g_lightSpeed = 1;
+  });
+
+  document.getElementById('startAnimation').addEventListener('click', function() {
+    g_accelerateTime = false;
+    g_rotateLight = true;
+    g_lightSpeed = 1;
+    g_lightOn = true;
+    g_accelerateTime = false;
+    g_accelerateStart = performance.now() / 1000;
+  });
+
+  document.getElementById('stopAnimation').addEventListener('click', function() {
+    g_rotateLight = false;
+    g_lightSpeed = 1;
+  });
   // document.getElementById('enableSpeech').addEventListener('click', function() {
   //     // const audio = document.getElementById('minosSpeech');
   //     // audio.currentTime = 0; // Reset the audio to the beginning

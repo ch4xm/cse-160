@@ -17,34 +17,27 @@ class Cube {
       0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1,
       0, 0, 1, 1, 1, 1, 0, 1,
     ]);
-  // this.normals = new Float32Array([
-  //     0, 0, -1, 0, 0, -1, 0, 0, -1,
-  //     0, 0, -1, 0, 0, -1, 0, 0, -1,
-  //     0, 0, -1, 0, 0, -1, 0, 0, -1,
-  //     0, 0, -1, 0, 0, -1, 0, 0, -1,
-  //     0, 1,  0, 0, 1,  0, 0, 1,  0,
-  //     0, 1,  0, 0, 1,  0, 0, 1,  0,
-  //     0, 1,  0, 0, 1,  0, 0, 1,  0,
-  //     0, 1,  0, 0, 1,  0, 0, 1,  0,
-  //     1, 0,  0, 1, 0,  0, 1, 0,  0,
-  //     1, 0,  0, 1, 0,  0, 1, 0,  0,
-  //     1, 0,  0, 1, 0,  0, 1, 0,  0,
-  //     1, 0,  0, 1, 0,  0, 1, 0,  0,
-  //   ]);
+    // this.normals = new Float32Array([
+    //     0, 0, -1, 0, 0, -1, 0, 0, -1,
+    //     0, 0, -1, 0, 0, -1, 0, 0, -1,
+    //     0, 0, -1, 0, 0, -1, 0, 0, -1,
+    //     0, 0, -1, 0, 0, -1, 0, 0, -1,
+    //     0, 1,  0, 0, 1,  0, 0, 1,  0,
+    //     0, 1,  0, 0, 1,  0, 0, 1,  0,
+    //     0, 1,  0, 0, 1,  0, 0, 1,  0,
+    //     0, 1,  0, 0, 1,  0, 0, 1,  0,
+    //     1, 0,  0, 1, 0,  0, 1, 0,  0,
+    //     1, 0,  0, 1, 0,  0, 1, 0,  0,
+    //     1, 0,  0, 1, 0,  0, 1, 0,  0,
+    //     1, 0,  0, 1, 0,  0, 1, 0,  0,
+    //   ]);
 
     this.normals = new Float32Array([
-      0, 0, -1, 0, 0, -1, 0, 0, -1,
-      0, 0, -1, 0, 0, -1, 0, 0, -1,
-      0, 0, 1, 0, 0, 1, 0, 0, 1,
-      0, 0, 1, 0, 0, 1, 0, 0, 1,
-      0, 1, 0, 0, 1, 0, 0, 1, 0,
-      0, 1, 0, 0, 1, 0, 0, 1, 0,
-      0, -1, 0, 0, -1, 0, 0, -1, 0,
-      0, -1, 0, 0, -1, 0, 0, -1, 0,
-      -1, 0, 0, -1, 0, 0, -1, 0, 0,
-      -1, 0, 0, -1, 0, 0, -1, 0, 0,
-      1, 0, 0, 1, 0, 0, 1, 0, 0,
-      1, 0, 0, 1, 0, 0, 1, 0, 0,
+      0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 1, 0, 0,
+      1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+      0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
+      0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 1, 0, 0, 1,
+      0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
     ]);
   }
 
@@ -52,7 +45,9 @@ class Cube {
     var rgba = this.color;
     var textureNum = g_normalsOn ? NORMALS : this.textureNum;
     const oldWhichTexture = u_whichTexture;
-    
+
+    this.normalMatrix.setInverseOf(this.matrix);
+    this.normalMatrix.transpose();
 
     gl.uniform1i(u_whichTexture, textureNum); // Set the texture number
 
@@ -248,6 +243,9 @@ class Cube {
   renderFast() {
     var rgba = this.color;
 
+    this.normalMatrix.setInverseOf(this.matrix);
+    this.normalMatrix.transpose();
+
     var textureNum = g_normalsOn ? NORMALS : this.textureNum;
     const oldWhichTexture = u_whichTexture;
 
@@ -255,6 +253,8 @@ class Cube {
     gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
 
     gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
+
+    gl.uniformMatrix4fv(u_NormalMatrix, false, this.normalMatrix.elements);
 
     drawTriangle3DUVNormal(this.vertices, this.uvs, this.normals);
     // Restore the old color

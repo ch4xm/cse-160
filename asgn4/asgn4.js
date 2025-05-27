@@ -21,7 +21,7 @@ let u_lightPos;
 let u_cameraPos;
 let u_lightOn;
 
-let g_lightPosition = [0, 1.5, 0];
+let g_lightPosition = [0, 1.5, 1];
 let g_lightOn = true;
 
 let g_startTime = performance.now() / 1000;
@@ -2322,7 +2322,7 @@ function renderAllShapes() {
   var sphere = new Sphere();
   sphere.color = solidColor;
   sphere.textureNum = COLOR;
-  sphere.matrix.translate(2, 0.5, 0);
+  sphere.matrix.translate(3, 0.5, 0);
   sphere.matrix.scale(0.5, 0.5, 0.5);
   sphere.render();
 
@@ -3075,16 +3075,22 @@ const TIMEOUT = 20;
 let timeLeft = TIMEOUT;
 
 let g_lightSpeed = 1;
+let g_accelerateTime = false;
+let g_accelerateStart;
+let g_rotateLight = true;
 
 function tick() {
   g_seconds = performance.now() / 1000 - g_startTime;
 
-  g_lightSpeed = Math.min(g_lightSpeed + g_seconds * 0.001, 50); // Increase light speed over time, cap at 50
+  if (g_accelerateTime) {
+    g_lightSpeed = Math.min(g_lightSpeed + (g_seconds - g_accelerateStart) * 0.001, 50); // Increase light speed over time, cap at 50
+  }
+
   keyboardPressed();
 
   touchMinos();
 
-  // updateAnimationAngles(); // Update angles for animation
+  updateAnimationAngles(); // Update angles for animation
 
   renderAllShapes(); // Render all shapes
 
@@ -3092,8 +3098,10 @@ function tick() {
 }
 
 function updateAnimationAngles() {
-  g_lightPosition[0] = 2 * Math.sin(g_seconds * 2 * g_lightSpeed);
-  g_lightPosition[1] = 2 * Math.cos(g_seconds * 2 * g_lightSpeed);
+  if (g_accelerateTime || g_rotateLight) {
+    g_lightPosition[0] = 2 * Math.sin(g_seconds * 2 * g_lightSpeed);
+    g_lightPosition[1] = 2 * Math.cos(g_seconds * 2 * g_lightSpeed);
+  }
 }
 
 function touchMinos() {
