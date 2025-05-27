@@ -69,331 +69,6 @@ const sliders = [
   },
 ];
 
-//     {sectionTitle: 'Global Rotation',
-//     sliders: [
-//         {
-//             id: 'globalRotateHorizontal',
-//             label: 'Global Rotate Horizontal',
-//             min: 0,
-//             max: 360,
-//             value: 200,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_globalAngleHorizontal = Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'globalRotateVertical',
-//             label: 'Global Rotate Vertical',
-//             min: -90,
-//             max: 90,
-//             value: -10,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_globalAngleVertical = Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//     ]},
-//     {
-//         sectionTitle: 'Head Rotation',
-//         sliders: [
-//         {
-//             id: 'neckAngleVertical',
-//             label: 'Neck Angle (Up/Down)',
-//             min: -30,
-//             max: 30,
-//             value: 0,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_neckAngleVertical = Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'neckAngleHorizontal',
-//             label: 'Neck Angle (Left/Right)',
-//             min: -30,
-//             max: 30,
-//             value: 0,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_neckAngleHorizontal = Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//     ]},
-//     {
-//         sectionTitle: 'Right Arm',
-//         sliders: [
-//         {
-//             id: 'rightShoulderAngleLateral',
-//             label: 'Shoulder Angle (Lateral)',
-//             min: -60,
-//             max: 80,
-//             value: 70,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_rightShoulderAngleLateral = Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'rightShoulderAngleForward',
-//             label: 'Shoulder Angle (Forward)',
-//             min: -60,
-//             max: 60,
-//             value: 0,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_rightShoulderAngleForward = Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'rightElbowAngle',
-//             label: 'Elbow Angle',
-//             min: 0,
-//             max: 90,
-//             value: 0,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_rightElbowAngle = -Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'rightWristAngle',
-//             label: 'Wrist Angle',
-//             min: -75,
-//             max: 20,
-//             value: 0,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_rightWristAngle = Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//     ]},
-//     {
-//         sectionTitle: 'Left Arm',
-//         sliders: [
-//         {
-//             id: 'leftShoulderAngleLateral',
-//             label: 'Shoulder Angle (Lateral)',
-//             min: 120,
-//             max: 260,
-//             value: 250,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_leftShoulderAngleLateral = Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'leftShoulderAngleForward',
-//             label: 'Shoulder Angle (Forward)',
-//             min: -60,
-//             max: 60,
-//             value: 0,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_leftShoulderAngleForward = Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'leftElbowAngle',
-//             label: 'Elbow Angle',
-//             min: 0,
-//             max: 90,
-//             value: 0,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_leftElbowAngle = -Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'leftWristAngle',
-//             label: 'Wrist Angle',
-//             min: -25,
-//             max: 20,
-//             value: 0,
-//             step: 1,
-//             onChange: function(event, slider) {
-//                 if (event.buttons != 1) {
-//                     return;
-//                 }
-//                 const value = event.target.value;
-//                 g_leftWristAngle = Number(value);
-//                 document.getElementById(slider.id + 'Label').innerText = slider.label + ':\xa0' + value;
-//                 renderAllShapes();
-//             }
-//         },
-//     ]},
-//     {
-//         sectionTitle: 'Right Leg',
-//         sliders: [
-//         {
-//             id: 'rightHipAngle',
-//             label: 'Hip Angle',
-//             min: 60, max: 270, value: 180, step: -1,
-//             onChange(e, s) {
-//                 if (e.buttons!=1) return;
-//                     g_rightHipAngle  = Number(e.target.value);
-//                     document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
-//                     renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'rightKneeAngle',
-//             label: 'Knee Angle',
-//             min: 180, max: 270, value: 180, step: -1,
-//             onChange(e, s) {
-//                 if (e.buttons!=1) return;
-//                 g_rightKneeAngle = Number(e.target.value);
-//                 document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'rightAnkleAngle',
-//             label: 'Ankle Angle',
-//             min: -45, max: 45, value: 0, step: 1,
-//             onChange(e, s) {
-//                 if (e.buttons!=1) return;
-//                     g_rightAnkleAngle = Number(e.target.value);
-//                     document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
-//                     renderAllShapes();
-//                 }
-//         }
-//         ]
-//       },
-//       {
-//         sectionTitle: 'Left Leg',
-//         sliders: [
-//         {
-//             id: 'leftHipAngle',
-//             label: 'Hip Angle',
-//             min: 60, max: 270, value: 180, step: 1,
-//             onChange(e, s) {
-//                 if (e.buttons!=1) return;
-//                 g_leftHipAngle   = Number(e.target.value);
-//                 document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'leftKneeAngle',
-//             label: 'Knee Angle',
-//             min: 0, max: 90, value: 0, step: 1,
-//             onChange(e, s) {
-//                 if (e.buttons!=1) return;
-//                 g_leftKneeAngle  = Number(e.target.value);
-//                 document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
-//                 renderAllShapes();
-//             }
-//         },
-//         {
-//             id: 'leftAnkleAngle',
-//             label: 'Ankle Angle',
-//             min: -45, max: 45, value: 0, step: 1,
-//             onChange(e, s) {
-//             if (e.buttons!=1) return;
-//             g_leftAnkleAngle = Number(e.target.value);
-//             document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
-//             renderAllShapes();
-//             }
-//         }
-//         ]
-//       },
-//       {
-//         sectionTitle: 'Body',
-//         sliders: [
-//         {
-//             // id: 'pelvisAngle',
-//             // label: 'Pelvis Angle',
-//             // min: -30, max: 30, value: 0, step: 1,
-//             // onChange(e, s) {
-//             //     if (e.buttons!=1) return;
-//             //     g_pelvisAngle = Number(e.target.value);
-//             //     document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
-//             //     renderAllShapes();
-//             // }
-//             id: 'bodyAngle',
-//             label: 'Body Angle',
-//             min: -20, max: 20, value: 0.0, step: 0.01,
-//             onChange(e, s) {
-//                 if (e.buttons!=1) return;
-//                 g_bodyAngle = Number(e.target.value);
-//                 document.getElementById(s.id+'Label').innerText = s.label+':\xa0'+e.target.value;
-//                 renderAllShapes();
-//             }
-//         },]
-//       }
-// ];
-
-// function setupKeybinds() {
-//     document.onkeydown = keydown;
-// }
-
 function setupUICallbacks() {
   canvas.onmousedown = function (event) {
     if (event.shiftKey) {
@@ -451,24 +126,6 @@ function setupUICallbacks() {
     g_rotateLight = false;
     g_lightSpeed = 1;
   });
-  // document.getElementById('enableSpeech').addEventListener('click', function() {
-  //     // const audio = document.getElementById('minosSpeech');
-  //     // audio.currentTime = 0; // Reset the audio to the beginning
-  //     // // audio.volume = 0.2; // Set the volume to 50%
-  //     // audio.play(); // Play the sound
-  //     shouldAnimate = false;
-  //     doSpawnAnimation();
-  // });
-
-  // document.getElementById('disableSpeech').addEventListener('click', function() {
-  //     stopAnimation = true;
-  //     const audio = document.getElementById('minosSpeech');
-  //     audio.pause();
-  //     audio.currentTime = 0; // Reset the audio to the beginning
-
-  //     shouldAnimate = false;
-  //     resetAngles();
-  // });
 
   document.getElementById("enablePose").addEventListener("click", function () {
     resetAngles();
@@ -491,7 +148,6 @@ function setupUICallbacks() {
   document.getElementById("enableWalk").addEventListener("click", function () {
     resetAngles();
 
-    // document.getElementById('minosSpeech').play();
     shouldAnimate = true;
     stopAnimation = true;
   });
@@ -507,19 +163,10 @@ function setupUICallbacks() {
   });
 
   document.getElementById("disableWalk").addEventListener("click", function () {
-    // const audio = document.getElementById('minosSpeech');
-    // audio.pause();
-    // audio.currentTime = 0;
 
     shouldAnimate = false;
     stopAnimation = true;
   });
-
-  // document
-  //   .getElementById("resetCharacter")
-  //   .addEventListener("click", function () {
-  //     resetAngles();
-  //   });
 
   document.getElementById("overhead").addEventListener("click", function () {
     doOverhead();
@@ -530,6 +177,7 @@ function setupUICallbacks() {
   document.oncontextmenu = function (event) {
     event.preventDefault();
   };
+  
   sliders.forEach((sliderCategory) => {
     const sectionTitle = document.createElement("h3");
     sectionTitle.innerText = sliderCategory.sectionTitle;
