@@ -424,9 +424,10 @@ function setupUICallbacks() {
   });
   
   document.getElementById("startMadeInHeaven").addEventListener("click", function () {
+    g_accelerateTime = true;
+    g_rotateLight = false;
     g_lightSpeed = 1;
     g_lightOn = true;
-    g_accelerateTime = true;
     g_accelerateStart = performance.now() / 1000;
   });
 
@@ -446,6 +447,7 @@ function setupUICallbacks() {
   });
 
   document.getElementById('stopAnimation').addEventListener('click', function() {
+    g_accelerateTime = false;
     g_rotateLight = false;
     g_lightSpeed = 1;
   });
