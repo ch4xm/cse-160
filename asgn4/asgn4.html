@@ -40,6 +40,12 @@
           <button id="enableWalk">Play Run</button>
           <button id="disableWalk">Stop Run</button>
         </span>
+        
+        
+        <span class="button-row">
+          <button id="enableLight">Lights on</button>
+          <button id="disableLight">Lights off</button>
+        </span>
 
         <button id="overhead" style="width: 100%;">Overhead Attack</button>
         
@@ -49,16 +55,6 @@
         <p style="margin-left: 15px;">Poke animation (Shift + click) plays Minos's Snake Throw Attack.</p>
 
         <h2 style="margin-top: 0; margin-bottom: 0;">Notes for graders:</h2>
-        <p>
-          The camera can be panned by the mouse, or q and e keys.
-          Control position using the WASD or arrow keys.
-          Press space to fly up, and control to fly down.
-          <br/>
-          Right click to place a block, and left click to destroy the block.
-          <br/>
-          <br/>
-          Game: Find and catch Minos Prime as fast as you can! The faster you catch him, the more score you get.
-        </p>
         
       </div>
       <div style="width: 1100x; margin-left: 0px; margin-right: 0px;"> 
@@ -79,16 +75,16 @@
         
         <label style="margin-left: 30px;" id="scoreLabel">Score: 0</label>
         </div>
-      <div style="width: 100%">
+      <div style="width: 100%; padding: 10px 20px;">
         <span class="button-row">
           <button id="normalsOn" style="width: 100%;">Normals on</button>
           <button id="normalsOff" style="width: 100%;">Normals off</button>
         </span>
-        
+        <div>
+          <div id="sliderContainer" style="display: flex; flex-direction: column; flex-wrap: wrap; max-height: 70vh; margin-top: 5vh; justify-content: flex-start; justify-content: flex-start; column-gap: 50px;"></div>
+        </div>
       </div>
-      <div>
-        <div id="sliderContainer" style="display: flex; flex-direction: column; flex-wrap: wrap; max-height: 70vh; margin-top: 5vh; justify-content: flex-start; justify-content: flex-start; column-gap: 50px;"></div>
-      </div>
+      
     </span>
 
     
@@ -102,6 +98,7 @@
     <script src="Octahedron.js"></script>
     <script src="setup.js"></script>
     <script src="Cube.js"></script>
+    <script src="Sphere.js"></script>
     <script src="Map.js"></script>
     <script src="asgn4.js"></script>
     <link rel="stylesheet" href="asgn4.css" />

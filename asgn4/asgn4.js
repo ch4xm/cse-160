@@ -10,12 +10,19 @@ let a_Normal;
 let u_FragColor;
 let u_Size;
 let u_ModelMatrix;
+let u_NormalMatrix;
 let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_GlobalRotateMatrix;
 let u_Sampler0;
 let u_Sampler1;
 let u_Sampler2;
+let u_lightPos;
+let u_cameraPos;
+let u_lightOn;
+
+let g_lightPosition = [0, 1.5, 0];
+let g_lightOn = true;
 
 let g_startTime = performance.now() / 1000;
 let g_seconds = performance.now() / 1000 - g_startTime;
@@ -79,14 +86,17 @@ var VSHADER_SOURCE = `
     attribute vec3 a_Normal;                      // Vertex normal
     varying vec2 v_UV;
     varying vec3 v_Normal;
+    varying vec4 v_VertPos;
     uniform mat4 u_ModelMatrix;
+    uniform mat4 u_NormalMatrix; // The normal matrix
     uniform mat4 u_GlobalRotateMatrix;
     uniform mat4 u_ViewMatrix;
     uniform mat4 u_ProjectionMatrix;
     void main() {
         gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;                   // Set the vertex coordinates of the point
         v_UV = a_UV;
-        v_Normal = a_Normal; // Simply pass the normal to the fragment shader for now
+        v_Normal = normalize(vec3(u_NormalMatrix * vec4(a_Normal, 1))); // Transform the normal vector to world coordinates
+        v_VertPos = u_ModelMatrix * a_Position; // The vertex position in world coordinates
     }`;
 
 // Fragment shader program
@@ -99,6 +109,12 @@ var FSHADER_SOURCE = `
     uniform sampler2D u_Sampler1;
     uniform sampler2D u_Sampler2;
     uniform int u_whichTexture; // The texture type
+
+    uniform vec3 u_cameraPos; // The position of the camera
+    uniform vec3 u_lightPos; // The position of the light source
+    varying vec4 v_VertPos;
+    
+    uniform bool u_lightOn; // Whether the light is on or not
 
     void main() {
       if (u_whichTexture == ${NORMALS}) {
@@ -115,6 +131,30 @@ var FSHADER_SOURCE = `
         gl_FragColor = texture2D(u_Sampler2, v_UV); // Set the point color
       } else {
         gl_FragColor = vec4(1, 0, 1, 1); // Set the point color to magenta
+      }
+
+      vec3 lightVector = u_lightPos - vec3(v_VertPos);
+      float d = length(lightVector);
+
+      vec3 L = normalize(lightVector);
+      vec3 N = normalize(v_Normal);
+      float nDotL = max(dot(N, L), 0.0);
+      
+      // Reflection vector
+      vec3 R = reflect(-L, N);
+
+      vec3 E = normalize(u_cameraPos - vec3(v_VertPos));
+      float specular = pow(max(dot(E,R), 0.0), 10.0);
+
+      vec3 diffuse = vec3(gl_FragColor) * nDotL;
+      vec3 ambient = vec3(gl_FragColor) * 0.3;
+      specular *= 0.5; // Adjust specular intensity
+      if (u_lightOn) {
+        if (u_whichTexture == ${EYE_TEXTURE} || u_whichTexture == ${GROUND_TEXTURE} || u_whichTexture == ${BONE_TEXTURE}) {
+          gl_FragColor = vec4(diffuse + ambient, 1.0);
+        } else {
+          gl_FragColor = vec4(specular + diffuse + ambient, 1.0);
+        }
       }
     }`;
 
@@ -2264,7 +2304,7 @@ function renderAllShapes() {
   // cube.textureNum = NORMALS;
   cube.matrix.scale(10, 10, 10);
   cube.matrix.translate(-0.5, -0.5, -0.5);
-  cube.render();
+  // cube.render();
 
   var groundPlane = new Cube();
   groundPlane.color = [0.5, 0.5, 0.5, 1];
@@ -2279,10 +2319,44 @@ function renderAllShapes() {
   // fleshPrison.textureNum = COLOR;
   // fleshPrison.renderFast();
 
+  var sphere = new Sphere();
+  sphere.color = solidColor;
+  sphere.textureNum = COLOR;
+  sphere.matrix.translate(2, 0.5, 0);
+  sphere.matrix.scale(0.5, 0.5, 0.5);
+  sphere.render();
+
+  gl.uniform3f(
+    u_cameraPos,
+    g_camera.eye.elements[0],
+    g_camera.eye.elements[1],
+    g_camera.eye.elements[2]
+  );
+  gl.uniform3f(
+    u_lightPos,
+    g_lightPosition[0],
+    g_lightPosition[1],
+    g_lightPosition[2]
+  );
+
+  gl.uniform1i(u_lightOn, g_lightOn ? 1 : 0);
+
+  var light = new Cube();
+  light.color = [1, 1, 0, 1];
+  light.textureNum = COLOR;
+  light.matrix.translate(
+    g_lightPosition[0],
+    g_lightPosition[1],
+    g_lightPosition[2]
+  );
+  light.matrix.scale(-0.1, -0.1, -0.1);
+  light.matrix.translate(-0.5, 1, -0.5);
+  light.renderFast();
+
   var sky = new Cube();
   sky.color = [0.4, 0, 0, 1];
   sky.textureNum = COLOR;
-  sky.matrix.scale(50, 50, 50);
+  sky.matrix.scale(-50, -50, -50);
   sky.matrix.translate(-0.5, -0.5, -0.5);
   sky.renderFast();
 
@@ -3000,16 +3074,26 @@ let score = 0;
 const TIMEOUT = 20;
 let timeLeft = TIMEOUT;
 
+let g_lightSpeed = 1;
+
 function tick() {
   g_seconds = performance.now() / 1000 - g_startTime;
 
+  g_lightSpeed = Math.min(g_lightSpeed + g_seconds * 0.001, 50); // Increase light speed over time, cap at 50
   keyboardPressed();
 
   touchMinos();
 
+  // updateAnimationAngles(); // Update angles for animation
+
   renderAllShapes(); // Render all shapes
 
   requestAnimationFrame(tick); // Request the next frame
+}
+
+function updateAnimationAngles() {
+  g_lightPosition[0] = 2 * Math.sin(g_seconds * 2 * g_lightSpeed);
+  g_lightPosition[1] = 2 * Math.cos(g_seconds * 2 * g_lightSpeed);
 }
 
 function touchMinos() {
