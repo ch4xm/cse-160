@@ -15,8 +15,8 @@ const sliders = [
           }
           console.log("Light Position X: " + event.target.value);
           const value = event.target.value;
-          var x = Number(value) / 100;
-          
+          var x = Number(value) / 5;
+
           g_lightPosition[0] = x;
           document.getElementById(slider.id + "Label").innerText =
             slider.label + ":\xa0" + value;
@@ -36,8 +36,8 @@ const sliders = [
           }
           console.log("Light Position Y: " + event.target.value);
           const value = event.target.value;
-          var y = Number(value) / 100;
-          
+          var y = Number(value) / 5;
+
           g_lightPosition[1] = y;
           document.getElementById(slider.id + "Label").innerText =
             slider.label + ":\xa0" + value;
@@ -57,8 +57,8 @@ const sliders = [
           }
           console.log("Light Position Z: " + event.target.value);
           const value = event.target.value;
-          var z = Number(value) / 100;
-          
+          var z = Number(value) / 5;
+
           g_lightPosition[2] = z;
           document.getElementById(slider.id + "Label").innerText =
             slider.label + ":\xa0" + value;
@@ -97,35 +97,45 @@ function setupUICallbacks() {
     g_normalsOn = false;
     renderAllShapes();
   });
-  
-  document.getElementById("startMadeInHeaven").addEventListener("click", function () {
-    g_accelerateTime = true;
-    g_rotateLight = false;
-    g_lightSpeed = 1;
-    g_lightOn = true;
-    g_accelerateStart = performance.now() / 1000;
-  });
 
-  document.getElementById("stopMadeInHeaven").addEventListener("click", function () {
-    g_accelerateTime = false;
-    g_rotateLight = false;
-    g_lightSpeed = 1;
-  });
+  document
+    .getElementById("startMadeInHeaven")
+    .addEventListener("click", function () {
+      g_accelerateTime = true;
+      g_rotateLight = false;
+      g_lightSpeed = 1;
+      g_lightOn = true;
+      g_accelerateStart = performance.now() / 1000;
+    });
 
-  document.getElementById('startAnimation').addEventListener('click', function() {
-    g_accelerateTime = false;
-    g_rotateLight = true;
-    g_lightSpeed = 1;
-    g_lightOn = true;
-    g_accelerateTime = false;
-    g_accelerateStart = performance.now() / 1000;
-  });
+  document
+    .getElementById("stopMadeInHeaven")
+    .addEventListener("click", function () {
+      g_lightPosition = [0, 1.5, 1];
+      g_accelerateTime = false;
+      g_rotateLight = false;
+      g_lightSpeed = 1;
+    });
 
-  document.getElementById('stopAnimation').addEventListener('click', function() {
-    g_accelerateTime = false;
-    g_rotateLight = false;
-    g_lightSpeed = 1;
-  });
+  document
+    .getElementById("startAnimation")
+    .addEventListener("click", function () {
+      g_accelerateTime = false;
+      g_rotateLight = true;
+      g_lightSpeed = 1;
+      g_lightOn = true;
+      g_accelerateTime = false;
+      g_accelerateStart = performance.now() / 1000;
+    });
+
+  document
+    .getElementById("stopAnimation")
+    .addEventListener("click", function () {
+      g_lightPosition = [0, 1.5, 1];
+      g_accelerateTime = false;
+      g_rotateLight = false;
+      g_lightSpeed = 1;
+    });
 
   document.getElementById("enablePose").addEventListener("click", function () {
     resetAngles();
@@ -157,13 +167,14 @@ function setupUICallbacks() {
     renderAllShapes();
   });
 
-  document.getElementById("disableLight").addEventListener("click", function () {
-    g_lightOn = false;
-    renderAllShapes();
-  });
+  document
+    .getElementById("disableLight")
+    .addEventListener("click", function () {
+      g_lightOn = false;
+      renderAllShapes();
+    });
 
   document.getElementById("disableWalk").addEventListener("click", function () {
-
     shouldAnimate = false;
     stopAnimation = true;
   });
@@ -177,7 +188,7 @@ function setupUICallbacks() {
   document.oncontextmenu = function (event) {
     event.preventDefault();
   };
-  
+
   sliders.forEach((sliderCategory) => {
     const sectionTitle = document.createElement("h3");
     sectionTitle.innerText = sliderCategory.sectionTitle;

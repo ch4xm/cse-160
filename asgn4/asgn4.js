@@ -41,29 +41,26 @@ document.onkeydown = function (event) {
   pressedKeys[event.keyCode] = true;
 };
 
-document.onmousedown = function (event) {
-  event.preventDefault();
-  console.log(event.button);
-  // console.log("Left mouse button clicked", g_camera.at.add(g_camera.eye));
-  const newVector = new Vector3();
-  newVector.set(g_camera.at); //.normalize();
-  // newVector.mul(3)
-  newVector.sub(g_camera.eye).normalize();
+// document.onmousedown = function (event) {
+//   // event.preventDefault();
+//   const newVector = new Vector3();
+//   newVector.set(g_camera.at); //.normalize();
+//   newVector.sub(g_camera.eye).normalize();
 
-  const target = new Vector3();
-  target.set(g_camera.eye);
-  target.add(newVector.mul(3));
+//   const target = new Vector3();
+//   target.set(g_camera.eye);
+//   target.add(newVector.mul(3));
 
-  let [x, z, y] = target.elements;
-  x = Math.round(x) - 1;
-  y = Math.round(y);
-  z = Math.round(z);
-  if (event.button == 2) {
-    map.placeBlock(x, y, -0.445 + z, EYE_TEXTURE);
-  } else if (event.button == 0) {
-    map.removeBlock(x, y, -0.445 + z);
-  }
-};
+//   let [x, z, y] = target.elements;
+//   x = Math.round(x) - 1;
+//   y = Math.round(y);
+//   z = Math.round(z);
+//   if (event.button == 2) {
+//     map.placeBlock(x, y, -0.445 + z, EYE_TEXTURE);
+//   } else if (event.button == 0) {
+//     map.removeBlock(x, y, -0.445 + z);
+//   }
+// };
 
 document.onkeyup = function (event) {
   event.preventDefault();
