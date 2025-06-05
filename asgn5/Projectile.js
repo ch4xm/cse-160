@@ -1,12 +1,16 @@
 import * as THREE from "three";
-import { fpsControls, pressedKeys, fleshPrison } from "./main.js";
+import { fpsControls, fleshPrison } from "./main.js";
 
 var playerLeftClicking = false;
 var lastParryAttemptTime = 0; // Time when the player last parried
-var lastSuccessfulParryTime = -Infinity; // Time when the player last attempted to parry
+export var lastSuccessfulParryTime = 0; // Time when the player last attempted to parry
+
+export let playerMax = 2500;
+export let playerHealth = playerMax;
 
 const PARRY_WINDOW = 50; // Time in milliseconds for the parry window
 const PARRY_COOLDOWN = 1000; // Cooldown time in milliseconds after a successful parry
+export const PARRY_FREEZE = 250;
 
 document.addEventListener("mousedown", function (event) {
   if (event.button !== 0) return; // Only handle left mouse button
@@ -40,7 +44,7 @@ export class Projectile {
     this.direction = this.target.clone().sub(this.position).normalize();
     this.source = "Maurice"; // Source of the projectile, e.g., "Maurice"
     this.object = this.create(scene);
-    this.despawnTime = 6000; // Time in milliseconds before the projectile despawns
+    this.despawnTime = 10000; // Time in milliseconds before the projectile despawns
     this.spawnTime = Date.now();
 
     this.damage = 20;
@@ -121,8 +125,8 @@ export class Projectile {
 
         // Set new direction: camera forward
         this.source = "Player"; // Update source to Player
-        this.object.material.color.set("rgb(150, 0, 0)"); // Change color to red on parry
-        this.object.children[0].material.color.set("rgb(230, 0, 0)"); // Change inner projectile color to red
+        // this.object.material.color.set("rgb(150, 0, 0)"); // Change color to red on parry
+        // this.object.children[0].material.color.set("rgb(230, 0, 0)"); // Change inner projectile color to red
         const forward = new THREE.Vector3(1, 0, 1);
         fpsControls.getDirection(forward); // gets forward vector from controls
         this.direction = forward.clone().normalize();
@@ -136,9 +140,10 @@ export class Projectile {
         return;
       }
       // console.log("Projectile hit the target!");
-      if (this.object.parent) {
-        this.object.parent.remove(this.object);
-      }
+      // if (this.object.parent) {
+      //   this.object.parent.remove(this.object);
+      // }
+      playerHealth = playerHealth - this.damage; // Reduce player health
       activeCollision = false; // Reset collision active after parry
 
       return;
@@ -154,10 +159,6 @@ export class Projectile {
       }
       // Handle damage to flesh prison here
       fleshPrison.health -= this.damage;
-      if (fleshPrison.health <= 0) {
-        console.log("Flesh prison destroyed!");
-        // // Handle destruction logic here
-      }
       return;
     }
   }

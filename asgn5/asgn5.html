@@ -8,8 +8,32 @@
     <audio id="chaos" src="./assets/sounds/chaos.mp3" loop></audio>
     <audio id="punch" src="./assets/sounds/punch.ogg"></audio>
     <audio id="parry" src="./assets/sounds/parry.mp3"></audio>
+    <link href="./assets/fonts/VCR_OSD_MONO_1.001.ttf" rel="font-face" />
 </head>
 <body>
+    <div style="position: fixed; background-color: transparent; color: white; width: 100%; display: flex; justify-content: center; align-items: center; font-size: 22px;">
+      <p style="background-color: rgba(0, 0, 0, 0.806); border-width: 5px; border-radius: 5px; width: 30%; text-align: center; padding: 5px; margin: 0;">
+        FLESH PRISON
+    </div>
+    <div id="player-health-container" class="health-container bottom-left">
+      <div id="player-health" class="health-bar"></div>
+    </div>
+
+    <div id="victory-message" class="message" style="visibility: hidden; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; background-color: rgba(0, 0, 0, 0.8); padding: 40px; border-radius: 5px; color: white;">
+      <h1>Victory!</h1>
+      <p>You have defeated the Flesh Prison!</p>
+      <p>But something else lurks inside...</p>
+    </div> 
+
+    <div id="game-over-message" class="message" style="visibility: hidden; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; background-color: rgba(0, 0, 0, 0.8); padding: 40px; border-radius: 5px; color: white;">
+      <h1>Game Over</h1>
+      <p>You have been defeated by the Flesh Prison!</p>
+      <p>The last judgement draweth nigh...</p>
+    </div>
+    <!-- Boss Health Bar -->
+    <div id="boss-health-container" class="health-container top-center">
+      <div id="boss-health" class="health-bar boss"></div>
+    </div>
     <canvas id="c"></canvas>
     <script type="importmap">
         {

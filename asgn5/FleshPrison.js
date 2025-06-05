@@ -4,6 +4,7 @@ export class FleshPrison {
   constructor(scene) {
     this.object = this.create(scene);
     this.health = 10000;
+    this.maxHealth = 10000;
   }
 
   create(scene) {

@@ -2,7 +2,13 @@ import * as THREE from "three";
 import { FleshPrison } from "./FleshPrison.js";
 import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { Projectile } from "./Projectile.js";
+import {
+  lastSuccessfulParryTime,
+  PARRY_FREEZE,
+  Projectile,
+  playerHealth,
+  playerMax,
+} from "./Projectile.js";
 import { Maurice } from "./Maurice.js";
 
 const canvas = document.querySelector("#c");
@@ -47,20 +53,20 @@ export const fleshPrison = new FleshPrison(scene);
 const projectile = new Projectile(scene, new THREE.Vector3(2, 0, 2));
 
 const MAURICE_POSITIONS = [
-  new THREE.Vector3(  2,  -1, -2),
-  new THREE.Vector3( -2,  -1, -2),
-  new THREE.Vector3(  2,  -1,  2),
-  new THREE.Vector3( -2,  -1,  2),
-  new THREE.Vector3(  0,  -1,  2),
-  new THREE.Vector3(  0,  -1, -2),
-  new THREE.Vector3(  2,  -1,  0),
-  new THREE.Vector3( -2,  -1,  0),
-  new THREE.Vector3(  1,  -2, -1),
-  new THREE.Vector3( -1,  -2, -1),
-  new THREE.Vector3(  1,  -2,  1),
-  new THREE.Vector3( -1,  -2,  1),
-  new THREE.Vector3(  0,  -2, -1),
-  new THREE.Vector3(  0,  -2,  1),
+  new THREE.Vector3(2, -1, -2),
+  new THREE.Vector3(-2, -1, -2),
+  new THREE.Vector3(2, -1, 2),
+  new THREE.Vector3(-2, -1, 2),
+  new THREE.Vector3(0, -1, 2),
+  new THREE.Vector3(0, -1, -2),
+  new THREE.Vector3(2, -1, 0),
+  new THREE.Vector3(-2, -1, 0),
+  new THREE.Vector3(1, -2, -1),
+  new THREE.Vector3(-1, -2, -1),
+  new THREE.Vector3(1, -2, 1),
+  new THREE.Vector3(-1, -2, 1),
+  new THREE.Vector3(0, -2, -1),
+  new THREE.Vector3(0, -2, 1),
 ];
 
 let maurices = [];
@@ -133,6 +139,13 @@ function resizeRendererToDisplaySize(renderer) {
 function renderScene(time) {
   time *= 0.001; // convert time to seconds
 
+  console.log(performance.now() - lastSuccessfulParryTime, PARRY_FREEZE);
+  if (performance.now() - lastSuccessfulParryTime < PARRY_FREEZE) {
+    // If within parry freeze time, do not update projectile position
+    requestAnimationFrame(renderScene);
+    return;
+  }
+
   if (resizeRendererToDisplaySize(renderer)) {
     const canvas = renderer.domElement;
     camera.aspect = canvas.clientWidth / canvas.clientHeight;
@@ -159,9 +172,38 @@ function renderScene(time) {
 
   keyboardPressed();
 
+  updateHealthBars(
+    playerHealth,
+    playerMax,
+    fleshPrison.health,
+    fleshPrison.maxHealth
+  );
+
+  if (fleshPrison.health <= 0) {
+    // Handle victory logic here, e.g., display a message or transition to another scene
+    document.getElementById("victory-message").style.visibility = "visible";
+    return;
+  }
+
+  if (playerHealth <= 0) {
+    // Handle game over logic here, e.g., display a message or restart the game
+    document.getElementById("game-over-message").style.visibility = "visible";
+    return;
+  }
   renderer.render(scene, camera);
 
   requestAnimationFrame(renderScene);
+}
+
+function updateHealthBars(playerHealth, playerMax, bossHealth, bossMax) {
+  const playerBar = document.getElementById("player-health");
+  const bossBar = document.getElementById("boss-health");
+
+  const playerPercent = Math.max(0, (playerHealth / playerMax) * 100);
+  const bossPercent = Math.max(0, (bossHealth / bossMax) * 100);
+
+  playerBar.style.width = `${playerPercent}%`;
+  bossBar.style.width = `${bossPercent}%`;
 }
 
 export var pressedKeys = {};
