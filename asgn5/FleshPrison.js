@@ -1,9 +1,8 @@
 import * as THREE from "three";
 
-const POSITION_Z = -2;
 export class FleshPrison {
-  constructor(renderer, scene) {
-    this.fleshPrison = this.create(renderer, scene);
+  constructor(scene) {
+    this.object = this.create(scene);
     this.health = 100;
   }
 
@@ -15,15 +14,6 @@ export class FleshPrison {
     const uvs = [];
 
     const positions = mainGeometry.attributes.position.array;
-    const faceCount = positions.length / 9;
-
-    // uvs.push(
-    // for (let i = 0; i < faceCount; i++) {
-    //   // For simplicity, assign a fixed triangle UV per face
-    //   uvs.push(0.5, 1.0); // Top vertex
-    //   uvs.push(0.0, 0.0); // Bottom left
-    //   uvs.push(1.0, 0.0); // Bottom right
-    // }
 
     const triUVs = [
       // Face 1 (back eye open)
@@ -88,16 +78,12 @@ export class FleshPrison {
 
     mainTexture.colorSpace = THREE.SRGBColorSpace;
     const material = new THREE.MeshBasicMaterial({
-      // color: "rgb(155, 0, 0)",
       map: mainTexture,
     });
 
-    const fleshPrison = new THREE.Mesh(mainGeometry, material);
-    fleshPrison.position.set(0, 0, POSITION_Z);
-
     // const uvs = new Float32Array([
 
-    scene.add(fleshPrison);
+    // scene.add(fleshPrison);
 
     // Pyramid geometry for the base
     const baseGeometry = new THREE.CylinderGeometry(0.075, 0.5, 0.45, 4);
@@ -111,8 +97,12 @@ export class FleshPrison {
       map: baseTexture,
     });
     const fleshPrisonBase = new THREE.Mesh(baseGeometry, baseMaterial);
-    fleshPrisonBase.position.set(0, -1.7, POSITION_Z);
-    scene.add(fleshPrisonBase);
+    fleshPrisonBase.position.set(0, -2.4, 0);
+
+    const fleshPrison = new THREE.Mesh(mainGeometry, material);
+    fleshPrison.position.set(0, 2.1, 0);
+    fleshPrison.scale.set(1.25, 1.25, 1.25);
+    fleshPrisonBase.add(fleshPrison);
 
     // Cylinder geometry for the spine
     const spineGeometry = new THREE.CylinderGeometry(0.025, 0.075, 4, 4);
@@ -128,8 +118,8 @@ export class FleshPrison {
     spineTexture.wrapS = THREE.RepeatWrapping;
     spineTexture.wrapT = THREE.RepeatWrapping;
     const fleshPrisonSpine = new THREE.Mesh(spineGeometry, spineMaterial);
-    fleshPrisonSpine.position.set(0, -0.1, POSITION_Z);
-    scene.add(fleshPrisonSpine);
+    fleshPrisonSpine.position.set(0, 2.1, 0);
+    fleshPrisonBase.add(fleshPrisonSpine);
 
     const topGeometry = new THREE.CylinderGeometry(0.35, 0.05, 0.35, 5);
     const topTexture = loader.load("./assets/textures/fleshMaterial.png");
@@ -142,25 +132,26 @@ export class FleshPrison {
       map: topTexture,
     });
     const fleshPrisonTop = new THREE.Mesh(topGeometry, topMaterial);
-    fleshPrisonTop.position.set(0, 2, POSITION_Z);
-    scene.add(fleshPrisonTop);
+    fleshPrisonTop.position.set(0, 4, 0);
+    fleshPrisonBase.add(fleshPrisonTop);
+    scene.add(fleshPrisonBase);
 
     return fleshPrison;
   }
 
   render(time) {
-    const speed = Math.min(2.5, 0.5 + 0.5 * (100 / this.health));
+    const speed = Math.min(2.5, 0.3 + 0.5 * (100 / this.health));
     // Spin faster as health decreases
     // Max out at 3x speed
     const rot = time * speed;
-    this.fleshPrison.rotation.y = rot;
+    this.object.rotation.y = rot;
   }
 
   addTexture() {
     const loader = new THREE.TextureLoader();
     const texture = loader.load("./assets/textures/fleshPrison.png");
     texture.colorSpace = THREE.SRGBColorSpace;
-    this.fleshPrison.material.map = texture;
-    this.fleshPrison.material.needsUpdate = true;
+    this.object.material.map = texture;
+    this.object.material.needsUpdate = true;
   }
 }
