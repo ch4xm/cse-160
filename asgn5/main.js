@@ -37,7 +37,7 @@ function main() {
   });
   const skyboxMesh = new THREE.Mesh(skybox, skyboxMaterial);
   scene.add(skyboxMesh);
-  scene.add(cube);
+  // scene.add(cube);
 
   renderer.render(scene, camera);
 
