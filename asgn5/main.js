@@ -34,6 +34,9 @@ const spotlight = new THREE.SpotLight(0xffffff, 5, 35);
 scene.add(spotlight);
 scene.add(spotlight.target);
 
+const ambientLight = new THREE.AmbientLight("rgb(9, 255, 0)", 1); // Soft white light
+scene.add(ambientLight);
+
 // const helper = new THREE.SpotLightHelper(spotlight);
 // scene.add(helper);
 
@@ -79,6 +82,8 @@ MAURICE_POSITIONS.forEach((position) => {
 const SKYBOX_WIDTH = 15;
 const SKYBOX_HEIGHT = 4.5;
 
+// const cerberus = loadCerberusModel();
+const mirage = loadMirageModel();
 function main() {
   camera.position.z = 2;
 
@@ -139,7 +144,6 @@ function resizeRendererToDisplaySize(renderer) {
 function renderScene(time) {
   time *= 0.001; // convert time to seconds
 
-  console.log(performance.now() - lastSuccessfulParryTime, PARRY_FREEZE);
   if (performance.now() - lastSuccessfulParryTime < PARRY_FREEZE) {
     // If within parry freeze time, do not update projectile position
     requestAnimationFrame(renderScene);
@@ -236,17 +240,18 @@ function keyboardPressed() {
   }
 }
 
-function loadV1Model() {
+function loadMirageModel() {
   const loader = new GLTFLoader();
-  let v1;
+  let cerberus;
   loader.load(
-    "./assets/models/v1_ultrakill.glb",
+    "./assets/models/mirage_ultrakill.glb", // Hot robot lady
     function (gltf) {
       const model = gltf.scene;
-      model.position.set(0, -3, 0);
+      model.position.set(2, -2.65, 5);
+      model.rotateY(5 * Math.PI / 4); // Rotate the model to face the camera
 
-      // model.scale.set(0.5, 0.5, 0.5);
-      v1 = model;
+      model.scale.set(0.5,0.5,0.5); // way too big initially
+      cerberus = model;
       scene.add(model);
     },
     undefined,
@@ -254,5 +259,27 @@ function loadV1Model() {
       console.error("An error occurred while loading the model:", error);
     }
   );
-  return v1;
+  return cerberus;
+}
+
+
+function loadCerberusModel() {
+  const loader = new GLTFLoader();
+  let cerberus;
+  loader.load(
+    "./assets/models/ultrakill_cerberus_rig.glb",
+    function (gltf) {
+      const model = gltf.scene;
+      model.position.set(2, -2, 2);
+
+      model.scale.set(0.25, 0.25, 0.25); // way too big initially
+      cerberus = model;
+      scene.add(model);
+    },
+    undefined,
+    function (error) {
+      console.error("An error occurred while loading the model:", error);
+    }
+  );
+  return cerberus;
 }
