@@ -1,10 +1,14 @@
 import * as THREE from "three";
+import { Projectile } from "./Projectile.js";
+import { fpsControls } from "./main.js";
 
 export class Maurice {
   constructor(scene, position) {
     this.position = position || new THREE.Vector3(0, 1, 0);
     this.object = this.create(scene);
+    this.scene = scene;
 
+    this.projectiles = [];
     this.firstPos = new THREE.Vector3(
       this.position.x,
       this.position.y,
@@ -28,11 +32,8 @@ export class Maurice {
     this.duration = rand * 3 + 4; // Random duration between 2 and 6 seconds
     this.moveDuration = rand * 2 + 1; // Random duration between 1 and 3 seconds
     this.waitDuration = this.duration - this.moveDuration * 2; // Random wait duration between 1 and 3 seconds
-    // this.moveDuration = rand * 2 + 1; // Random duration between 1 and 3 seconds
-    // this.waitDuration = rand + 1; // Random wait duration between 1 and 3 seconds
-    // this.duration = Math.random() * 8 + 2; // Random duration between 2 and 6 seconds
-    // this.moveDuration = Math.random() * 2 + 1; // Random duration between 2 and 5 seconds
-    // this.waitDuration = Math.random() * 2 + 1; // Random wait duration between 1 and 3 seconds
+
+    this.projectileSpawnRate = Math.random() * 2 + 1; // Random spawn rate between 1 and 3 seconds
   }
 
   create(scene) {
@@ -48,10 +49,33 @@ export class Maurice {
   }
 
   render(time) {
-    const phase = time % this.duration;
+    if (time % this.projectileSpawnRate < 0.003) {
+      if (!fpsControls.object || !fpsControls.object.position) {
+        console.error("fpsControls or its position is not defined.");
+        return;
+      }
+      const projectile = new Projectile(
+        this.scene,
+        this.object.position.clone(),
+        fpsControls.object.position.clone()
+      );
+    //   projectile.object.position.copy(this.object.position);
+    //   projectile.object.lookAt(this.secondPos);
+    //   projectile.object.position.y += 0.5;
 
-    // const this.moveDuration = 3;
-    // const this.waitDuration = 2;
+      this.projectiles.push(projectile);
+      // projectile.object.position.copy(this.object.position);
+      // projectile.object.lookAt(this.secondPos);
+      // projectile.object.position.y += 0.5;
+      // projectile.object.position.x += 0.5;
+      // projectile.object.position.z += 0.5;
+    }
+
+    this.projectiles.forEach((projectile) => {
+      projectile.render(time);
+    });
+
+    const phase = time % this.duration;
 
     if (phase < this.moveDuration) {
       // Moving from firstPos to secondPos
@@ -63,7 +87,10 @@ export class Maurice {
       // Waiting at secondPos
       this.object.position.copy(this.secondPos);
       this.object.lookAt(this.firstPos);
-    } else if (phase < this.moveDuration + this.waitDuration + this.moveDuration) {
+    } else if (
+      phase <
+      this.moveDuration + this.waitDuration + this.moveDuration
+    ) {
       // Moving back from secondPos to firstPos
       const t = this.easeInOutCubic(
         (phase - this.moveDuration - this.waitDuration) / this.moveDuration

@@ -31,7 +31,7 @@ scene.add(spotlight.target);
 // const helper = new THREE.SpotLightHelper(spotlight);
 // scene.add(helper);
 
-let fpsControls = new PointerLockControls(camera, document.body);
+export let fpsControls = new PointerLockControls(camera, document.body);
 fpsControls.pointerSpeed = 0.5;
 
 document.body.addEventListener(
@@ -42,7 +42,7 @@ document.body.addEventListener(
   false
 );
 
-const fleshPrison = new FleshPrison(scene);
+export const fleshPrison = new FleshPrison(scene);
 
 const projectile = new Projectile(scene, new THREE.Vector3(2, 0, 2));
 
@@ -55,6 +55,12 @@ const MAURICE_POSITIONS = [
   new THREE.Vector3(  0,  -1, -2),
   new THREE.Vector3(  2,  -1,  0),
   new THREE.Vector3( -2,  -1,  0),
+  new THREE.Vector3(  1,  -2, -1),
+  new THREE.Vector3( -1,  -2, -1),
+  new THREE.Vector3(  1,  -2,  1),
+  new THREE.Vector3( -1,  -2,  1),
+  new THREE.Vector3(  0,  -2, -1),
+  new THREE.Vector3(  0,  -2,  1),
 ];
 
 let maurices = [];
@@ -158,7 +164,7 @@ function renderScene(time) {
   requestAnimationFrame(renderScene);
 }
 
-var pressedKeys = {};
+export var pressedKeys = {};
 
 document.onkeydown = function (event) {
   event.preventDefault();

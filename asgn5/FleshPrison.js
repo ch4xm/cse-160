@@ -3,7 +3,7 @@ import * as THREE from "three";
 export class FleshPrison {
   constructor(scene) {
     this.object = this.create(scene);
-    this.health = 100;
+    this.health = 10000;
   }
 
   create(scene) {
